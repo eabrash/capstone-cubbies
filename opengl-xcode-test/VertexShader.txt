@@ -1,0 +1,18 @@
+#version 330 core
+
+// We use a vec3 because our vertex has three coordinates. The location = 0 must match with the first
+// parameter of glVertexAttributePointer. This is a way of passing different aspects of a vertex (?) into
+// a shader for use. vertexPosition_modelspace is just the name this argument takes within the shader.
+
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec3 inColor;
+
+out vec3 color;
+
+uniform mat4 MY_MATRIX;
+
+void main()
+{
+    color = inColor;
+    gl_Position = MY_MATRIX * vec4(vertexPosition_modelspace,1);
+}
