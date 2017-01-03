@@ -280,11 +280,11 @@ int main(){
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     
     // Only during the initialisation
-    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
+    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX"); // This is tying the MatrixId to MY_MATRIX variable in the shader
     
     // Turn on culling; cull triangles with their back facing the camera
-    //    glEnable(GL_CULL_FACE);
-    //    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     
     // Turn on z-buffering
     glEnable(GL_DEPTH_TEST);
@@ -294,72 +294,126 @@ int main(){
     
     //int counter = 0;
     
+    float scaleFactor = 20.0;
+    
     float cameraX = 0.0f;
-    float cameraY = 0.0f;
-    float cameraZ = -3.0f;
+    float cameraY = -scaleFactor + 10.0f;
+    float cameraZ = 0.0f;
+    
+    //float targetX = 0.0f;
+    float targetY = 0.0f;
+    //float targetZ = 1.0f;
+    
+    float targetAngleXZ = M_PI;
+
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
+        // Strafe sideways
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            cameraZ -= scaleFactor/100;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            cameraZ += scaleFactor/100;
+        }
         
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        // Move forward or back
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            cameraX -= 0.1;
+            cameraX += scaleFactor/100;
         }
-        else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            cameraX += 0.1;
+            cameraX -= scaleFactor/100;
         }
+        
+        //Turn viewer's gaze up or down
         
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            cameraY += 0.1;
+            targetY += 0.1;
         }
         else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            cameraY -= 0.1;
+            targetY -= 0.1;
         }
         
-        if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+        // Turn viewer's gaze and direction of motion to the side
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            cameraZ += 0.1;
+            targetAngleXZ += 0.05;
         }
-        else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
-            cameraZ -= 0.1;
+            targetAngleXZ -= 0.05;
         }
+        
+        //std::cout << "cameraX: " << cameraX << ", cameraY: " << cameraY << ", cameraZ: " << cameraZ << ", targetAngleXZ: " << targetAngleXZ << ", targetY: " << targetY;
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
         
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-        glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-        glm::mat4 myModelMatrix = myTranslationMatrix * myScalingMatrix;
+        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, 0.0f, scaleFactor));
+        glm::mat4 myScalingMatrix = glm::scale(glm::vec3(scaleFactor, scaleFactor, scaleFactor/50));
+        glm::mat4 myRotationMatrix = glm::mat4();
+        glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
         
-        glm::mat4 cameraMatrix = glm::lookAt(
+        glm::mat4 viewMatrix = glm::lookAt(
                                              glm::vec3(cameraX, cameraY, cameraZ), // the position of your camera
-                                             glm::vec3(0.0f, 0.0f, 0.0f),   // where you want to look at
+                                             glm::vec3(cameraX, cameraY, cameraZ) + glm::vec3(cos(targetAngleXZ), targetY, sin(targetAngleXZ)),   // where you want to look at
                                              glm::vec3(0.0f, 1.0f, 0.0f)    // right-side up
                                              );
         
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), (float)1.0, 0.1f, 100.0f);
-        glm::mat4 mymatrix = projectionMatrix * cameraMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]);
+        std::cout << "Vector: [" << cos(targetAngleXZ) << " " << targetY << " " << sin(targetAngleXZ) << "\n";
+        
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), (float)1.0, 0.1f, 1000.0f);
+        glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // This is sending the matrix to the shader
         
         //        glEnableVertexAttribArray(0);
         //        glEnableVertexAttribArray(1);
         
         glDrawArrays(GL_TRIANGLES, 0, 12*3);
         
-        myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-        myModelMatrix = myTranslationMatrix * myScalingMatrix;
-        mymatrix = projectionMatrix * cameraMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]);
+        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, 0.0f, -scaleFactor));
+        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
+        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
         glDrawArrays(GL_TRIANGLES, 0, 12*3);
         
         //        glDisableVertexAttribArray(0); // Why do we need to do this?
         //        glDisableVertexAttribArray(1);
+
+        // Floor
+        
+        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, -scaleFactor, 0.0f));
+        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0));
+        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
+        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
+        glDrawArrays(GL_TRIANGLES, 0, 12*3);
+        
+        // Ceiling
+        
+        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, scaleFactor, 0.0f));
+        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0));
+        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
+        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
+        glDrawArrays(GL_TRIANGLES, 0, 12*3);
+        
+        // Back wall
+        
+        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor*2, 0.0f, 0.0f));
+        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0));
+        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
+        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
+        glDrawArrays(GL_TRIANGLES, 0, 12*3);
         
         // Swap buffers
         glfwSwapBuffers(window);
