@@ -296,62 +296,66 @@ int main(){
     
     float scaleFactor = 20.0;
     
-    float cameraX = 0.0f;
-    float cameraY = -scaleFactor + 10.0f;
-    float cameraZ = 0.0f;
     
-    //float targetX = 0.0f;
-    float targetY = 0.0f;
-    //float targetZ = 1.0f;
-    
-    float targetAngleXZ = M_PI;
-
+    glm::vec3 camera = glm::vec3(0.0f, -scaleFactor + 10.0f, 0.0f);
+    glm::vec3 lookAt = glm::vec3(-1, 0, 0);
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         // Strafe sideways
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            cameraZ -= scaleFactor/100;
+            camera.z -= scaleFactor/100;
         }
         else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            cameraZ += scaleFactor/100;
+            camera.z += scaleFactor/100;
         }
         
         // Move forward or back
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            cameraX += scaleFactor/100;
+            camera.x += scaleFactor/100;
         }
         else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            cameraX -= scaleFactor/100;
+            camera.x -= scaleFactor/100;
         }
         
-        //Turn viewer's gaze up or down
+        glm::mat3 rotation = glm::mat3();
+        float angle = 0.05;
+        
+        //Turn viewer's gaze up or down - should be rotate about x, but seems to be z?
         
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            targetY += 0.1;
+            rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
+            rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
+            rotation[2] = glm::vec3(0, 0, 1);
         }
         else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            targetY -= 0.1;
+            rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
+            rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
+            rotation[2] = glm::vec3(0, 0, 1);
         }
         
         // Turn viewer's gaze and direction of motion to the side
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            targetAngleXZ += 0.05;
+            //rotate about y-axis
+            rotation[0] = glm::vec3(cos(-angle), 0, -sin(-angle));
+            rotation[1] = glm::vec3(0, 1, 0);
+            rotation[2] = glm::vec3(sin(-angle), 0, cos(-angle));
         }
         else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
-            targetAngleXZ -= 0.05;
+            //rotate about y-axis
+            rotation[0] = glm::vec3(cos(angle), 0, -sin(angle));
+            rotation[1] = glm::vec3(0, 1, 0);
+            rotation[2] = glm::vec3(sin(angle), 0, cos(angle));
         }
-        
-        //std::cout << "cameraX: " << cameraX << ", cameraY: " << cameraY << ", cameraZ: " << cameraZ << ", targetAngleXZ: " << targetAngleXZ << ", targetY: " << targetY;
-        
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
         
         glUseProgram(programID); // Use the shader program to do the drawing
@@ -362,13 +366,13 @@ int main(){
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
         
-        glm::mat4 viewMatrix = glm::lookAt(
-                                             glm::vec3(cameraX, cameraY, cameraZ), // the position of your camera
-                                             glm::vec3(cameraX, cameraY, cameraZ) + glm::vec3(cos(targetAngleXZ), targetY, sin(targetAngleXZ)),   // where you want to look at
-                                             glm::vec3(0.0f, 1.0f, 0.0f)    // right-side up
-                                             );
+        lookAt = rotation * lookAt;
         
-        std::cout << "Vector: [" << cos(targetAngleXZ) << " " << targetY << " " << sin(targetAngleXZ) << "\n";
+        glm::mat4 viewMatrix = glm::lookAt(
+                                             camera, // position of camera
+                                             camera + lookAt, // where to look
+                                             glm::vec3(0.0f, 1.0f, 0.0f)    // +Y axis points up
+                                             );
         
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), (float)1.0, 0.1f, 1000.0f);
         glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
