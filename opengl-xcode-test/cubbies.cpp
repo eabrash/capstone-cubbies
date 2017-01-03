@@ -297,7 +297,7 @@ int main(){
     float scaleFactor = 20.0;
     
     
-    glm::vec3 camera = glm::vec3(0.0f, -scaleFactor + 10.0f, 0.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 lookAt = glm::vec3(-1, 0, 0);
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
@@ -323,21 +323,43 @@ int main(){
         }
         
         glm::mat3 rotation = glm::mat3();
-        float angle = 0.05;
+        float angle = 0.01;
         
         //Turn viewer's gaze up or down - should be rotate about x, but seems to be z?
         
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
-            rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
-            rotation[2] = glm::vec3(0, 0, 1);
+            //Rotate about z-axis (why is it the z-axis?)
+            
+            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
+            {
+                rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
+                rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
+                rotation[2] = glm::vec3(0, 0, 1);
+            }
+            
+            //Rotate about x-axis
+            
+//            rotation[0] = glm::vec3(1, 0, 0);
+//            rotation[1] = glm::vec3(0, cos(angle), sin(angle));
+//            rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
+            
         }
-        else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
-            rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
-            rotation[2] = glm::vec3(0, 0, 1);
+            //Rotate about z-axis (why is it the z-axis?)
+            
+            if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
+            {
+                rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
+                rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
+                rotation[2] = glm::vec3(0, 0, 1);
+            }
+            
+//            //Rotate about x-axis
+//            rotation[0] = glm::vec3(1, 0, 0);
+//            rotation[1] = glm::vec3(0, cos(angle), sin(angle));
+//            rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
         }
         
         // Turn viewer's gaze and direction of motion to the side
