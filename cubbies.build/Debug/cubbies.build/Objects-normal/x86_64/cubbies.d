@@ -95,4 +95,5 @@ dependencies: \
   /usr/local/include/glm/gtx/../gtc/../gtc/constants.hpp \
   /usr/local/include/glm/gtx/../gtc/constants.inl \
   /usr/local/include/glm/gtx/../gtc/matrix_transform.inl \
-  /usr/local/include/glm/gtx/transform.inl
+  /usr/local/include/glm/gtx/transform.inl \
+  /usr/local/include/FreeImage.h

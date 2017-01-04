@@ -3,9 +3,12 @@
 //
 // Based on code from opengl-tutorial: http://www.opengl-tutorial.org/download/ (licensed under FTWPL).
 //
+// Using FreeImage (http://freeimage.sourceforge.net/license.html), GPLv3.0.
+//
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <string.h>
 #include <vector>
 #include <iostream>
@@ -16,6 +19,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <FreeImage.h>
 
 using namespace glm;    // Allows us to say vec3 rather than glm::vec3
 
@@ -114,6 +118,116 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     return ProgramID; // Return the id of the program so we can access it in other parts of our code.
 }
 
+//Load bitmap for texture (does not work any better if the one from the tutorial is used)
+
+GLuint loadBMP(const char * imagepath)
+{
+    FIBITMAP *bitmap = FreeImage_Load(FIF_BMP, "cat.bmp");
+    
+    //Conversion from FIBITMAP to bytes from: https://solarianprogrammer.com/2013/05/17/opengl-101-textures/
+    
+    BYTE *bitmapBytes = (BYTE*)FreeImage_GetBits(bitmap);
+    
+    // Create one OpenGL texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    
+    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    // Give the image to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmapBytes);
+    
+    std::cout << "FreeImage_GetWidth: " << FreeImage_GetWidth(bitmap) << ", FreeImage_GetHeight: " << FreeImage_GetHeight(bitmap) << "\n";
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    
+    // OpenGL has now copied the data. Free our own version
+    FreeImage_Unload(bitmap);
+    
+    return textureID;
+    
+//    printf("Reading image %s\n", imagepath);
+//    
+//    // Data read from the header of the BMP file
+//    unsigned char header[54];
+//    unsigned int dataPos;
+//    unsigned int imageSize;
+//    unsigned int width, height;
+//    // Actual RGB data
+//    unsigned char * data;
+//    
+//    // Open the file
+//    FILE * file = fopen(imagepath,"rb");
+//    if (!file)							    {printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); return 0;}
+//    
+//    // Read the header, i.e. the 54 first bytes
+//    
+//    // If less than 54 bytes are read, problem
+//    if ( fread(header, 1, 54, file)!=54 ){
+//        printf("Not a correct BMP file\n");
+//        return 0;
+//    }
+//    // A BMP files always begins with "BM"
+//    if ( header[0]!='B' || header[1]!='M' ){
+//        printf("Not a correct BMP file\n");
+//        return 0;
+//    }
+//    // Make sure this is a 24bpp file
+//    if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    return 0;}
+//    if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    return 0;}
+//    
+//    // Read the information about the image
+//    dataPos    = *(int*)&(header[0x0A]);
+//    imageSize  = *(int*)&(header[0x22]);
+//    width      = *(int*)&(header[0x12]);
+//    height     = *(int*)&(header[0x16]);
+//    
+//    // Some BMP files are misformatted, guess missing information
+//    if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+//    if (dataPos==0)      dataPos=54; // The BMP header is done that way
+//    
+//    // Create a buffer
+//    data = new unsigned char [imageSize];
+//    
+//    // Read the actual data from the file into the buffer
+//    fread(data,1,imageSize,file);
+//    
+//    // Everything is in memory now, the file wan be closed
+//    fclose (file);
+//    
+//    // Create one OpenGL texture
+//    GLuint textureID;
+//    glGenTextures(1, &textureID);
+//    
+//    // "Bind" the newly created texture : all future texture functions will modify this texture
+//    glBindTexture(GL_TEXTURE_2D, textureID);
+//    
+//    // Give the image to OpenGL
+//    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+//    
+//    // OpenGL has now copied the data. Free our own version
+//    delete [] data;
+//    
+//    // Poor filtering, or ...
+//    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    
+//    // ... nice trilinear filtering.
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//    glGenerateMipmap(GL_TEXTURE_2D);
+//    
+//    // Return the ID of the texture we just created
+//    return textureID;
+}
+
 // Main function for drawing
 
 int main(){
@@ -151,136 +265,7 @@ int main(){
     
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Input mode on window is to detect keystrokes
     
-    // What is the point of this? As far as I can tell, it does not hold anything important, but no
-    // triangles will be drawn if it is commented out. Does it create the context that we attach
-    // attributes to in some way?
-    
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);     // This is the VAO
-    
-    // An array of 3 vectors which represents 3 vertices
-    static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
-    };
-    
-    //int numPts = 36;
-    
-    GLuint vertexbuffer;   // This will identify our vertex buffer
-    glGenBuffers(1, &vertexbuffer); // Generate 1 buffer, put the resulting identifier in vertexbuffer
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-    
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(
-                          0,
-                          3,                                // size
-                          GL_FLOAT,                         // type
-                          GL_FALSE,                         // normalized?
-                          0,                                // stride
-                          (void*)0                          // array buffer offset
-                          );
-    
-    // Now handle the color buffer
-    
-    static const GLfloat g_color_buffer_data [] = {
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.583f,  0.583f,  0.583f,
-        0.483f,  0.596f,  0.789f,
-        0.559f,  0.861f,  0.639f,
-        0.195f,  0.548f,  0.859f,
-        0.014f,  0.184f,  0.576f,
-        0.771f,  0.328f,  0.970f,
-        0.406f,  0.615f,  0.116f,
-        0.676f,  0.977f,  0.133f,
-        0.971f,  0.572f,  0.833f,
-        0.140f,  0.616f,  0.489f,
-        0.997f,  0.513f,  0.064f,
-        0.945f,  0.719f,  0.592f,
-        0.543f,  0.021f,  0.978f,
-        0.279f,  0.317f,  0.505f,
-        0.167f,  0.620f,  0.077f,
-        0.347f,  0.857f,  0.137f,
-        0.055f,  0.953f,  0.042f,
-        0.714f,  0.505f,  0.345f,
-        0.783f,  0.290f,  0.734f,
-        0.722f,  0.645f,  0.174f,
-        0.302f,  0.455f,  0.848f,
-        0.225f,  0.587f,  0.040f,
-        0.517f,  0.713f,  0.338f,
-        0.053f,  0.959f,  0.120f,
-        0.393f,  0.621f,  0.362f,
-        0.673f,  0.211f,  0.457f,
-        0.820f,  0.883f,  0.371f,
-        0.982f,  0.099f,  0.879f
-    };
-    
-    GLuint colorBuffer;
-    glGenBuffers(1, &colorBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-    
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glVertexAttribPointer(
-                          1,
-                          3,                                // size
-                          GL_FLOAT,                         // type
-                          GL_FALSE,                         // normalized?
-                          0,                                // stride
-                          (void*)0                          // array buffer offset
-                          );
-    
-    // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
-    
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    
-    // Only during the initialisation
-    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX"); // This is tying the MatrixId to MY_MATRIX variable in the shader
     
     // Turn on culling; cull triangles with their back facing the camera
     glEnable(GL_CULL_FACE);
@@ -289,36 +274,93 @@ int main(){
     // Turn on z-buffering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);   // Keep the fragment w/shorter distance to camera
+
+    
+    // What is the point of this? As far as I can tell, it does not hold anything important, but no
+    // triangles will be drawn if it is commented out. Does it create the context that we attach
+    // attributes to in some way?
+    
+    GLuint VertexArrayID;
+    glGenVertexArrays(1, &VertexArrayID);
+    glBindVertexArray(VertexArrayID);     // This is the VAO
+    
+    // Create and compile our GLSL program from the shaders
+    GLuint programID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
+    
+    // This is tying the MatrixId to MY_MATRIX variable in the shader
+    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
+    
+    // Load the texture
+    GLuint texture = loadBMP("uvtemplate.bmp");
+    
+    // Get a handle for our "myTextureSampler" uniform
+    GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
+    
+    // An array of 3 vectors which represents 3 vertices
+    static const GLfloat g_vertex_buffer_data[] = {
+        0.0f, 0.0f, 0.0f, // triangle 1 : begin
+        1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, // triangle 1 : end
+        1.0f, 0.0f, 0.0f, // triangle 2 : begin
+        1.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f // triangle 2 : end
+        
+    };
+    
+    // Two UV coordinatesfor each vertex. They were created with Blender.
+    static const GLfloat g_uv_buffer_data[] = {
+        
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 0.0f
+        
+        // Eye only
+//        0.0f, 0.5f,
+//        0.5f, 1.0f,
+//        0.0f, 1.0f,
+//        0.5f, 0.5f,
+//        0.5f, 1.0f,
+//        0.0f, 0.5f
+    };
+    
+    GLuint vertexbuffer;   // This will identify our vertex buffer
+    glGenBuffers(1, &vertexbuffer); // Generate 1 buffer, put the resulting identifier in vertexbuffer
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    
+    GLuint uvbuffer;
+    glGenBuffers(1, &uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
     
     // Main drawing loop
     
-    //int counter = 0;
-    
-    float scaleFactor = 20.0;
-    
-    
-    glm::vec3 camera = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 lookAt = glm::vec3(-1, 0, 0);
+    float scaleFactor = 1.0;
+    glm::vec3 camera = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 lookAt = glm::normalize(glm::vec3(0, 0, -1)); // This needs to be (-) z vector b/c we are looking towards the back
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         // Strafe sideways
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
             camera.z -= scaleFactor/100;
         }
-        else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
             camera.z += scaleFactor/100;
         }
         
         // Move forward or back
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
             camera.x += scaleFactor/100;
             // TESTING THE VERSION CONTROL
         }
-        else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
             camera.x -= scaleFactor/100;
         }
@@ -332,35 +374,41 @@ int main(){
         {
             //Rotate about z-axis (why is it the z-axis?)
             
-            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
-            {
-                rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
-                rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
-                rotation[2] = glm::vec3(0, 0, 1);
-            }
+//            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
+//            {
+//                rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
+//                rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
+//                rotation[2] = glm::vec3(0, 0, 1);
+//            }
             
             //Rotate about x-axis
             
-//            rotation[0] = glm::vec3(1, 0, 0);
-//            rotation[1] = glm::vec3(0, cos(angle), sin(angle));
-//            rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
+            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
+            {
+                rotation[0] = glm::vec3(1, 0, 0);
+                rotation[1] = glm::vec3(0, cos(-angle), sin(-angle));
+                rotation[2] = glm::vec3(0, -sin(-angle), cos(-angle));
+            }
             
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
             //Rotate about z-axis (why is it the z-axis?)
             
+//            if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
+//            {
+//                rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
+//                rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
+//                rotation[2] = glm::vec3(0, 0, 1);
+//            }
+            
+            //Rotate about x-axis
             if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
             {
-                rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
-                rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
-                rotation[2] = glm::vec3(0, 0, 1);
+                rotation[0] = glm::vec3(1, 0, 0);
+                rotation[1] = glm::vec3(0, cos(angle), sin(angle));
+                rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
             }
-            
-//            //Rotate about x-axis
-//            rotation[0] = glm::vec3(1, 0, 0);
-//            rotation[1] = glm::vec3(0, cos(angle), sin(angle));
-//            rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
         }
         
         // Turn viewer's gaze and direction of motion to the side
@@ -384,8 +432,8 @@ int main(){
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, 0.0f, scaleFactor));
-        glm::mat4 myScalingMatrix = glm::scale(glm::vec3(scaleFactor, scaleFactor, scaleFactor/50));
+        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+        glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
         
@@ -397,56 +445,60 @@ int main(){
                                              glm::vec3(0.0f, 1.0f, 0.0f)    // +Y axis points up
                                              );
         
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(90.0f), (float)1.0, 0.1f, 1000.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)1.0, 0.1f, 1000.0f);
         glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // This is sending the matrix to the shader
         
-        //        glEnableVertexAttribArray(0);
-        //        glEnableVertexAttribArray(1);
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
+        
+        // Bind our texture in Texture Unit 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        // Set our "myTextureSampler" sampler to user Texture Unit 0
+        glUniform1i(textureID, 0);
+        
+        // 1st attribute buffer: locations of vertices
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glVertexAttribPointer(
+                              0,
+                              3,                                // size
+                              GL_FLOAT,                         // type
+                              GL_FALSE,                         // normalized?
+                              0,                                // stride
+                              (void*)0                          // array buffer offset
+                              );
+        
+        // 2nd attribute buffer: UVs
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glVertexAttribPointer(
+                              1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+                              2,                                // size : U+V => 2
+                              GL_FLOAT,                         // type
+                              GL_FALSE,                         // normalized?
+                              0,                                // stride
+                              (void*)0                          // array buffer offset
+                              );
         
         glDrawArrays(GL_TRIANGLES, 0, 12*3);
         
-        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, 0.0f, -scaleFactor));
-        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
-        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
-        glDrawArrays(GL_TRIANGLES, 0, 12*3);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
         
-        //        glDisableVertexAttribArray(0); // Why do we need to do this?
-        //        glDisableVertexAttribArray(1);
-
-        // Floor
-        
-        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, -scaleFactor, 0.0f));
-        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0));
-        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
-        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
-        glDrawArrays(GL_TRIANGLES, 0, 12*3);
-        
-        // Ceiling
-        
-        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor, scaleFactor, 0.0f));
-        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(1, 0, 0));
-        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
-        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
-        glDrawArrays(GL_TRIANGLES, 0, 12*3);
-        
-        // Back wall
-        
-        myTranslationMatrix = glm::translate(glm::vec3(-scaleFactor*2, 0.0f, 0.0f));
-        myRotationMatrix = glm::rotate(glm::radians(90.0f), glm::vec3(0, 1, 0));
-        myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
-        mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // GL_FALSE says "not transpose". Not sure what the 1 indicates.
-        glDrawArrays(GL_TRIANGLES, 0, 12*3);
-        
-        // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
-        
+
     }
+    
+    // Cleanup VBO and shader
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteBuffers(1, &uvbuffer);
+    glDeleteProgram(programID);
+    glDeleteTextures(1, &textureID);
+    glDeleteVertexArrays(1, &VertexArrayID);
+    
+    // Close OpenGL window and terminate GLFW
+    glfwTerminate();
     
     return 0;
     

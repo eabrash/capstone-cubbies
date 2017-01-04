@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		375B85551E1C62D9001DB3F2 /* libfreeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 375B85541E1C62D9001DB3F2 /* libfreeimage.a */; };
 		3792F6C91E1AFC890019370B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6C81E1AFC890019370B /* OpenGL.framework */; };
 		3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */; };
 		3792F6CD1E1AFD830019370B /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */; };
@@ -26,6 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		375B85541E1C62D9001DB3F2 /* libfreeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreeimage.a; path = ../../../../usr/local/Cellar/freeimage/3.17.0/lib/libfreeimage.a; sourceTree = "<group>"; };
 		3792F6BE1E1AF9E80019370B /* cubbies */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cubbies; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6C81E1AFC890019370B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.0.0.dylib; path = ../../../../usr/local/lib/libGLEW.2.0.0.dylib; sourceTree = "<group>"; };
@@ -40,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				375B85551E1C62D9001DB3F2 /* libfreeimage.a in Frameworks */,
 				3792F6CD1E1AFD830019370B /* libglfw.3.2.dylib in Frameworks */,
 				3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */,
 				3792F6C91E1AFC890019370B /* OpenGL.framework in Frameworks */,
@@ -52,6 +55,7 @@
 		3792F6B51E1AF9E80019370B = {
 			isa = PBXGroup;
 			children = (
+				375B85541E1C62D9001DB3F2 /* libfreeimage.a */,
 				3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */,
 				3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */,
 				3792F6C81E1AFC890019370B /* OpenGL.framework */,
@@ -238,6 +242,7 @@
 					"$(PROJECT_DIR)/glfw-3.2.1/build/src/Debug",
 					/usr/local/lib,
 					/opt/local/lib,
+					/usr/local/Cellar/freeimage/3.17.0/lib,
 				);
 				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = cubbies;
@@ -260,6 +265,7 @@
 					"$(PROJECT_DIR)/glfw-3.2.1/build/src/Debug",
 					/usr/local/lib,
 					/opt/local/lib,
+					/usr/local/Cellar/freeimage/3.17.0/lib,
 				);
 				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = cubbies;
@@ -286,6 +292,7 @@
 				3792F6C71E1AF9E80019370B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
