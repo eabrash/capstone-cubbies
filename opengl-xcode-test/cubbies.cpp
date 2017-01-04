@@ -150,82 +150,6 @@ GLuint loadBMP(const char * imagepath)
     FreeImage_Unload(bitmap);
     
     return textureID;
-    
-//    printf("Reading image %s\n", imagepath);
-//    
-//    // Data read from the header of the BMP file
-//    unsigned char header[54];
-//    unsigned int dataPos;
-//    unsigned int imageSize;
-//    unsigned int width, height;
-//    // Actual RGB data
-//    unsigned char * data;
-//    
-//    // Open the file
-//    FILE * file = fopen(imagepath,"rb");
-//    if (!file)							    {printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); return 0;}
-//    
-//    // Read the header, i.e. the 54 first bytes
-//    
-//    // If less than 54 bytes are read, problem
-//    if ( fread(header, 1, 54, file)!=54 ){
-//        printf("Not a correct BMP file\n");
-//        return 0;
-//    }
-//    // A BMP files always begins with "BM"
-//    if ( header[0]!='B' || header[1]!='M' ){
-//        printf("Not a correct BMP file\n");
-//        return 0;
-//    }
-//    // Make sure this is a 24bpp file
-//    if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    return 0;}
-//    if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    return 0;}
-//    
-//    // Read the information about the image
-//    dataPos    = *(int*)&(header[0x0A]);
-//    imageSize  = *(int*)&(header[0x22]);
-//    width      = *(int*)&(header[0x12]);
-//    height     = *(int*)&(header[0x16]);
-//    
-//    // Some BMP files are misformatted, guess missing information
-//    if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
-//    if (dataPos==0)      dataPos=54; // The BMP header is done that way
-//    
-//    // Create a buffer
-//    data = new unsigned char [imageSize];
-//    
-//    // Read the actual data from the file into the buffer
-//    fread(data,1,imageSize,file);
-//    
-//    // Everything is in memory now, the file wan be closed
-//    fclose (file);
-//    
-//    // Create one OpenGL texture
-//    GLuint textureID;
-//    glGenTextures(1, &textureID);
-//    
-//    // "Bind" the newly created texture : all future texture functions will modify this texture
-//    glBindTexture(GL_TEXTURE_2D, textureID);
-//    
-//    // Give the image to OpenGL
-//    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-//    
-//    // OpenGL has now copied the data. Free our own version
-//    delete [] data;
-//    
-//    // Poor filtering, or ...
-//    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    
-//    // ... nice trilinear filtering.
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-//    glGenerateMipmap(GL_TEXTURE_2D);
-//    
-//    // Return the ID of the texture we just created
-//    return textureID;
 }
 
 // Main function for drawing
@@ -298,31 +222,35 @@ int main(){
     
     // An array of 3 vectors which represents 3 vertices
     static const GLfloat g_vertex_buffer_data[] = {
-        0.0f, 0.0f, 0.0f, // triangle 1 : begin
+        0.0f, 0.0f, 0.0f,
         1.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, // triangle 1 : end
-        1.0f, 0.0f, 0.0f, // triangle 2 : begin
-        1.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f // triangle 2 : end
-        
+        0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f
+    };
+    
+    // An array specifying which vertices to use for each triangle
+    static const GLuint g_index_buffer_data[] = {
+        0, 1, 2,
+        3, 1, 0
     };
     
     // Two UV coordinatesfor each vertex. They were created with Blender.
     static const GLfloat g_uv_buffer_data[] = {
-        
         0.0f, 0.0f,
         1.0f, 1.0f,
         0.0f, 1.0f,
-        1.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 0.0f
-        
+        1.0f, 0.0f
     };
     
-    GLuint vertexbuffer;   // This will identify our vertex buffer
-    glGenBuffers(1, &vertexbuffer); // Generate 1 buffer, put the resulting identifier in vertexbuffer
+    GLuint vertexbuffer;
+    glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    
+    GLuint indexbuffer;
+    glGenBuffers(1, &indexbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , indexbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_STATIC_DRAW);
     
     GLuint uvbuffer;
     glGenBuffers(1, &uvbuffer);
@@ -365,15 +293,6 @@ int main(){
         
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            //Rotate about z-axis (why is it the z-axis?)
-            
-//            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
-//            {
-//                rotation[0] = glm::vec3(cos(angle), sin(angle), 0);
-//                rotation[1] = glm::vec3(-sin(angle), cos(angle), 0);
-//                rotation[2] = glm::vec3(0, 0, 1);
-//            }
-            
             //Rotate about x-axis
             
             if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
@@ -386,15 +305,6 @@ int main(){
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            //Rotate about z-axis (why is it the z-axis?)
-            
-//            if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
-//            {
-//                rotation[0] = glm::vec3(cos(-angle), sin(-angle), 0);
-//                rotation[1] = glm::vec3(-sin(-angle), cos(-angle), 0);
-//                rotation[2] = glm::vec3(0, 0, 1);
-//            }
-            
             //Rotate about x-axis
             if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
             {
@@ -473,7 +383,8 @@ int main(){
                               (void*)0                          // array buffer offset
                               );
         
-        glDrawArrays(GL_TRIANGLES, 0, 12*3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
