@@ -28,11 +28,13 @@
 
 /* Begin PBXFileReference section */
 		375B85541E1C62D9001DB3F2 /* libfreeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreeimage.a; path = ../../../../usr/local/Cellar/freeimage/3.17.0/lib/libfreeimage.a; sourceTree = "<group>"; };
+		375B85561E1D81FE001DB3F2 /* cat.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = cat.bmp; path = "../opengl-xcode-test/cat.bmp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		375B85571E1D81FE001DB3F2 /* uvtemplate.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = uvtemplate.bmp; path = "../opengl-xcode-test/uvtemplate.bmp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6BE1E1AF9E80019370B /* cubbies */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cubbies; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6C81E1AFC890019370B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.0.0.dylib; path = ../../../../usr/local/lib/libGLEW.2.0.0.dylib; sourceTree = "<group>"; };
 		3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = "glfw-3.2.1/build/src/Debug/libglfw.3.2.dylib"; sourceTree = "<group>"; };
-		3792F6D41E1B07680019370B /* cubbies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cubbies.cpp; sourceTree = "<group>"; };
+		3792F6D41E1B07680019370B /* cubbies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cubbies.cpp; path = "../opengl-xcode-test/cubbies.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6D51E1B07680019370B /* FragmentShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FragmentShader.txt; sourceTree = "<group>"; };
 		3792F6D61E1B07680019370B /* VertexShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VertexShader.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,6 +77,8 @@
 		3792F6C01E1AF9E80019370B /* opengl-xcode-test */ = {
 			isa = PBXGroup;
 			children = (
+				375B85561E1D81FE001DB3F2 /* cat.bmp */,
+				375B85571E1D81FE001DB3F2 /* uvtemplate.bmp */,
 				3792F6D41E1B07680019370B /* cubbies.cpp */,
 				3792F6D51E1B07680019370B /* FragmentShader.txt */,
 				3792F6D61E1B07680019370B /* VertexShader.txt */,

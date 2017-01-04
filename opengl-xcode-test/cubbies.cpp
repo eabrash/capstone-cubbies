@@ -122,7 +122,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 
 GLuint loadBMP(const char * imagepath)
 {
-    FIBITMAP *bitmap = FreeImage_Load(FIF_BMP, "cat.bmp");
+    FIBITMAP *bitmap = FreeImage_Load(FIF_BMP, imagepath);
     
     //Conversion from FIBITMAP to bytes from: https://solarianprogrammer.com/2013/05/17/opengl-101-textures/
     
@@ -291,7 +291,7 @@ int main(){
     GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
     
     // Load the texture
-    GLuint texture = loadBMP("uvtemplate.bmp");
+    GLuint texture = loadBMP("catfamily.bmp");
     
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
@@ -317,13 +317,6 @@ int main(){
         1.0f, 1.0f,
         0.0f, 0.0f
         
-        // Eye only
-//        0.0f, 0.5f,
-//        0.5f, 1.0f,
-//        0.0f, 1.0f,
-//        0.5f, 0.5f,
-//        0.5f, 1.0f,
-//        0.0f, 0.5f
     };
     
     GLuint vertexbuffer;   // This will identify our vertex buffer
