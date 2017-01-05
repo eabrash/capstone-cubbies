@@ -228,12 +228,6 @@ int main(){
         1.0f, 0.0f, 0.0f
     };
     
-    // An array specifying which vertices to use for each triangle
-    static const GLuint g_index_buffer_data[] = {
-        0, 1, 2,
-        3, 1, 0
-    };
-    
     // Two UV coordinatesfor each vertex. They were created with Blender.
     static const GLfloat g_uv_buffer_data[] = {
         0.0f, 0.0f,
@@ -242,20 +236,27 @@ int main(){
         1.0f, 0.0f
     };
     
+    // An array specifying which vertices to use for each triangle
+    static const GLuint g_index_buffer_data[] = {
+        0, 1, 2,
+        3, 1, 0
+    };
+    
     GLuint vertexbuffer;
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
     
-    GLuint indexbuffer;
-    glGenBuffers(1, &indexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , indexbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_STATIC_DRAW);
-    
     GLuint uvbuffer;
     glGenBuffers(1, &uvbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+    
+    GLuint indexbuffer;
+    glGenBuffers(1, &indexbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , indexbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_STATIC_DRAW);
+
     
     // Main drawing loop
     
@@ -268,22 +269,22 @@ int main(){
         // Strafe sideways
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            camera.z -= scaleFactor/100;
+            camera.z -= scaleFactor/50;
         }
         else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            camera.z += scaleFactor/100;
+            camera.z += scaleFactor/50;
         }
         
         // Move forward or back
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            camera.x += scaleFactor/100;
+            camera.x += scaleFactor/50;
             // TESTING THE VERSION CONTROL
         }
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            camera.x -= scaleFactor/100;
+            camera.x -= scaleFactor/50;
         }
         
         glm::mat3 rotation = glm::mat3();
@@ -397,9 +398,11 @@ int main(){
     // Cleanup VBO and shader
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &uvbuffer);
+    glDeleteBuffers(1, &indexbuffer);
     glDeleteProgram(programID);
     glDeleteTextures(1, &textureID);
     glDeleteVertexArrays(1, &VertexArrayID);
+    
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
