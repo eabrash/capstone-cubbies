@@ -265,7 +265,7 @@ int main(){
     GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
     
     // Load the texture
-    GLuint texture = loadBMP("catfamily.bmp");
+    GLuint texture = loadBMP("texturesampler.bmp");
     
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
@@ -275,7 +275,7 @@ int main(){
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
     
-    loadAssImp("cubeflatmap2.obj", vertices, texture_uvs, vertex_normals);
+    loadAssImp("walls.obj", vertices, texture_uvs, vertex_normals);
     
     std::cout << "size: " << vertices.size() << "\n";
     
