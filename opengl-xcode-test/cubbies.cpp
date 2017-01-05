@@ -324,57 +324,66 @@ int main(){
     
     // Main drawing loop
     
-    float scaleFactor = 1.0;
+    float step = 0.1;
     glm::vec3 camera = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 lookAt = glm::normalize(glm::vec3(0, 0, -1)); // This needs to be (-) z vector b/c we are looking towards the back
+    //glm::vec3 lookAt = glm::normalize(glm::vec3(0, 0, -1)); // This needs to be (-) z vector b/c we are looking towards the back
+    glm::vec3 p = glm::vec3(1,0,0);
+    glm::vec3 q = glm::vec3(0,1,0);
+    glm::vec3 r = glm::vec3(0,0,-1);
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
-        // Strafe sideways
+        // Move forward or back
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            camera.z -= scaleFactor/50;
+            camera = camera + glm::mat3(p,q,r)*vec3(0,0,step);
         }
         else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            camera.z += scaleFactor/50;
+            camera = camera + glm::mat3(p,q,r)*vec3(0,0,-step);
         }
         
-        // Move forward or back
+        // Strafe sideways
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            camera.x += scaleFactor/50;
+            camera = camera + glm::mat3(p,q,r)*vec3(-step,0,0);
         }
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            camera.x -= scaleFactor/50;
+            camera = camera + glm::mat3(p,q,r)*vec3(step,0,0);
         }
         
         glm::mat3 rotation = glm::mat3();
         float angle = 0.01;
         
-        //Turn viewer's gaze up or down - should be rotate about x, but seems to be z?
+        //Turn viewer's gaze up or down
         
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
             //Rotate about x-axis
             
-            if (glm::dot(glm::vec3(0, 1, 0), lookAt) > -0.99)
+            if (glm::dot(glm::vec3(0, 1, 0), r) > -0.99)
             {
                 rotation[0] = glm::vec3(1, 0, 0);
                 rotation[1] = glm::vec3(0, cos(-angle), sin(-angle));
                 rotation[2] = glm::vec3(0, -sin(-angle), cos(-angle));
+            
+                r = glm::normalize(rotation*r);
+                q = glm::normalize(rotation*q);
             }
             
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
             //Rotate about x-axis
-            if (glm::dot(glm::vec3(0, 1, 0), lookAt) < 0.99)
+            if (glm::dot(glm::vec3(0, 1, 0), r) < 0.99)
             {
                 rotation[0] = glm::vec3(1, 0, 0);
                 rotation[1] = glm::vec3(0, cos(angle), sin(angle));
                 rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
+
+                r = glm::normalize(rotation*r);
+                q = glm::normalize(rotation*q);
             }
         }
         
@@ -385,6 +394,9 @@ int main(){
             rotation[0] = glm::vec3(cos(-angle), 0, -sin(-angle));
             rotation[1] = glm::vec3(0, 1, 0);
             rotation[2] = glm::vec3(sin(-angle), 0, cos(-angle));
+            
+            p = glm::normalize(rotation*p);
+            r = glm::normalize(rotation*r);
         }
         else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
@@ -392,6 +404,9 @@ int main(){
             rotation[0] = glm::vec3(cos(angle), 0, -sin(angle));
             rotation[1] = glm::vec3(0, 1, 0);
             rotation[2] = glm::vec3(sin(angle), 0, cos(angle));
+            
+            p = glm::normalize(rotation*p);
+            r = glm::normalize(rotation*r);
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
@@ -399,16 +414,16 @@ int main(){
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -10.0f));
         glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
         
-        lookAt = rotation * lookAt;
+        //lookAt = rotation * lookAt;
         
         glm::mat4 viewMatrix = glm::lookAt(
                                              camera, // position of camera
-                                             camera + lookAt, // where to look
+                                             camera + r, // where to look
                                              glm::vec3(0.0f, 1.0f, 0.0f)    // +Y axis points up
                                              );
         
