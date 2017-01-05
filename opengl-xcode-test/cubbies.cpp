@@ -324,7 +324,7 @@ int main(){
     
     // Main drawing loop
     
-    float step = 0.1;
+    float step = 0.05;
     glm::vec3 camera = glm::vec3(0.0f, 0.0f, 3.0f);
     //glm::vec3 lookAt = glm::normalize(glm::vec3(0, 0, -1)); // This needs to be (-) z vector b/c we are looking towards the back
     glm::vec3 p = glm::vec3(1,0,0);
@@ -334,13 +334,17 @@ int main(){
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         // Move forward or back
+        // Projection of vector onto plane explanation: https://www.maplesoft.com/support/help/Maple/view.aspx?path=MathApps/ProjectionOfVectorOntoPlane
+        
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            camera = camera + glm::mat3(p,q,r)*vec3(0,0,step);
+            glm::vec3 inCameraDirection = glm::mat3(p,q,r)*vec3(0,0,1);
+            camera = camera + glm::normalize(inCameraDirection - inCameraDirection.y)*step;
         }
         else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            camera = camera + glm::mat3(p,q,r)*vec3(0,0,-step);
+            glm::vec3 inCameraDirection = glm::mat3(p,q,r)*vec3(0,0,1);
+            camera = camera + glm::normalize(inCameraDirection - inCameraDirection.y)*(-step);
         }
         
         // Strafe sideways
