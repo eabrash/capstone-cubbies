@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		372819ED1E1DD43900D1DEF7 /* libassimp.3.3.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 372819EC1E1DD43900D1DEF7 /* libassimp.3.3.1.dylib */; };
 		375B85551E1C62D9001DB3F2 /* libfreeimage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 375B85541E1C62D9001DB3F2 /* libfreeimage.a */; };
 		3792F6C91E1AFC890019370B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6C81E1AFC890019370B /* OpenGL.framework */; };
 		3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */; };
@@ -27,6 +28,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		372819EC1E1DD43900D1DEF7 /* libassimp.3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.3.3.1.dylib; path = ../../../../usr/local/Cellar/assimp/3.3.1/lib/libassimp.3.3.1.dylib; sourceTree = "<group>"; };
 		375B85541E1C62D9001DB3F2 /* libfreeimage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfreeimage.a; path = ../../../../usr/local/Cellar/freeimage/3.17.0/lib/libfreeimage.a; sourceTree = "<group>"; };
 		375B85561E1D81FE001DB3F2 /* cat.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = cat.bmp; path = "../opengl-xcode-test/cat.bmp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		375B85571E1D81FE001DB3F2 /* uvtemplate.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = uvtemplate.bmp; path = "../opengl-xcode-test/uvtemplate.bmp"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				372819ED1E1DD43900D1DEF7 /* libassimp.3.3.1.dylib in Frameworks */,
 				375B85551E1C62D9001DB3F2 /* libfreeimage.a in Frameworks */,
 				3792F6CD1E1AFD830019370B /* libglfw.3.2.dylib in Frameworks */,
 				3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */,
@@ -57,6 +60,7 @@
 		3792F6B51E1AF9E80019370B = {
 			isa = PBXGroup;
 			children = (
+				372819EC1E1DD43900D1DEF7 /* libassimp.3.3.1.dylib */,
 				375B85541E1C62D9001DB3F2 /* libfreeimage.a */,
 				3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */,
 				3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */,
@@ -247,6 +251,7 @@
 					/usr/local/lib,
 					/opt/local/lib,
 					/usr/local/Cellar/freeimage/3.17.0/lib,
+					/usr/local/Cellar/assimp/3.3.1/lib,
 				);
 				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = cubbies;
@@ -270,6 +275,7 @@
 					/usr/local/lib,
 					/opt/local/lib,
 					/usr/local/Cellar/freeimage/3.17.0/lib,
+					/usr/local/Cellar/assimp/3.3.1/lib,
 				);
 				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = cubbies;

@@ -21,6 +21,10 @@
 #include <glm/gtx/transform.hpp>
 #include <FreeImage.h>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 using namespace glm;    // Allows us to say vec3 rather than glm::vec3
 
 // Shader loading and compiling function
@@ -118,7 +122,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     return ProgramID; // Return the id of the program so we can access it in other parts of our code.
 }
 
-//Load bitmap for texture (does not work any better if the one from the tutorial is used)
+//Load bitmap for texture. This method uses the FreeImage library for loading.
 
 GLuint loadBMP(const char * imagepath)
 {
@@ -150,6 +154,52 @@ GLuint loadBMP(const char * imagepath)
     FreeImage_Unload(bitmap);
     
     return textureID;
+}
+
+std::vector<unsigned short> indices;
+std::vector<glm::vec3> vertices;
+std::vector<glm::vec2> texture_uvs;
+std::vector<glm::vec3> vertex_normals;
+
+
+// Code from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
+// and from http://www.assimp.org/lib_html/usage.html
+
+void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals)
+{
+    Assimp::Importer importer;
+    
+    const aiScene *scene = importer.ReadFile(filename, 0);
+    
+    int numMeshes = scene->mNumMeshes;
+    
+    for (int j = 0; j < numMeshes; j++)
+    {
+        aiMesh *mesh = scene->mMeshes[j];
+        
+        //Get the pointers to the vertices, texture (uv) coords, and normals
+        int numVertices = mesh->mNumVertices;
+        aiVector3D *meshVertices = mesh->mVertices;
+        aiVector3D *meshTextures = mesh->mTextureCoords[0];
+        aiVector3D *meshNormals = mesh->mNormals;
+        //aiVector3D *meshColors = mesh->mColors[0]; //We could also get colors if this had been in the .obj
+        
+        // Get the pointer to the faces array; each face contains a pointer to the indices of its vertices
+        //int numFaces = mesh->mNumFaces;
+        //aiFace *faces = mesh->mFaces;
+        
+        for (int i = 0; i < numVertices; i++)
+        {
+            //std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
+            //std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
+            //std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
+            //std::cout << i << "\n";
+            
+            vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
+            uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
+            normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
+        }
+    }
 }
 
 // Main function for drawing
@@ -220,42 +270,56 @@ int main(){
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
     
-    // An array of 3 vectors which represents 3 vertices
-    static const GLfloat g_vertex_buffer_data[] = {
-        0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f
-    };
+    //std::vector<unsigned short> indices;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> texture_uvs;
+    std::vector<glm::vec3> vertex_normals;
     
-    // Two UV coordinatesfor each vertex. They were created with Blender.
-    static const GLfloat g_uv_buffer_data[] = {
-        0.0f, 0.0f,
-        1.0f, 1.0f,
-        0.0f, 1.0f,
-        1.0f, 0.0f
-    };
+    loadAssImp("cubeflatmap2.obj", vertices, texture_uvs, vertex_normals);
     
-    // An array specifying which vertices to use for each triangle
-    static const GLuint g_index_buffer_data[] = {
-        0, 1, 2,
-        3, 1, 0
-    };
+    std::cout << "size: " << vertices.size() << "\n";
+    
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        std::cout << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z << "\n";
+    }
+    
+//    // An array of 3 vectors which represents 3 vertices
+//    static const GLfloat g_vertex_buffer_data[] = {
+//        0.0f, 0.0f, 0.0f,
+//        1.0f, 1.0f, 0.0f,
+//        0.0f, 1.0f, 0.0f,
+//        1.0f, 0.0f, 0.0f
+//    };
+//    
+//    // Two UV coordinatesfor each vertex. They were created with Blender.
+//    static const GLfloat g_uv_buffer_data[] = {
+//        0.0f, 0.0f,
+//        1.0f, 1.0f,
+//        0.0f, 1.0f,
+//        1.0f, 0.0f
+//    };
+//    
+//    // An array specifying which vertices to use for each triangle
+//    static const GLuint g_index_buffer_data[] = {
+//        0, 1, 2,
+//        3, 1, 0
+//    };
     
     GLuint vertexbuffer;
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float)*3, &vertices[0], GL_STATIC_DRAW);
     
     GLuint uvbuffer;
     glGenBuffers(1, &uvbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, texture_uvs.size()*sizeof(float)*2, &texture_uvs[0], GL_STATIC_DRAW);
     
     GLuint indexbuffer;
     glGenBuffers(1, &indexbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , indexbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertex_normals.size()*sizeof(float)*3, &vertex_normals[0], GL_STATIC_DRAW);
 
     
     // Main drawing loop
@@ -384,8 +448,8 @@ int main(){
                               (void*)0                          // array buffer offset
                               );
         
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
