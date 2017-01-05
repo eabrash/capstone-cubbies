@@ -19,6 +19,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <FreeImage.h>
 
 #include <assimp/Importer.hpp>
@@ -325,8 +326,7 @@ int main(){
     // Main drawing loop
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 0.0f, 3.0f);
-    //glm::vec3 lookAt = glm::normalize(glm::vec3(0, 0, -1)); // This needs to be (-) z vector b/c we are looking towards the back
+    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 3.0f);
     glm::vec3 p = glm::vec3(1,0,0);
     glm::vec3 q = glm::vec3(0,1,0);
     glm::vec3 r = glm::vec3(0,0,-1);
@@ -366,28 +366,33 @@ int main(){
         {
             //Rotate about x-axis
             
-            if (glm::dot(glm::vec3(0, 1, 0), r) > -0.99)
+            if (glm::dot(glm::vec3(0, 1, 0), r) > -0.95)
             {
-                rotation[0] = glm::vec3(1, 0, 0);
-                rotation[1] = glm::vec3(0, cos(-angle), sin(-angle));
-                rotation[2] = glm::vec3(0, -sin(-angle), cos(-angle));
-            
-                r = glm::normalize(rotation*r);
-                q = glm::normalize(rotation*q);
+                // This approach ensures that we specifically rotate about the model's own x-axis
+                // p (expressed in world coordinates), not around the x-axis of the world
+                
+                glm::mat4 rotationMatrix = glm::rotate(-angle, p);
+                
+                glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
+                glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
+                
+                q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
+                r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
             }
             
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            //Rotate about x-axis
-            if (glm::dot(glm::vec3(0, 1, 0), r) < 0.99)
+            
+            if (glm::dot(glm::vec3(0, 1, 0), r) < 0.95)
             {
-                rotation[0] = glm::vec3(1, 0, 0);
-                rotation[1] = glm::vec3(0, cos(angle), sin(angle));
-                rotation[2] = glm::vec3(0, -sin(angle), cos(angle));
-
-                r = glm::normalize(rotation*r);
-                q = glm::normalize(rotation*q);
+                glm::mat4 rotationMatrix = glm::rotate(angle, p);
+                
+                glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
+                glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
+                
+                q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
+                r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
             }
         }
         
@@ -418,7 +423,7 @@ int main(){
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, -10.0f));
+        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 3.0f, 0.0f));
         glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;

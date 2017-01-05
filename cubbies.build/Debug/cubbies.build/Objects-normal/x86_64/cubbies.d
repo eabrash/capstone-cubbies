@@ -96,6 +96,8 @@ dependencies: \
   /usr/local/include/glm/gtx/../gtc/constants.inl \
   /usr/local/include/glm/gtx/../gtc/matrix_transform.inl \
   /usr/local/include/glm/gtx/transform.inl \
+  /usr/local/include/glm/gtx/rotate_vector.hpp \
+  /usr/local/include/glm/gtx/rotate_vector.inl \
   /usr/local/include/FreeImage.h /usr/local/include/assimp/Importer.hpp \
   /usr/local/include/assimp/types.h /usr/local/include/assimp/defs.h \
   /usr/local/include/assimp/vector3.h \
