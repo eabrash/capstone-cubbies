@@ -344,7 +344,6 @@ int main(){
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
             camera.x += scaleFactor/50;
-            // TESTING THE VERSION CONTROL
         }
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
