@@ -170,7 +170,7 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
 {
     Assimp::Importer importer;
     
-    const aiScene *scene = importer.ReadFile(filename, 0);
+    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
     
     int numMeshes = scene->mNumMeshes;
     
