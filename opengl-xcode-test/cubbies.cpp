@@ -262,8 +262,12 @@ int main(){
     // Create and compile our GLSL program from the shaders
     GLuint programID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
     
-    // This is tying the MatrixId to MY_MATRIX variable in the shader
+    // This section is getting handles for uniforms in the shader
     GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
+    GLuint ViewMatrixID = glGetUniformLocation(programID, "VIEW_MATRIX");
+    GLuint ModelMatrixID = glGetUniformLocation(programID, "MODEL_MATRIX");
+    GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
+    GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
     // Load the texture
     GLuint texture = loadBMP("texturesampler.bmp");
@@ -276,14 +280,9 @@ int main(){
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
     
-    loadAssImp("walls.obj", vertices, texture_uvs, vertex_normals);
+    loadAssImp("walls_tile_ceiling2.obj", vertices, texture_uvs, vertex_normals);
     
-    std::cout << "size: " << vertices.size() << "\n";
-    
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        std::cout << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z << "\n";
-    }
+    std::cout << "Size: " << vertices.size() << "\n";
     
 //    // An array of 3 vectors which represents 3 vertices
 //    static const GLfloat g_vertex_buffer_data[] = {
@@ -317,16 +316,18 @@ int main(){
     glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
     glBufferData(GL_ARRAY_BUFFER, texture_uvs.size()*sizeof(float)*2, &texture_uvs[0], GL_STATIC_DRAW);
     
-    GLuint indexbuffer;
-    glGenBuffers(1, &indexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER , indexbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertex_normals.size()*sizeof(float)*3, &vertex_normals[0], GL_STATIC_DRAW);
+    GLuint normalbuffer;
+    glGenBuffers(1, &normalbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertex_normals.size()*sizeof(float)*3, &vertex_normals[0], GL_STATIC_DRAW);
 
+    
+    glm::vec3 lightPositionWorld = glm::vec3(10.0f, 10.0f, 0.0f);
     
     // Main drawing loop
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 3.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 0.0f);
     glm::vec3 p = glm::vec3(1,0,0);
     glm::vec3 q = glm::vec3(0,1,0);
     glm::vec3 r = glm::vec3(0,0,-1);
@@ -379,7 +380,6 @@ int main(){
                 q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
                 r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
             }
-            
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
@@ -436,10 +436,17 @@ int main(){
                                              glm::vec3(0.0f, 1.0f, 0.0f)    // +Y axis points up
                                              );
         
+        //std::cout << "Camera position: " << camera.x << ", " << camera.y << ", " << camera.z << "\n";
+        
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)1.0, 0.1f, 1000.0f);
         glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
         
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
+        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
+        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &myModelMatrix[0][0]);
+        glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
+        glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
+        
         
         // Bind our texture in Texture Unit 0
         glActiveTexture(GL_TEXTURE0);
@@ -463,8 +470,20 @@ int main(){
         glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
         glVertexAttribPointer(
-                              1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+                              1,                                // attribute
                               2,                                // size : U+V => 2
+                              GL_FLOAT,                         // type
+                              GL_FALSE,                         // normalized?
+                              0,                                // stride
+                              (void*)0                          // array buffer offset
+                              );
+        
+        // 3rd attribute buffer: UVs
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glVertexAttribPointer(
+                              2,                                // attribute
+                              3,                                // size
                               GL_FLOAT,                         // type
                               GL_FALSE,                         // normalized?
                               0,                                // stride
@@ -476,6 +495,7 @@ int main(){
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -485,7 +505,7 @@ int main(){
     // Cleanup VBO and shader
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &uvbuffer);
-    glDeleteBuffers(1, &indexbuffer);
+    glDeleteBuffers(1, &normalbuffer);
     glDeleteProgram(programID);
     glDeleteTextures(1, &textureID);
     glDeleteVertexArrays(1, &VertexArrayID);

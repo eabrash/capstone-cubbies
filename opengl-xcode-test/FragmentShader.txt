@@ -2,15 +2,37 @@
 
 // Interpolated values from the vertex shaders
 in vec2 UV;
+in vec3 Vertex_Position_In_Worldspace;
+in vec3 Normal_worldspace;
+in vec3 EyeDirection;
+in vec3 LightDirection;
 
 // Ouput data
 out vec3 color;
 
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
+uniform vec3 LIGHT_POSITION_WORLDSPACE;
 
 void main()
 {
+    vec3 LightColor = vec3(1,1,1);
+    float LightPower = 50.0f;
+
+    /////
+
+    vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
+
+    // Distance from the point to the light
+    float distance = length(LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace);
+
+    vec3 n = normalize(Normal_worldspace);
+    vec3 l = normalize(LightDirection);
+
+    float cosTheta = clamp(dot(n,l), 0, 1);
+
+    /////
+
     // Output color = color of the texture at the specified UV
-    color = texture( myTextureSampler, UV ).rgb;
+    color = MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance);
 }

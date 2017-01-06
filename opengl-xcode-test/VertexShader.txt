@@ -7,17 +7,38 @@
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec2 vertexUV;
+layout(location = 2) in vec3 vertexNormal;
 
-// Output data ; will be interpolated for each fragment.
+// Output data (goes to fragment shader)
 out vec2 UV;
+out vec3 Vertex_Position_In_Worldspace;
+out vec3 Normal_worldspace;
+out vec3 EyeDirection;
+out vec3 LightDirection;
+
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MY_MATRIX;
+uniform mat4 VIEW_MATRIX;
+uniform mat4 MODEL_MATRIX;
+uniform vec3 LIGHT_POSITION_WORLDSPACE;
+uniform vec3 CAMERA_POSITION_WORLDSPACE;
+
 
 void main()
 {
     gl_Position = MY_MATRIX * vec4(vertexPosition_modelspace, 1);
 
-    // UV of the vertex. No special space for this one.
+    Vertex_Position_In_Worldspace = (MODEL_MATRIX * vec4(vertexPosition_modelspace, 1)).xyz;
+
+    //Get the vector pointing from the vertex to the camera
+    EyeDirection = CAMERA_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace;
+
+    //Get the vector pointing from the vertex to the light source
+    LightDirection = LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace;
+
+    // Normal of the the vertex
+    Normal_worldspace = ( MODEL_MATRIX * vec4(vertexNormal,0)).xyz; // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
+
     UV = vertexUV;
 }
