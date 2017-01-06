@@ -191,10 +191,10 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         
         for (int i = 0; i < numVertices; i++)
         {
-            //std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
-            //std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
-            //std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
-            //std::cout << i << "\n";
+            std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
+            std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
+            std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
+            std::cout << i << "\n";
             
             vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
             uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
@@ -243,8 +243,8 @@ int main(){
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     
     // Turn on culling; cull triangles with their back facing the camera
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
     
     // Turn on z-buffering
     glEnable(GL_DEPTH_TEST);
@@ -280,7 +280,7 @@ int main(){
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
     
-    loadAssImp("walls_tile_ceiling2.obj", vertices, texture_uvs, vertex_normals);
+    loadAssImp("cubeflatmap.obj", vertices, texture_uvs, vertex_normals);
     
     std::cout << "Size: " << vertices.size() << "\n";
     
@@ -419,6 +419,10 @@ int main(){
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
+        
+//        glEnable(GL_LIGHTING);
+//        glEnable(GL_LIGHT0);
+        glEnable(GL_DEPTH_TEST);
         
         glUseProgram(programID); // Use the shader program to do the drawing
         
