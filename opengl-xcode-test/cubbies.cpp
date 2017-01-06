@@ -166,7 +166,7 @@ std::vector<glm::vec3> vertex_normals;
 // Code from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
-void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals)
+void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices)
 {
     Assimp::Importer importer;
     
@@ -199,6 +199,16 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
             vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
             uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
             normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
+        }
+        
+        aiFace *meshFaces = mesh->mFaces;
+        int numFaces = mesh->mNumFaces;
+        
+        for (int i = 0; i < numFaces; i++)
+        {
+            indices.push_back(meshFaces[i].mIndices[0]);
+            indices.push_back(meshFaces[i].mIndices[1]);
+            indices.push_back(meshFaces[i].mIndices[2]);
         }
     }
 }
@@ -279,10 +289,11 @@ int main(){
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
+    std::vector<unsigned short> indices;
     
-    loadAssImp("cubeflatmap.obj", vertices, texture_uvs, vertex_normals);
+    loadAssImp("cubeflatmap.obj", vertices, texture_uvs, vertex_normals, indices);
     
-    std::cout << "Size: " << vertices.size() << "\n";
+    //std::cout << "Size: " << vertices.size() << "\n";
     
 //    // An array of 3 vectors which represents 3 vertices
 //    static const GLfloat g_vertex_buffer_data[] = {
@@ -321,13 +332,17 @@ int main(){
     glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
     glBufferData(GL_ARRAY_BUFFER, vertex_normals.size()*sizeof(float)*3, &vertex_normals[0], GL_STATIC_DRAW);
 
+    GLuint indexbuffer;
+    glGenBuffers(1, &indexbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned short)*3, &indices[0], GL_STATIC_DRAW);
     
     glm::vec3 lightPositionWorld = glm::vec3(10.0f, 10.0f, 0.0f);
     
     // Main drawing loop
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 0.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 1.0f, 6.0f);
     glm::vec3 p = glm::vec3(1,0,0);
     glm::vec3 q = glm::vec3(0,1,0);
     glm::vec3 r = glm::vec3(0,0,-1);
@@ -427,7 +442,7 @@ int main(){
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 3.0f, 0.0f));
+        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
         glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
@@ -494,8 +509,8 @@ int main(){
                               (void*)0                          // array buffer offset
                               );
         
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+        //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
         
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
