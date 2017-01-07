@@ -280,7 +280,7 @@ int main(){
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
     // Load the texture
-    GLuint texture = loadBMP("texturesampler.bmp");
+    GLuint texture = loadBMP("cat.bmp");
     
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
@@ -334,15 +334,15 @@ int main(){
 
     GLuint indexbuffer;
     glGenBuffers(1, &indexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalbuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned short)*3, &indices[0], GL_STATIC_DRAW);
     
-    glm::vec3 lightPositionWorld = glm::vec3(10.0f, 10.0f, 0.0f);
+    glm::vec3 lightPositionWorld = glm::vec3(3.0f, 3.0f, 3.0f);
     
     // Main drawing loop
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 1.0f, 6.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 3.0f, 6.0f);
     glm::vec3 p = glm::vec3(1,0,0);
     glm::vec3 q = glm::vec3(0,1,0);
     glm::vec3 r = glm::vec3(0,0,-1);
@@ -499,7 +499,7 @@ int main(){
         
         // 3rd attribute buffer: UVs
         glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
         glVertexAttribPointer(
                               2,                                // attribute
                               3,                                // size
