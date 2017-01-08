@@ -19,9 +19,11 @@ void main()
     vec3 LightColor = vec3(1,1,1);
     float LightPower = 50.0f;
 
-    /////
-
     vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
+
+    vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+
+    vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
 
     // Distance from the point to the light
     float distance = length(LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace);
@@ -29,10 +31,14 @@ void main()
     vec3 n = normalize(Normal_worldspace);
     vec3 l = normalize(LightDirection);
 
+    vec3 E = normalize(EyeDirection);
+    vec3 R = reflect(-l,n);
+    float cosAlpha = clamp( dot( E,R ), 0,1 );
+
     float cosTheta = clamp(dot(n,l), 0, 1);
 
-    /////
-
     // Output color = color of the texture at the specified UV
-    color = MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance);
+    color = MaterialAmbientColor +
+    MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 }
