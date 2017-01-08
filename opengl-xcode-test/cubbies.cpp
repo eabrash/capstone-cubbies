@@ -362,7 +362,7 @@ int main(){
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
     
-    char *filename = "walls_tile_ceiling2.obj";
+    char *filename = "walls3_test.obj";
     
     int numMeshes = getNumMeshes(filename);
 //
