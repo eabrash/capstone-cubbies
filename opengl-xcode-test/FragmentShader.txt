@@ -39,6 +39,6 @@ void main()
 
     // Output color = color of the texture at the specified UV
     color = MaterialAmbientColor +
-    MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-    MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+            MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+            MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 }

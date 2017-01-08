@@ -28,9 +28,72 @@
 
 using namespace glm;    // Allows us to say vec3 rather than glm::vec3
 
+//class Mesh
+//{
+//public:
+//    Mesh();
+//    Mesh(char *filename, int meshNumber);
+//    ~Mesh();
+//    
+//    std::vector<glm::vec3> getVertices() const { return vertices; }
+//    std::vector<glm::vec2> getUVs() const { return texture_uvs; }
+//    std::vector<glm::vec3> getNormals() const { return vertex_normals; }
+//    std::vector<unsigned short> getIndices() const { return indices; }
+//
+//private:
+//    std::vector<glm::vec3> vertices;
+//    std::vector<glm::vec2> texture_uvs;
+//    std::vector<glm::vec3> vertex_normals;
+//    std::vector<unsigned short> indices;
+//    
+//};
+//
+//Mesh::Mesh(char *filename, int meshNumber)
+//{
+//    Assimp::Importer importer;
+//    
+//    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
+//    
+//    aiMesh *mesh = scene->mMeshes[meshNumber];
+//    
+//    //Get the pointers to the vertices, texture (uv) coords, and normals
+//    int numVertices = mesh->mNumVertices;
+//    aiVector3D *meshVertices = mesh->mVertices;
+//    aiVector3D *meshTextures = mesh->mTextureCoords[0];
+//    aiVector3D *meshNormals = mesh->mNormals;
+//    //aiVector3D *meshColors = mesh->mColors[0]; //We could also get colors if this had been in the .obj
+//    
+//    // Get the pointer to the faces array; each face contains a pointer to the indices of its vertices
+//    //int numFaces = mesh->mNumFaces;
+//    //aiFace *faces = mesh->mFaces;
+//    
+//    for (int i = 0; i < numVertices; i++)
+//    {
+//        std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
+//        std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
+//        std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
+//        std::cout << i << "\n";
+//        
+//        vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
+//        texture_uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
+//        vertex_normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
+//    }
+//    
+//    aiFace *meshFaces = mesh->mFaces;
+//    int numFaces = mesh->mNumFaces;
+//    
+//    for (int i = 0; i < numFaces; i++)
+//    {
+//        indices.push_back(meshFaces[i].mIndices[0]);
+//        indices.push_back(meshFaces[i].mIndices[1]);
+//        indices.push_back(meshFaces[i].mIndices[2]);
+//    }
+//}
+
+
 // Shader loading and compiling function
 
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
+GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path){
     
     // Create the shaders. We get back their IDs from OpenGL.
     GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -162,17 +225,27 @@ std::vector<glm::vec3> vertices;
 std::vector<glm::vec2> texture_uvs;
 std::vector<glm::vec3> vertex_normals;
 
+int getNumMeshes (char *filename)
+{
+    Assimp::Importer importer;
+    
+    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
+    
+    return scene->mNumMeshes;
+}
 
 // Code from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
-void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices)
+void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh)
 {
     Assimp::Importer importer;
     
-    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
     
     int numMeshes = scene->mNumMeshes;
+    
+    std::cout << "Num Meshes: " << numMeshes;
     
     for (int j = 0; j < numMeshes; j++)
     {
@@ -191,15 +264,17 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         
         for (int i = 0; i < numVertices; i++)
         {
-            std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
-            std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
-            std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
-            std::cout << i << "\n";
-            
+//            std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
+//            std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
+//            std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
+//            std::cout << i << "\n";
+//            
             vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
             uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
             normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
         }
+        
+        verticesPerMesh.push_back(numVertices);
         
         aiFace *meshFaces = mesh->mFaces;
         int numFaces = mesh->mNumFaces;
@@ -210,6 +285,8 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
             indices.push_back(meshFaces[i].mIndices[1]);
             indices.push_back(meshFaces[i].mIndices[2]);
         }
+        
+        indicesPerMesh.push_back(numFaces);
     }
 }
 
@@ -280,18 +357,50 @@ int main(){
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
     // Load the texture
-    GLuint texture = loadBMP("cat.bmp");
+    GLuint texture = loadBMP("texturesampler.bmp");
     
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
     
-    //std::vector<unsigned short> indices;
+    char *filename = "walls_tile_ceiling2.obj";
+    
+    int numMeshes = getNumMeshes(filename);
+//
+//    std::vector<Mesh> meshes;
+//    
+//    for (int i = 0; i < numMeshes; i++)
+//    {
+//        Mesh mesh = Mesh(filename, i);
+//        meshes.push_back(mesh);
+//    }
+    
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
     std::vector<unsigned short> indices;
+    std::vector<unsigned short> numVerticesPerMesh;
+    std::vector<unsigned short> numIndicesPerMesh;
     
-    loadAssImp("cubeflatmap.obj", vertices, texture_uvs, vertex_normals, indices);
+    loadAssImp(filename, vertices, texture_uvs, vertex_normals, indices, numVerticesPerMesh, numIndicesPerMesh);
+    
+//    std::cout << "Indices\n";
+//    
+//    for (int i = 0; i < indices.size(); i++)
+//    {
+//        std::cout << indices[i] << " ";
+//        
+//        if ((i+1)%3 == 0)
+//        {
+//            std::cout << "\n";
+//        }
+//    }
+//    
+//    std::cout << "\nIndices per mesh:" << "\n";
+//    
+//    for (int i = 0; i < numMeshes; i++)
+//    {
+//        std::cout << numIndicesPerMesh[i] << "\n";
+//    }
     
     //std::cout << "Size: " << vertices.size() << "\n";
     
@@ -317,25 +426,51 @@ int main(){
 //        3, 1, 0
 //    };
     
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(float)*3, &vertices[0], GL_STATIC_DRAW);
+    GLuint vertexbuffer[numMeshes];
+    glGenBuffers(numMeshes, vertexbuffer);
+    int offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertices[0+offset], GL_STATIC_DRAW);
+//        std::cout << "VERTICES " << i << "\n";
+//        for (int j = 0; j < numVerticesPerMesh[i]; j++)
+//        {
+//            std::cout << vertices[j+offset].x << " " << vertices[j+offset].y << " " << vertices[j+offset].z << "\n";
+//        }
+//        
+        offset += numVerticesPerMesh[i];
+    }
     
-    GLuint uvbuffer;
-    glGenBuffers(1, &uvbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, texture_uvs.size()*sizeof(float)*2, &texture_uvs[0], GL_STATIC_DRAW);
+    GLuint uvbuffer[numMeshes];
+    glGenBuffers(numMeshes, uvbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*2, &texture_uvs[0+offset], GL_STATIC_DRAW);
+        offset += numVerticesPerMesh[i];
+    }
     
-    GLuint normalbuffer;
-    glGenBuffers(1, &normalbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertex_normals.size()*sizeof(float)*3, &vertex_normals[0], GL_STATIC_DRAW);
+    GLuint normalbuffer[numMeshes];
+    glGenBuffers(numMeshes, normalbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertex_normals[0+offset], GL_STATIC_DRAW);
+        offset += numVerticesPerMesh[i];
+    }
 
-    GLuint indexbuffer;
-    glGenBuffers(1, &indexbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned short)*3, &indices[0], GL_STATIC_DRAW);
+    GLuint indexbuffer[numMeshes];
+    glGenBuffers(numMeshes, indexbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndicesPerMesh[i]*sizeof(unsigned short)*3, &indices[0+offset], GL_STATIC_DRAW);
+        offset += numIndicesPerMesh[i]*3; // Has to be a 3 - these are just ints, not vecs
+    }
     
     glm::vec3 lightPositionWorld = glm::vec3(3.0f, 3.0f, 3.0f);
     
@@ -473,48 +608,54 @@ int main(){
         // Set our "myTextureSampler" sampler to user Texture Unit 0
         glUniform1i(textureID, 0);
         
-        // 1st attribute buffer: locations of vertices
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(
-                              0,
-                              3,                                // size
-                              GL_FLOAT,                         // type
-                              GL_FALSE,                         // normalized?
-                              0,                                // stride
-                              (void*)0                          // array buffer offset
-                              );
-        
-        // 2nd attribute buffer: UVs
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-        glVertexAttribPointer(
-                              1,                                // attribute
-                              2,                                // size : U+V => 2
-                              GL_FLOAT,                         // type
-                              GL_FALSE,                         // normalized?
-                              0,                                // stride
-                              (void*)0                          // array buffer offset
-                              );
-        
-        // 3rd attribute buffer: UVs
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glVertexAttribPointer(
-                              2,                                // attribute
-                              3,                                // size
-                              GL_FLOAT,                         // type
-                              GL_FALSE,                         // normalized?
-                              0,                                // stride
-                              (void*)0                          // array buffer offset
-                              );
-        
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-        //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-        
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+        for (int i = 0; i < numMeshes; i++)
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
+            
+            // 1st attribute buffer: locations of vertices
+            glEnableVertexAttribArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[i]);
+            glVertexAttribPointer(
+                                  0,
+                                  3,                                // size
+                                  GL_FLOAT,                         // type
+                                  GL_FALSE,                         // normalized?
+                                  0,                                // stride
+                                  (void*)0                          // array buffer offset
+                                  );
+            
+            // 2nd attribute buffer: UVs
+            glEnableVertexAttribArray(1);
+            glBindBuffer(GL_ARRAY_BUFFER, uvbuffer[i]);
+            glVertexAttribPointer(
+                                  1,                                // attribute
+                                  2,                                // size : U+V => 2
+                                  GL_FLOAT,                         // type
+                                  GL_FALSE,                         // normalized?
+                                  0,                                // stride
+                                  (void*)0                          // array buffer offset
+                                  );
+            
+            // 3rd attribute buffer: UVs
+            glEnableVertexAttribArray(2);
+            glBindBuffer(GL_ARRAY_BUFFER, normalbuffer[i]);
+            glVertexAttribPointer(
+                                  2,                                // attribute
+                                  3,                                // size
+                                  GL_FLOAT,                         // type
+                                  GL_FALSE,                         // normalized?
+                                  0,                                // stride
+                                  (void*)0                          // array buffer offset
+                                  );
+            
+            glDrawElements(GL_TRIANGLES, numIndicesPerMesh[i]*3, GL_UNSIGNED_SHORT, (void*)0);
+            //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+            
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(2);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
         
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -522,9 +663,9 @@ int main(){
     }
     
     // Cleanup VBO and shader
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteBuffers(1, &uvbuffer);
-    glDeleteBuffers(1, &normalbuffer);
+//    glDeleteBuffers(1, &vertexbuffer);
+//    glDeleteBuffers(1, &uvbuffer);
+//    glDeleteBuffers(1, &normalbuffer);
     glDeleteProgram(programID);
     glDeleteTextures(1, &textureID);
     glDeleteVertexArrays(1, &VertexArrayID);
