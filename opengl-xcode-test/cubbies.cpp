@@ -28,7 +28,7 @@
 
 using namespace glm;    // Allows us to say vec3 rather than glm::vec3
 
-// Shader loading and compiling function
+// Shader loading and compiling function (straight from opengl-tutorial.org)
 
 GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path){
     
@@ -123,7 +123,8 @@ GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_pat
     return ProgramID; // Return the id of the program so we can access it in other parts of our code.
 }
 
-//Load bitmap for texture. This method uses the FreeImage library for loading.
+// Load bitmap for texture. This method uses the FreeImage library for loading. FreeImage can load various
+// image types, but this function is only intended for BMP files.
 
 GLuint loadBMP(const char * imagepath)
 {
@@ -137,7 +138,7 @@ GLuint loadBMP(const char * imagepath)
     GLuint textureID;
     glGenTextures(1, &textureID);
     
-    // "Bind" the newly created texture : all future texture functions will modify this texture
+    // "Bind" the newly created texture : all future texture functions will modify this texture.
     glBindTexture(GL_TEXTURE_2D, textureID);
     
     // Give the image to OpenGL
@@ -205,8 +206,8 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, index, &filepath);
         paths.push_back(filepath);
         
-//        std::cout << filepath.C_Str() << "\n";
-//        std::cout << index << "\n";
+        std::cout << filepath.C_Str() << "\n";
+        std::cout << index << "\n";
         
         if (filepath.length != 0)
         {
@@ -328,25 +329,28 @@ int main(){
     GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
-    char *filename = "walls5.obj";
+    char *filename = "tilebench.obj";
     
-    int numMeshes = getNumMeshes(filename);
+    int numMeshes = getNumMeshes(filename); // Should really be integrated into loadAssImp function below
+    
+    // Vectors that we will pass into loadAssImp and get back filled with relevant data for the scene to be
+    // drawn.
     
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_uvs;
     std::vector<glm::vec3> vertex_normals;
-    std::vector<unsigned short> indices;
+    std::vector<unsigned short> indexedVertices;
     std::vector<unsigned short> numVerticesPerMesh;
     std::vector<unsigned short> numIndicesPerMesh;
     std::vector<aiString> texturePaths;
     std::vector<unsigned short> textureIndices;
     
-    loadAssImp(filename, vertices, texture_uvs, vertex_normals, indices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices);
+    loadAssImp(filename, vertices, texture_uvs, vertex_normals, indexedVertices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices);
     
-    std::vector<GLuint> textures;
+    std::vector<GLuint> textures; // To store texture handles once loaded from texturePaths obtained above
     
-    //std::cout << "Size of texturePaths: " << texturePaths.size() << "\n";
-    
+    // This will give us back a bunch of OpenGL-internal texture handles for the BMPs we have loaded
+    // (which are now OpenGL textures that we must call by these handles).
     for (int i = 0; i < texturePaths.size(); i++)
     {
         textures.push_back(loadBMP(texturePaths[i].C_Str()));
@@ -355,6 +359,12 @@ int main(){
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID = glGetUniformLocation(programID, "myTextureSampler");
     
+    // We will make a buffer of each type (vertex, uv, normal, and index) for each mesh. The data is not
+    // actually split up in memory; we just tell each buffer to start reading in at the correct address in
+    // memory. For instance, all the vertices in all the meshes of the scene are in a single std::vector.
+    // However, they are copied into separate buffers in OpenGL by the code below. The offset variable is
+    // used to bump our position in the std::vector array forward by the correct amount with each pass.
+    
     GLuint vertexbuffer[numMeshes];
     glGenBuffers(numMeshes, vertexbuffer);
     int offset = 0;
@@ -362,15 +372,10 @@ int main(){
     {
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[i]);
         glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertices[0+offset], GL_STATIC_DRAW);
-//        std::cout << "VERTICES " << i << "\n";
-//        for (int j = 0; j < numVerticesPerMesh[i]; j++)
-//        {
-//            std::cout << vertices[j+offset].x << " " << vertices[j+offset].y << " " << vertices[j+offset].z << "\n";
-//        }
-        
         offset += numVerticesPerMesh[i];
     }
     
+    // Same as above for uv (texture) coordinates
     GLuint uvbuffer[numMeshes];
     glGenBuffers(numMeshes, uvbuffer);
     offset = 0;
@@ -381,6 +386,7 @@ int main(){
         offset += numVerticesPerMesh[i];
     }
     
+    // Same as above for vertex normals
     GLuint normalbuffer[numMeshes];
     glGenBuffers(numMeshes, normalbuffer);
     offset = 0;
@@ -391,25 +397,30 @@ int main(){
         offset += numVerticesPerMesh[i];
     }
 
+    // This set of buffers consists of element array buffers (one for each mesh). These buffers contain
+    // indices. Because they have a type of unsigned short (multiples of 1) and not a type of vec3
+    // (multiples of 3), we need to multiply by three to get the correct offset, since there are actually
+    // three unsigned shorts (3x the size in memory) for each index in the mesh.
+    
     GLuint indexbuffer[numMeshes];
     glGenBuffers(numMeshes, indexbuffer);
     offset = 0;
     for (int i = 0; i < numMeshes; i++)
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndicesPerMesh[i]*sizeof(unsigned short)*3, &indices[0+offset], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndicesPerMesh[i]*sizeof(unsigned short)*3, &indexedVertices[0+offset], GL_STATIC_DRAW);
         offset += numIndicesPerMesh[i]*3; // Has to be a 3 - these are just ints, not vecs
     }
     
-    glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
-    
     // Main drawing loop
     
+    glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
+    
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 3.0f, 6.0f);
-    glm::vec3 p = glm::vec3(1,0,0);
-    glm::vec3 q = glm::vec3(0,1,0);
-    glm::vec3 r = glm::vec3(0,0,-1);
+    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 6.0f);
+    glm::vec3 p = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
+    glm::vec3 q = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
+    glm::vec3 r = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
@@ -438,13 +449,13 @@ int main(){
         }
         
         glm::mat3 rotation = glm::mat3();
-        float angle = 0.01;
+        float angle = 0.01; // Increment to look up or down by
         
         //Turn viewer's gaze up or down
         
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         {
-            //Rotate about x-axis
+            // Rotate about x-axis; don't let the viewer look beyond 90 degrees down (stop slightly short)
             
             if (glm::dot(glm::vec3(0, 1, 0), r) > -0.95)
             {
@@ -462,7 +473,8 @@ int main(){
         }
         else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         {
-            
+            // Rotate about x-axis; don't let the viewer look beyond 90 degrees up (stop slightly short)
+
             if (glm::dot(glm::vec3(0, 1, 0), r) < 0.95)
             {
                 glm::mat4 rotationMatrix = glm::rotate(angle, p);
@@ -594,6 +606,7 @@ int main(){
         glDeleteBuffers(1, &vertexbuffer[i]);
         glDeleteBuffers(1, &uvbuffer[i]);
         glDeleteBuffers(1, &normalbuffer[i]);
+        glDeleteBuffers(1, &indexbuffer[i]);
     }
     glDeleteProgram(programID);
     glDeleteTextures(1, &textureID);
