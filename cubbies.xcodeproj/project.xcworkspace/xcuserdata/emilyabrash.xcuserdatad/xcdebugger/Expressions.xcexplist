@@ -11,6 +11,12 @@
             <PersistentString
                value = "memory read -t int -c8 `vertices`">
             </PersistentString>
+            <PersistentString
+               value = "cumulativeMeshes[j]">
+            </PersistentString>
+            <PersistentString
+               value = "i">
+            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
@@ -20,6 +26,9 @@
                value = "meshVertices[i]">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "loadAssImp(char*, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec2&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec2&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;aiString, std::__1::allocator&lt;aiString&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;):cubbies.cpp">
       </ContextState>
    </ContextStates>
 </VariablesViewState>
