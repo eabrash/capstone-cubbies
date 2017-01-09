@@ -237,7 +237,7 @@ int getNumMeshes (char *filename)
 // Code from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
-void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh)
+void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices)
 {
     Assimp::Importer importer;
     
@@ -245,11 +245,48 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
     
     int numMeshes = scene->mNumMeshes;
     
-    std::cout << "Num Meshes: " << numMeshes;
+    std::cout << "Num materials: " << scene->mNumMaterials << "\n";
+    
+    std::cout << "Num Meshes: " << numMeshes << "\n";
+    
+    std::cout << "Materials list: \n";
+    
+    std::vector<aiString> paths;
+    
+    int emptyCount = 0; // Number of empty textures encountered, usually at least one
+    
+    for (int i = 0; i < scene->mNumMaterials; i++)
+    {
+        aiString filepath;
+        int index = 0;
+        
+        // From http://www.lighthouse3d.com/cg-topics/code-samples/importing-3d-models-with-assimp/
+        
+        scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, index, &filepath);
+        paths.push_back(filepath);
+        
+        std::cout << filepath.C_Str() << "\n";
+        std::cout << index << "\n";
+        
+        if (filepath.length != 0)
+        {
+            texturePaths.push_back(filepath);
+        }
+        else
+        {
+            emptyCount++;
+        }
+    }
+    
+    std::cout<< "Emptycount: " << emptyCount << "\n";
     
     for (int j = 0; j < numMeshes; j++)
     {
         aiMesh *mesh = scene->mMeshes[j];
+        
+        std::cout << "Mesh " << j << ": material is " << mesh->mMaterialIndex << "\n";
+        
+        textureIndices.push_back(mesh->mMaterialIndex-emptyCount);
         
         //Get the pointers to the vertices, texture (uv) coords, and normals
         int numVertices = mesh->mNumVertices;
@@ -356,23 +393,9 @@ int main(){
     GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
-    // Load the texture
-    GLuint texture = loadBMP("texturesampler.bmp");
-    
-    // Get a handle for our "myTextureSampler" uniform
-    GLuint textureID  = glGetUniformLocation(programID, "myTextureSampler");
-    
-    char *filename = "walls3_test.obj";
+    char *filename = "walls5.obj";
     
     int numMeshes = getNumMeshes(filename);
-//
-//    std::vector<Mesh> meshes;
-//    
-//    for (int i = 0; i < numMeshes; i++)
-//    {
-//        Mesh mesh = Mesh(filename, i);
-//        meshes.push_back(mesh);
-//    }
     
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_uvs;
@@ -380,51 +403,22 @@ int main(){
     std::vector<unsigned short> indices;
     std::vector<unsigned short> numVerticesPerMesh;
     std::vector<unsigned short> numIndicesPerMesh;
+    std::vector<aiString> texturePaths;
+    std::vector<unsigned short> textureIndices;
     
-    loadAssImp(filename, vertices, texture_uvs, vertex_normals, indices, numVerticesPerMesh, numIndicesPerMesh);
+    loadAssImp(filename, vertices, texture_uvs, vertex_normals, indices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices);
     
-//    std::cout << "Indices\n";
-//    
-//    for (int i = 0; i < indices.size(); i++)
-//    {
-//        std::cout << indices[i] << " ";
-//        
-//        if ((i+1)%3 == 0)
-//        {
-//            std::cout << "\n";
-//        }
-//    }
-//    
-//    std::cout << "\nIndices per mesh:" << "\n";
-//    
-//    for (int i = 0; i < numMeshes; i++)
-//    {
-//        std::cout << numIndicesPerMesh[i] << "\n";
-//    }
+    std::vector<GLuint> textures;
     
-    //std::cout << "Size: " << vertices.size() << "\n";
+    std::cout << "Size of texturePaths: " << texturePaths.size() << "\n";
     
-//    // An array of 3 vectors which represents 3 vertices
-//    static const GLfloat g_vertex_buffer_data[] = {
-//        0.0f, 0.0f, 0.0f,
-//        1.0f, 1.0f, 0.0f,
-//        0.0f, 1.0f, 0.0f,
-//        1.0f, 0.0f, 0.0f
-//    };
-//    
-//    // Two UV coordinatesfor each vertex. They were created with Blender.
-//    static const GLfloat g_uv_buffer_data[] = {
-//        0.0f, 0.0f,
-//        1.0f, 1.0f,
-//        0.0f, 1.0f,
-//        1.0f, 0.0f
-//    };
-//    
-//    // An array specifying which vertices to use for each triangle
-//    static const GLuint g_index_buffer_data[] = {
-//        0, 1, 2,
-//        3, 1, 0
-//    };
+    for (int i = 0; i < texturePaths.size(); i++)
+    {
+        textures.push_back(loadBMP(texturePaths[i].C_Str()));
+    }
+    
+    // Get a handle for our "myTextureSampler" uniform
+    GLuint textureID = glGetUniformLocation(programID, "myTextureSampler");
     
     GLuint vertexbuffer[numMeshes];
     glGenBuffers(numMeshes, vertexbuffer);
@@ -438,7 +432,7 @@ int main(){
 //        {
 //            std::cout << vertices[j+offset].x << " " << vertices[j+offset].y << " " << vertices[j+offset].z << "\n";
 //        }
-//        
+        
         offset += numVerticesPerMesh[i];
     }
     
@@ -472,7 +466,7 @@ int main(){
         offset += numIndicesPerMesh[i]*3; // Has to be a 3 - these are just ints, not vecs
     }
     
-    glm::vec3 lightPositionWorld = glm::vec3(3.0f, 3.0f, 3.0f);
+    glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
     
     // Main drawing loop
     
@@ -601,15 +595,15 @@ int main(){
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
         
-        
-        // Bind our texture in Texture Unit 0
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        // Set our "myTextureSampler" sampler to user Texture Unit 0
-        glUniform1i(textureID, 0);
-        
         for (int i = 0; i < numMeshes; i++)
         {
+            // Bind our texture in Texture Unit 0
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]]);
+            std::cout << "Mesh " << i << ", textureIndex " << textureIndices[i] << "\n";
+            // Set our "myTextureSampler" sampler to user Texture Unit 0
+            glUniform1i(textureID, 0);
+            
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
             
             // 1st attribute buffer: locations of vertices
@@ -667,7 +661,7 @@ int main(){
 //    glDeleteBuffers(1, &uvbuffer);
 //    glDeleteBuffers(1, &normalbuffer);
     glDeleteProgram(programID);
-    glDeleteTextures(1, &textureID);
+    //glDeleteTextures(1, &textureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
     
