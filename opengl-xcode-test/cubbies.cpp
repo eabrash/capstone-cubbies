@@ -28,69 +28,6 @@
 
 using namespace glm;    // Allows us to say vec3 rather than glm::vec3
 
-//class Mesh
-//{
-//public:
-//    Mesh();
-//    Mesh(char *filename, int meshNumber);
-//    ~Mesh();
-//    
-//    std::vector<glm::vec3> getVertices() const { return vertices; }
-//    std::vector<glm::vec2> getUVs() const { return texture_uvs; }
-//    std::vector<glm::vec3> getNormals() const { return vertex_normals; }
-//    std::vector<unsigned short> getIndices() const { return indices; }
-//
-//private:
-//    std::vector<glm::vec3> vertices;
-//    std::vector<glm::vec2> texture_uvs;
-//    std::vector<glm::vec3> vertex_normals;
-//    std::vector<unsigned short> indices;
-//    
-//};
-//
-//Mesh::Mesh(char *filename, int meshNumber)
-//{
-//    Assimp::Importer importer;
-//    
-//    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
-//    
-//    aiMesh *mesh = scene->mMeshes[meshNumber];
-//    
-//    //Get the pointers to the vertices, texture (uv) coords, and normals
-//    int numVertices = mesh->mNumVertices;
-//    aiVector3D *meshVertices = mesh->mVertices;
-//    aiVector3D *meshTextures = mesh->mTextureCoords[0];
-//    aiVector3D *meshNormals = mesh->mNormals;
-//    //aiVector3D *meshColors = mesh->mColors[0]; //We could also get colors if this had been in the .obj
-//    
-//    // Get the pointer to the faces array; each face contains a pointer to the indices of its vertices
-//    //int numFaces = mesh->mNumFaces;
-//    //aiFace *faces = mesh->mFaces;
-//    
-//    for (int i = 0; i < numVertices; i++)
-//    {
-//        std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
-//        std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
-//        std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
-//        std::cout << i << "\n";
-//        
-//        vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
-//        texture_uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
-//        vertex_normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
-//    }
-//    
-//    aiFace *meshFaces = mesh->mFaces;
-//    int numFaces = mesh->mNumFaces;
-//    
-//    for (int i = 0; i < numFaces; i++)
-//    {
-//        indices.push_back(meshFaces[i].mIndices[0]);
-//        indices.push_back(meshFaces[i].mIndices[1]);
-//        indices.push_back(meshFaces[i].mIndices[2]);
-//    }
-//}
-
-
 // Shader loading and compiling function
 
 GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path){
@@ -220,10 +157,15 @@ GLuint loadBMP(const char * imagepath)
     return textureID;
 }
 
+// These arrays will hold the data that is given to OpenGL to draw
+
 std::vector<unsigned short> indices;
 std::vector<glm::vec3> vertices;
 std::vector<glm::vec2> texture_uvs;
 std::vector<glm::vec3> vertex_normals;
+
+
+//Get the number of meshes in a model
 
 int getNumMeshes (char *filename)
 {
@@ -234,7 +176,7 @@ int getNumMeshes (char *filename)
     return scene->mNumMeshes;
 }
 
-// Code from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
+// Code modified from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
 void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices)
@@ -245,11 +187,9 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
     
     int numMeshes = scene->mNumMeshes;
     
-    std::cout << "Num materials: " << scene->mNumMaterials << "\n";
-    
-    std::cout << "Num Meshes: " << numMeshes << "\n";
-    
-    std::cout << "Materials list: \n";
+//    std::cout << "Num materials: " << scene->mNumMaterials << "\n";
+//    std::cout << "Num Meshes: " << numMeshes << "\n";
+//    std::cout << "Materials list: \n";
     
     std::vector<aiString> paths;
     
@@ -265,8 +205,8 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, index, &filepath);
         paths.push_back(filepath);
         
-        std::cout << filepath.C_Str() << "\n";
-        std::cout << index << "\n";
+//        std::cout << filepath.C_Str() << "\n";
+//        std::cout << index << "\n";
         
         if (filepath.length != 0)
         {
@@ -284,7 +224,7 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
     {
         aiMesh *mesh = scene->mMeshes[j];
         
-        std::cout << "Mesh " << j << ": material is " << mesh->mMaterialIndex << "\n";
+        //std::cout << "Mesh " << j << ": material is " << mesh->mMaterialIndex << "\n";
         
         textureIndices.push_back(mesh->mMaterialIndex-emptyCount);
         
@@ -295,15 +235,11 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         aiVector3D *meshNormals = mesh->mNormals;
         //aiVector3D *meshColors = mesh->mColors[0]; //We could also get colors if this had been in the .obj
         
-        // Get the pointer to the faces array; each face contains a pointer to the indices of its vertices
-        //int numFaces = mesh->mNumFaces;
-        //aiFace *faces = mesh->mFaces;
-        
         for (int i = 0; i < numVertices; i++)
         {
 //            std::cout << "vertices: " << meshVertices[i].x << ", " << meshVertices[i].y << ", " << meshVertices[i].z << "\n";
 //            std::cout << "textures: " << meshTextures[i].x << ", " << meshTextures[i].y << ", " << meshTextures[i].z << "\n";
-//            std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n"; //Getting 3x
+//            std::cout << "normals: " << meshNormals[i].x << ", " << meshNormals[i].y << ", " << meshNormals[i].z << "\n";
 //            std::cout << i << "\n";
 //            
             vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
@@ -367,13 +303,12 @@ int main(){
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     
     // Turn on culling; cull triangles with their back facing the camera
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     
     // Turn on z-buffering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);   // Keep the fragment w/shorter distance to camera
-
     
     // What is the point of this? As far as I can tell, it does not hold anything important, but no
     // triangles will be drawn if it is commented out. Does it create the context that we attach
@@ -410,7 +345,7 @@ int main(){
     
     std::vector<GLuint> textures;
     
-    std::cout << "Size of texturePaths: " << texturePaths.size() << "\n";
+    //std::cout << "Size of texturePaths: " << texturePaths.size() << "\n";
     
     for (int i = 0; i < texturePaths.size(); i++)
     {
@@ -564,8 +499,6 @@ int main(){
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
         
-//        glEnable(GL_LIGHTING);
-//        glEnable(GL_LIGHT0);
         glEnable(GL_DEPTH_TEST);
         
         glUseProgram(programID); // Use the shader program to do the drawing
@@ -575,8 +508,6 @@ int main(){
         glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
         glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
-        
-        //lookAt = rotation * lookAt;
         
         glm::mat4 viewMatrix = glm::lookAt(
                                              camera, // position of camera
@@ -600,7 +531,7 @@ int main(){
             // Bind our texture in Texture Unit 0
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]]);
-            std::cout << "Mesh " << i << ", textureIndex " << textureIndices[i] << "\n";
+            //std::cout << "Mesh " << i << ", textureIndex " << textureIndices[i] << "\n";
             // Set our "myTextureSampler" sampler to user Texture Unit 0
             glUniform1i(textureID, 0);
             
@@ -657,11 +588,15 @@ int main(){
     }
     
     // Cleanup VBO and shader
-//    glDeleteBuffers(1, &vertexbuffer);
-//    glDeleteBuffers(1, &uvbuffer);
-//    glDeleteBuffers(1, &normalbuffer);
+    
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glDeleteBuffers(1, &vertexbuffer[i]);
+        glDeleteBuffers(1, &uvbuffer[i]);
+        glDeleteBuffers(1, &normalbuffer[i]);
+    }
     glDeleteProgram(programID);
-    //glDeleteTextures(1, &textureID);
+    glDeleteTextures(1, &textureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
     
