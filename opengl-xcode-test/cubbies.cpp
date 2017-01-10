@@ -180,7 +180,7 @@ int getNumMeshes (char *filename)
 // Code modified from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
-void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices)
+void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices, std::vector<unsigned short> &texturesPerModel)
 {
     Assimp::Importer importer;
     
@@ -195,6 +195,7 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
     std::vector<aiString> paths;
     
     int emptyCount = 0; // Number of empty textures encountered, usually at least one
+    int numValidTextures = 0;
     
     for (int i = 0; i < scene->mNumMaterials; i++)
     {
@@ -212,12 +213,15 @@ void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<gl
         if (filepath.length != 0)
         {
             texturePaths.push_back(filepath);
+            numValidTextures++;
         }
         else
         {
             emptyCount++;
         }
     }
+    
+    texturesPerModel.push_back(numValidTextures);
     
     std::cout<< "Emptycount: " << emptyCount << "\n";
     
@@ -333,9 +337,9 @@ int main(){
 //    char *filename2 = "catsphere.obj";
 //    char *filename3 = "walls5.obj";
     
-    char *filenames [] = {"walls5.obj", "catsphere_only.obj", "woodinnertube_only.obj", "bench_only.obj"};
+    char *filenames [] = {"bench_only.obj", "catsphere.obj", "woodinnertube_only.obj", "walls5.obj"};
     int numModels = 4;
-    glm::mat4 translations [] = {glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(5.0f, 0.0f, 0.0f))};
+    glm::mat4 translations [] = {glm::translate(glm::vec3(5.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 0.0f))};
     
     int numMeshes = 0;
     int meshesPerModel[numModels];
@@ -362,11 +366,12 @@ int main(){
     std::vector<unsigned short> numIndicesPerMesh;
     std::vector<aiString> texturePaths;
     std::vector<unsigned short> textureIndices;
+    std::vector<unsigned short> numTexturesPerModel;
     
     
     for (int i = 0; i < numModels; i++)
     {
-        loadAssImp(filenames[i], vertices, texture_uvs, vertex_normals, indexedVertices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices);
+        loadAssImp(filenames[i], vertices, texture_uvs, vertex_normals, indexedVertices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices, numTexturesPerModel);
     }
     std::vector<GLuint> textures; // To store texture handles once loaded from texturePaths obtained above
     
@@ -375,13 +380,28 @@ int main(){
     for (int i = 0; i < texturePaths.size(); i++)
     {
         textures.push_back(loadBMP(texturePaths[i].C_Str()));
-        //std::cout << texturePaths[i].C_Str() << " \n";
+        std::cout << texturePaths[i].C_Str() << " \n";
     }
     
-//    for (int i = 0; i < textureIndices.size(); i++)
-//    {
-//        std::cout << textureIndices[i] << "\n";
-//    }
+    std::cout << "Number of texture paths: " << texturePaths.size() << "\n";
+    
+    for (int i = 0; i < textureIndices.size(); i++)
+    {
+        std::cout << textureIndices[i] << "\n";
+    }
+    
+    unsigned short cumulativeTextures[numModels];
+    
+    std::cout << "Textures per model: \n" << "\n";
+    
+    int total = 0;
+    
+    for (int i = 0; i < numTexturesPerModel.size(); i++)
+    {
+        std::cout << numTexturesPerModel[i] << "\n";
+        total += numTexturesPerModel[i];
+        cumulativeTextures[i] = total;
+    }
     
     // Get a handle for our "myTextureSampler" uniform
     GLuint textureID = glGetUniformLocation(programID, "myTextureSampler");
@@ -573,40 +593,39 @@ int main(){
             // textureIndices array are for each model. So an index of 0 in the part of the textureIndices
             // array that is for the second model (in the range of meshes belonging to the second model)
             // has to be adjusted (bumped up by the number of meshes found in the first model, roughly)
-            // before lookup occurs in the master textures array, which contains texture IDs for all of
-            // the textures in linear order. Note: number of textures in main texture array = number of
-            // meshes under current import process. I.e., if the same texture is used for several
-            // meshes, it will be read in twice. Not optimal long-term but works okay for now.
+            // before lookup occurs in the master textures array. j represents number of the model.
             
-            int j = 0;
+            int modelNumber = 0;
             
             // Figure out which model we are in - the first one (j = 0) or a later one (j = 1, j = 2, etc.)
             
-            while (cumulativeMeshes[j] < i+1)
+            while (cumulativeMeshes[modelNumber] < i+1)
             {
-                j++;
+                modelNumber++;
             }
             
-            if (j==0) // No need to adjust index before lookup
+            if (modelNumber == 0) // No need to adjust index before lookup
             {
-                //std::cout << "In first branch; i =" << i << "\n";
+                //std::cout << "In first branch " << textureIndices[i] << "\n";
                 glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]]);
             }
             else // Adjust index before lookup in textures according to number of preceding meshes
             {
-                if (cumulativeMeshes[j-1] == 1 || cumulativeMeshes[j-1]-cumulativeMeshes[j-2] == 1)
-                {
-                    std::cout << "In first branch " << textureIndices[i]+cumulativeMeshes[j-1] << "\n";
-                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]]);
-                }
-                else
-                {
-                    std::cout << "In second branch " << textureIndices[i]+cumulativeMeshes[j-1]-1 << "\n";
-                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]-1]);
-                }
+//                if (cumulativeMeshes[j-1] == 1 || cumulativeMeshes[j-1]-cumulativeMeshes[j-2] == 1)
+//                {
+//                    //std::cout << "In first branch " << textureIndices[i]+cumulativeMeshes[j-1] << "\n";
+//                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]]);
+//                }
+//                else
+//                {
+                    //std::cout << "In second branch " << textureIndices[i]+cumulativeTextures[j-1] << "\n";
+                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeTextures[modelNumber-1]]);
+                //}
             }
             
-            glm::mat4 myModelMatrix = translations[j] * myRotationMatrix * myScalingMatrix;
+            //std::cout << "j is: " << j << "\n";
+            
+            glm::mat4 myModelMatrix = translations[modelNumber] * myRotationMatrix * myScalingMatrix;
             glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
             
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
