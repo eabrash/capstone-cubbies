@@ -456,12 +456,15 @@ int main(){
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
             glm::vec3 inCameraDirection = glm::mat3(p,q,r)*vec3(0,0,1);
-            camera = camera + glm::normalize(inCameraDirection - inCameraDirection.y)*step;
+            //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
+            camera = camera + normalize(vec3(inCameraDirection.x, 0, inCameraDirection.z))*step;
+
         }
         else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
             glm::vec3 inCameraDirection = glm::mat3(p,q,r)*vec3(0,0,1);
-            camera = camera + glm::normalize(inCameraDirection - inCameraDirection.y)*(-step);
+            //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
+            camera = camera + normalize(vec3(inCameraDirection.x, 0, inCameraDirection.z))*(-step);
         }
         
         // Strafe sideways
@@ -590,7 +593,7 @@ int main(){
             
             if (j==0) // No need to adjust index before lookup
             {
-                std::cout << "In first branch; i =" << i << "\n";
+                //std::cout << "In first branch; i =" << i << "\n";
                 glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]]);
             }
             else // Adjust index before lookup in textures according to number of preceding meshes
