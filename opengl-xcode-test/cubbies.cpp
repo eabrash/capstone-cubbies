@@ -126,6 +126,100 @@ GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_pat
 // Load bitmap for texture. This method uses the FreeImage library for loading. FreeImage can load various
 // image types, but this function is only intended for BMP files.
 
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices)
+{
+    std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
+    
+    if(worldDataStream.is_open())
+    {
+        std::string line = "";
+        int counter = 0;
+        while(getline(worldDataStream, line)) // Keep getting lines from file while it has more
+        {
+            if (counter % 4 == 0)
+            {
+                filenames.push_back(line);
+            }
+            else if (counter % 4 == 1)
+            {
+                int begin = 0;
+                int end = 0;
+                float transforms [3];
+                int transformsCounter = 0;
+                
+                for (int i = 0; i < line.length(); i++)
+                {
+                    if (isspace(line[i]))
+                    {
+                        end = i-1;
+                        transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
+                        begin = i+1;
+                        end = i+1;
+                        transformsCounter++;
+                    }
+                }
+                
+                transforms[transformsCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+                
+                translationMatrices.push_back(glm::translate(vec3(transforms[0], transforms[1], transforms[2])));
+            }
+            else if (counter % 4 == 2)
+            {
+                int begin = 0;
+                int end = 0;
+                float transforms [3];
+                int transformsCounter = 0;
+                
+                for (int i = 0; i < line.length(); i++)
+                {
+                    if (isspace(line[i]))
+                    {
+                        end = i-1;
+                        transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
+                        begin = i+1;
+                        end = i+1;
+                        transformsCounter++;
+                    }
+                }
+                
+                transforms[transformsCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+                
+                scalingMatrices.push_back(glm::translate(vec3(transforms[0], transforms[1], transforms[2])));
+            }
+            else if (counter % 4 == 3)
+            {
+                int begin = 0;
+                int end = 0;
+                float transforms [3];
+                int transformsCounter = 0;
+                
+                for (int i = 0; i < line.length(); i++)
+                {
+                    if (isspace(line[i]))
+                    {
+                        end = i-1;
+                        transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
+                        begin = i+1;
+                        end = i+1;
+                        transformsCounter++;
+                    }
+                }
+                
+                transforms[transformsCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+                
+                rotationMatrices.push_back(glm::translate(vec3(transforms[0], transforms[1], transforms[2])));
+            }
+            //std::cout << line << "\n";
+            counter++;
+        }
+        worldDataStream.close();
+    }
+    else
+    {
+        printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", world_file_path);
+    }
+}
+
 GLuint loadBMP(const char * imagepath)
 {
     FIBITMAP *bitmap = FreeImage_Load(FIF_BMP, imagepath);
@@ -168,11 +262,11 @@ std::vector<glm::vec3> vertex_normals;
 
 //Get the number of meshes in a model
 
-int getNumMeshes (char *filename)
+int getNumMeshes (std::string filename)
 {
     Assimp::Importer importer;
     
-    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
+    const aiScene *scene = importer.ReadFile(filename.c_str(), aiProcess_JoinIdenticalVertices);
     
     return scene->mNumMeshes;
 }
@@ -180,11 +274,11 @@ int getNumMeshes (char *filename)
 // Code modified from opengl-tutorials (http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/, see associated code for tutorial 09 in assimp version)
 // and from http://www.assimp.org/lib_html/usage.html
 
-void loadAssImp(char *filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices, std::vector<unsigned short> &texturesPerModel)
+void loadAssImp(std::string filename, std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &uvs, std::vector<glm::vec3> &normals, std::vector<unsigned short> &indices, std::vector<unsigned short> &verticesPerMesh, std::vector<unsigned short> &indicesPerMesh, std::vector<aiString> &texturePaths, std::vector<unsigned short> &textureIndices, std::vector<unsigned short> &texturesPerModel)
 {
     Assimp::Importer importer;
     
-    const aiScene *scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices);
+    const aiScene *scene = importer.ReadFile(filename.c_str(), aiProcess_JoinIdenticalVertices);
     
     int numMeshes = scene->mNumMeshes;
     
@@ -333,9 +427,16 @@ int main(){
     GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
-    char *filenames [] = {"bench_only.obj", "catsphere.obj", "woodinnertube_only.obj", "walls5.obj"};
-    int numModels = 4;
-    glm::mat4 translations [] = {glm::translate(glm::vec3(5.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 0.0f))};
+    std::vector<std::string> filenames;
+    std::vector<glm::mat4> translations;
+    std::vector<glm::mat4> scales;
+    std::vector<glm::mat4> rotations;
+    
+    loadWorld("world1.txt", filenames, translations, scales, rotations);
+    
+    //char *filenames [] = {"bench_only.obj", "catsphere.obj", "woodinnertube_only.obj", "walls5.obj"};
+    int numModels = filenames.size();
+    //glm::mat4 translations [] = {glm::translate(glm::vec3(5.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 0.0f))};
     
     int numMeshes = 0;
     int meshesPerModel[numModels];
@@ -363,7 +464,6 @@ int main(){
     std::vector<aiString> texturePaths;
     std::vector<unsigned short> textureIndices;
     std::vector<unsigned short> numTexturesPerModel;
-    
     
     for (int i = 0; i < numModels; i++)
     {
@@ -607,19 +707,9 @@ int main(){
             }
             else // Adjust index before lookup in textures according to number of preceding meshes
             {
-//                if (cumulativeMeshes[j-1] == 1 || cumulativeMeshes[j-1]-cumulativeMeshes[j-2] == 1)
-//                {
-//                    //std::cout << "In first branch " << textureIndices[i]+cumulativeMeshes[j-1] << "\n";
-//                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]]);
-//                }
-//                else
-//                {
-                    //std::cout << "In second branch " << textureIndices[i]+cumulativeTextures[j-1] << "\n";
-                    glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeTextures[modelNumber-1]]);
-                //}
+                //std::cout << "In second branch " << textureIndices[i]+cumulativeTextures[j-1] << "\n";
+                glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeTextures[modelNumber-1]]);
             }
-            
-            //std::cout << "j is: " << j << "\n";
             
             glm::mat4 myModelMatrix = translations[modelNumber] * myRotationMatrix * myScalingMatrix;
             glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
