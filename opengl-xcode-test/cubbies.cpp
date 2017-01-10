@@ -333,7 +333,7 @@ int main(){
 //    char *filename2 = "catsphere.obj";
 //    char *filename3 = "walls5.obj";
     
-    char *filenames [] = { "catsphere.obj", "woodinnertube.obj", "tilebench.obj", "walls5.obj"};
+    char *filenames [] = { "catsphere_only.obj", "woodinnertube_only.obj", "bench_only.obj", "walls5.obj"};
     int numModels = 4;
     
     int numMeshes = 0;
