@@ -333,10 +333,6 @@ int main(){
     GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
-//    char *filename1 = "tilebench.obj";
-//    char *filename2 = "catsphere.obj";
-//    char *filename3 = "walls5.obj";
-    
     char *filenames [] = {"bench_only.obj", "catsphere.obj", "woodinnertube_only.obj", "walls5.obj"};
     int numModels = 4;
     glm::mat4 translations [] = {glm::translate(glm::vec3(5.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 0.0f))};
@@ -383,22 +379,22 @@ int main(){
         std::cout << texturePaths[i].C_Str() << " \n";
     }
     
-    std::cout << "Number of texture paths: " << texturePaths.size() << "\n";
+    //std::cout << "Number of texture paths: " << texturePaths.size() << "\n";
     
-    for (int i = 0; i < textureIndices.size(); i++)
-    {
-        std::cout << textureIndices[i] << "\n";
-    }
+//    for (int i = 0; i < textureIndices.size(); i++)
+//    {
+//        std::cout << textureIndices[i] << "\n";
+//    }
     
     unsigned short cumulativeTextures[numModels];
     
-    std::cout << "Textures per model: \n" << "\n";
+    //std::cout << "Textures per model: \n" << "\n";
     
     int total = 0;
     
     for (int i = 0; i < numTexturesPerModel.size(); i++)
     {
-        std::cout << numTexturesPerModel[i] << "\n";
+        //std::cout << numTexturesPerModel[i] << "\n";
         total += numTexturesPerModel[i];
         cumulativeTextures[i] = total;
     }
