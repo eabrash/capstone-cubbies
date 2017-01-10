@@ -333,8 +333,9 @@ int main(){
 //    char *filename2 = "catsphere.obj";
 //    char *filename3 = "walls5.obj";
     
-    char *filenames [] = { "catsphere_only.obj", "woodinnertube_only.obj", "bench_only.obj", "walls5.obj"};
+    char *filenames [] = {"walls5.obj", "catsphere_only.obj", "woodinnertube_only.obj", "bench_only.obj"};
     int numModels = 4;
+    glm::mat4 translations [] = {glm::translate(glm::vec3(0.0f, 0.0f, 0.0f)), glm::translate(glm::vec3(0.0f, 0.0f, -5.0f)), glm::translate(glm::vec3(0.0f, 0.0f, 5.0f)), glm::translate(glm::vec3(5.0f, 0.0f, 0.0f))};
     
     int numMeshes = 0;
     int meshesPerModel[numModels];
@@ -545,10 +546,9 @@ int main(){
         glUseProgram(programID); // Use the shader program to do the drawing
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
-        glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+        //glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
         glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
         glm::mat4 myRotationMatrix = glm::mat4();
-        glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScalingMatrix;
         
         glm::mat4 viewMatrix = glm::lookAt(
                                              camera, // position of camera
@@ -559,11 +559,8 @@ int main(){
         //std::cout << "Camera position: " << camera.x << ", " << camera.y << ", " << camera.z << "\n";
         
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)1.0, 0.1f, 1000.0f);
-        glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
         
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
-        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &myModelMatrix[0][0]);
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
         
@@ -571,7 +568,6 @@ int main(){
         {
             // Bind our texture in Texture Unit 0
             glActiveTexture(GL_TEXTURE0);
-            
             
             // Get the right texture by determining which model the mesh is in. The lookup numbers in the
             // textureIndices array are for each model. So an index of 0 in the part of the textureIndices
@@ -600,13 +596,21 @@ int main(){
             {
                 if (cumulativeMeshes[j-1] == 1 || cumulativeMeshes[j-1]-cumulativeMeshes[j-2] == 1)
                 {
+                    std::cout << "In first branch " << textureIndices[i]+cumulativeMeshes[j-1] << "\n";
                     glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]]);
                 }
                 else
                 {
+                    std::cout << "In second branch " << textureIndices[i]+cumulativeMeshes[j-1]-1 << "\n";
                     glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeMeshes[j-1]-1]);
                 }
             }
+            
+            glm::mat4 myModelMatrix = translations[j] * myRotationMatrix * myScalingMatrix;
+            glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+            
+            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
+            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &myModelMatrix[0][0]);
             
             // Set our "myTextureSampler" sampler to user Texture Unit 0
             glUniform1i(textureID, 0);
