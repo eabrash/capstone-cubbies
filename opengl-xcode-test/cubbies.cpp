@@ -32,6 +32,227 @@
 #include "imageloader.h"
 #include "modelloader_assimp.h"
 
+//class BoundingBox
+//{
+//public:
+//    BoundingBox(std::vector<glm::vec3> vertices);
+//    ~BoundingBox();
+//    glm::vec3 getMin();
+//    glm::vec3 getMax();
+//private:
+//    glm::vec3 min;
+//    glm::vec3 max;
+//};
+
+
+class Mesh
+{
+public:
+    Mesh(aiMesh *inputMesh, int emptyCount);
+    ~Mesh();
+    std::vector<glm::vec3> *getVertices();
+    std::vector<glm::vec2> *getUVs();
+    std::vector<glm::vec3> *getNormals();
+    std::vector<unsigned short> *getIndices();
+    int getTextureIndex();
+private:
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> normals;
+    std::vector<unsigned short> indices;
+    int textureIndex;
+};
+
+Mesh::Mesh(aiMesh *mesh, int emptyCount)
+{
+    textureIndex = (mesh->mMaterialIndex-emptyCount);
+    
+    //Get the pointers to the vertices, texture (uv) coords, and normals
+    int numVertices = mesh->mNumVertices;
+    aiVector3D *meshVertices = mesh->mVertices;
+    aiVector3D *meshTextures = mesh->mTextureCoords[0];
+    aiVector3D *meshNormals = mesh->mNormals;
+    //aiVector3D *meshColors = mesh->mColors[0]; //We could also get colors if this had been in the .obj
+    
+    for (int i = 0; i < numVertices; i++)
+    {
+        vertices.push_back(glm::vec3(meshVertices[i].x, meshVertices[i].y, meshVertices[i].z));
+        uvs.push_back(glm::vec2(meshTextures[i].x, meshTextures[i].y));
+        normals.push_back(glm::vec3(meshNormals[i].x, meshNormals[i].y, meshNormals[i].z));
+    }
+    
+    aiFace *meshFaces = mesh->mFaces;
+    int numFaces = mesh->mNumFaces;
+    
+    for (int i = 0; i < numFaces; i++)
+    {
+        indices.push_back(meshFaces[i].mIndices[0]);
+        indices.push_back(meshFaces[i].mIndices[1]);
+        indices.push_back(meshFaces[i].mIndices[2]);
+    }
+}
+
+Mesh::~Mesh()
+{
+    std::cout << "In Mesh class destructor\n";
+}
+
+std::vector<glm::vec3> * Mesh::getVertices()
+{
+    return &vertices;
+}
+
+std::vector<glm::vec2> * Mesh::getUVs()
+{
+    return &uvs;
+}
+
+std::vector<glm::vec3> * Mesh::getNormals()
+{
+    return &normals;
+}
+
+std::vector<unsigned short> * Mesh::getIndices()
+{
+    return &indices;
+}
+
+int Mesh::getTextureIndex()
+{
+    return textureIndex;
+}
+
+class Model
+{
+public:
+    Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation);
+    ~Model();
+    std::vector<Mesh> *getMeshes();
+    glm::mat4 getTranslation();
+    glm::mat4 getRotation();
+    glm::mat4 getScale();
+    void setTranslation(glm::mat4 newTranslation);
+    void setRotation(glm::mat4 newRotation);
+    void setScale(glm::mat4 newScale);
+    std::vector<GLuint> *getTextures();
+private:
+    std::vector<Mesh> modelMeshes;
+    glm::mat4 translation;
+    glm::mat4 rotation;
+    glm::mat4 scale;
+    std::vector<GLuint> textures;
+};
+
+void Model::setTranslation(glm::mat4 newTranslation)
+{
+    translation = newTranslation;
+}
+
+void Model::setRotation(glm::mat4 newRotation)
+{
+    rotation = newRotation;
+}
+
+void Model::setScale(glm::mat4 newScale)
+{
+    scale = newScale;
+}
+
+std::vector<Mesh> * Model::getMeshes()
+{
+    return &modelMeshes;
+}
+
+glm::mat4 Model::getTranslation()
+{
+    return translation;
+}
+
+glm::mat4 Model::getScale()
+{
+    return scale;
+}
+
+glm::mat4 Model::getRotation()
+{
+    return rotation;
+}
+
+std::vector<GLuint> * Model::getTextures()
+{
+    return &textures;
+}
+
+Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation)
+{
+    
+    translation = inputTranslation;
+    scale = inputScale;
+    rotation = inputRotation;
+    
+    Assimp::Importer importer;
+    
+    const aiScene *scene = importer.ReadFile(filename.c_str(), aiProcess_JoinIdenticalVertices);
+    
+    int numMeshes = scene->mNumMeshes;
+    
+    int emptyCount = 0; // Number of empty textures encountered, usually at least one
+    int numValidTextures = 0;
+    
+    std::vector<aiString> texturePaths;
+    
+    for (int i = 0; i < scene->mNumMaterials; i++)
+    {
+        aiString filepath;
+        int index = 0;
+        
+        // From http://www.lighthouse3d.com/cg-topics/code-samples/importing-3d-models-with-assimp/
+        
+        scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, index, &filepath);
+        texturePaths.push_back(filepath);
+        
+        //        std::cout << filepath.C_Str() << "\n";
+        //        std::cout << index << "\n";
+        
+        if (filepath.length != 0)
+        {
+            texturePaths.push_back(filepath);
+            numValidTextures++;
+        }
+        else
+        {
+            emptyCount++;
+        }
+    }
+
+    // This will give us back a bunch of OpenGL-internal texture handles for the BMPs we have loaded
+    // (which are now OpenGL textures that we must call by these handles).
+    for (int i = 0; i < texturePaths.size(); i++)
+    {
+        textures.push_back(loadBMP(texturePaths[i].C_Str()));
+        std::cout << texturePaths[i].C_Str() << " \n";
+    }
+    
+    //std::cout<< "Emptycount: " << emptyCount << "\n";
+    
+    for (int j = 0; j < numMeshes; j++)
+    {
+        aiMesh *assimpMesh = scene->mMeshes[j];
+        
+        //std::cout << "Mesh " << j << ": material is " << mesh->mMaterialIndex << "\n";
+        
+        Mesh *currentMesh = new Mesh(assimpMesh, emptyCount);
+        
+        modelMeshes.push_back(*currentMesh);
+    }
+}
+
+
+
+// Function declarations
+
+void drawWorldOnLoop(GLFWwindow *window, GLuint programID, GLuint ViewMatrixID, GLuint LightPositionID, GLuint CameraPositionID, int numMeshes, int *cumulativeMeshes, std::vector<GLuint> &textures, std::vector<unsigned short> &textureIndices, unsigned short *cumulativeTextures, std::vector<glm::mat4> &translations, std::vector<glm::mat4> &rotations, std::vector<glm::mat4> &scales, GLuint MatrixID, GLuint ModelMatrixID, GLuint textureID, GLuint *vertexbuffer, GLuint *normalbuffer, GLuint *uvbuffer, GLuint *indexbuffer, std::vector<unsigned short> &numIndicesPerMesh);
+
 // Not yet tested. Must figure out where to calculate the bounding boxes using this function.
 
 void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, glm::vec3 &minBound, glm::vec3 &maxBound)
@@ -76,6 +297,205 @@ void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, gl
     
     minBound = mins;
     maxBound = maxes;
+}
+
+
+int main(){
+    
+    // GLFW setup
+    
+    if( !glfwInit() )
+    {
+        fprintf( stderr, "Failed to initialize GLFW\n" );
+        return -1;
+    }
+    
+    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing. What is antialiasing?
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3; this line is the ones place 3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // This line is the tenths place 3
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    
+    GLFWwindow * window = nullptr;
+    window = glfwCreateWindow( 500, 500, "Drawing a Cube", NULL, NULL);
+    if (window == nullptr)
+    {
+        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window); // The window is our current rendering context
+    
+    // GLEW setup
+    glewExperimental = true; // The core profile needs for this flag to be set
+    if (glewInit() != GLEW_OK) {
+        fprintf(stderr, "Failed to initialize GLEW\n");
+        return -1;
+    }
+    
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Input mode on window is to detect keystrokes
+    
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    
+    // Turn on culling; cull triangles with their back facing the camera
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    
+    // Turn on z-buffering
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);   // Keep the fragment w/shorter distance to camera
+    
+    // What is the point of this? As far as I can tell, it does not hold anything important, but no
+    // triangles will be drawn if it is commented out. Does it create the context that we attach
+    // attributes to in some way?
+    
+    GLuint VertexArrayID;
+    glGenVertexArrays(1, &VertexArrayID);
+    glBindVertexArray(VertexArrayID);     // This is the VAO
+    
+    // Create and compile our GLSL program from the shaders
+    GLuint programID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
+    
+    // This section is getting handles for uniforms in the shader
+    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
+    GLuint ViewMatrixID = glGetUniformLocation(programID, "VIEW_MATRIX");
+    GLuint ModelMatrixID = glGetUniformLocation(programID, "MODEL_MATRIX");
+    GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
+    GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
+    //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(programID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
+    
+    // Load the file that tells us what models we will have in the world and what their initial
+    // transformations will be.
+    
+    std::vector<std::string> filenames;
+    std::vector<glm::mat4> translations;
+    std::vector<glm::mat4> scales;
+    std::vector<glm::mat4> rotations;
+    
+    loadWorld("world1.txt", filenames, translations, scales, rotations);
+    int numModels = filenames.size();
+    
+    // Vectors that we will pass into loadAssImp and get back filled with relevant data for the scene to be
+    // drawn.
+    
+    std::vector<Model*> models;
+    for (int i = 0; i < numModels; i++)
+    {
+        Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i]);
+        models.push_back(newModel);
+    }
+    
+    
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> texture_uvs;
+    std::vector<glm::vec3> vertex_normals;
+    std::vector<unsigned short> indexedVertices;
+    std::vector<unsigned short> numVerticesPerMesh;
+    std::vector<unsigned short> numIndicesPerMesh;
+    std::vector<aiString> texturePaths;
+    std::vector<unsigned short> textureIndices;
+    std::vector<unsigned short> numTexturesPerModel;
+    
+    int numMeshes = 0;
+    int meshesPerModel[numModels];
+    int cumulativeMeshes[numModels];
+    
+    for (int i = 0; i < numModels; i++)
+    {
+        meshesPerModel[i] = loadAssImp(filenames[i], vertices, texture_uvs, vertex_normals, indexedVertices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices, numTexturesPerModel);
+        numMeshes += meshesPerModel[i];
+        cumulativeMeshes[i] = numMeshes;
+        
+    }
+    
+    unsigned short cumulativeTextures[numModels];
+    
+    int total = 0;
+    
+    for (int i = 0; i < numTexturesPerModel.size(); i++)
+    {
+        //std::cout << numTexturesPerModel[i] << "\n";
+        total += numTexturesPerModel[i];
+        cumulativeTextures[i] = total;
+    }
+    
+    // Get a handle for our "myTextureSampler" uniform
+    GLuint textureID = glGetUniformLocation(programID, "myTextureSampler");
+    
+    // We will make a buffer of each type (vertex, uv, normal, and index) for each mesh. The data is not
+    // actually split up in memory; we just tell each buffer to start reading in at the correct address in
+    // memory. For instance, all the vertices in all the meshes of the scene are in a single std::vector.
+    // However, they are copied into separate buffers in OpenGL by the code below. The offset variable is
+    // used to bump our position in the std::vector array forward by the correct amount with each pass.
+    
+    GLuint vertexbuffer[numMeshes];
+    glGenBuffers(numMeshes, vertexbuffer);
+    int offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertices[0+offset], GL_STATIC_DRAW);
+        offset += numVerticesPerMesh[i];
+    }
+    
+    // Same as above for uv (texture) coordinates
+    GLuint uvbuffer[numMeshes];
+    glGenBuffers(numMeshes, uvbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*2, &texture_uvs[0+offset], GL_STATIC_DRAW);
+        offset += numVerticesPerMesh[i];
+    }
+    
+    // Same as above for vertex normals
+    GLuint normalbuffer[numMeshes];
+    glGenBuffers(numMeshes, normalbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer[i]);
+        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertex_normals[0+offset], GL_STATIC_DRAW);
+        offset += numVerticesPerMesh[i];
+    }
+
+    // This set of buffers consists of element array buffers (one for each mesh). These buffers contain
+    // indices. Because they have a type of unsigned short (multiples of 1) and not a type of vec3
+    // (multiples of 3), we need to multiply by three to get the correct offset, since there are actually
+    // three unsigned shorts (3x the size in memory) for each index in the mesh.
+    
+    GLuint indexbuffer[numMeshes];
+    glGenBuffers(numMeshes, indexbuffer);
+    offset = 0;
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndicesPerMesh[i]*sizeof(unsigned short)*3, &indexedVertices[0+offset], GL_STATIC_DRAW);
+        offset += numIndicesPerMesh[i]*3; // Has to be a 3 - these are just ints, not vecs
+    }
+    
+    //drawWorldOnLoop(window, programID, ViewMatrixID, LightPositionID, CameraPositionID, numMeshes, cumulativeMeshes, textures, textureIndices, cumulativeTextures, translations, rotations, scales, MatrixID, ModelMatrixID, textureID, vertexbuffer, normalbuffer, uvbuffer, indexbuffer,numIndicesPerMesh);
+    
+    // Cleanup VBO and shader
+    
+    for (int i = 0; i < numMeshes; i++)
+    {
+        glDeleteBuffers(1, &vertexbuffer[i]);
+        glDeleteBuffers(1, &uvbuffer[i]);
+        glDeleteBuffers(1, &normalbuffer[i]);
+        glDeleteBuffers(1, &indexbuffer[i]);
+    }
+    glDeleteProgram(programID);
+    glDeleteTextures(1, &textureID);
+    glDeleteVertexArrays(1, &VertexArrayID);
+    
+    
+    // Close OpenGL window and terminate GLFW
+    glfwTerminate();
+    
+    return 0;
+    
 }
 
 // Main function for drawing
@@ -301,207 +721,4 @@ void drawWorldOnLoop(GLFWwindow *window, GLuint programID, GLuint ViewMatrixID, 
         glfwPollEvents();
         
     }
-}
-
-int main(){
-    
-    // GLFW setup
-    
-    if( !glfwInit() )
-    {
-        fprintf( stderr, "Failed to initialize GLFW\n" );
-        return -1;
-    }
-    
-    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing. What is antialiasing?
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3; this line is the ones place 3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // This line is the tenths place 3
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
-    GLFWwindow * window = nullptr;
-    window = glfwCreateWindow( 500, 500, "Drawing a Cube", NULL, NULL);
-    if (window == nullptr)
-    {
-        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window); // The window is our current rendering context
-    
-    // GLEW setup
-    glewExperimental = true; // The core profile needs for this flag to be set
-    if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "Failed to initialize GLEW\n");
-        return -1;
-    }
-    
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Input mode on window is to detect keystrokes
-    
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    
-    // Turn on culling; cull triangles with their back facing the camera
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    
-    // Turn on z-buffering
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);   // Keep the fragment w/shorter distance to camera
-    
-    // What is the point of this? As far as I can tell, it does not hold anything important, but no
-    // triangles will be drawn if it is commented out. Does it create the context that we attach
-    // attributes to in some way?
-    
-    GLuint VertexArrayID;
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);     // This is the VAO
-    
-    // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
-    
-    // This section is getting handles for uniforms in the shader
-    GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
-    GLuint ViewMatrixID = glGetUniformLocation(programID, "VIEW_MATRIX");
-    GLuint ModelMatrixID = glGetUniformLocation(programID, "MODEL_MATRIX");
-    GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
-    GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
-    //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(programID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
-    
-    // Load the file that tells us what models we will have in the world and what their initial
-    // transformations will be.
-    
-    std::vector<std::string> filenames;
-    std::vector<glm::mat4> translations;
-    std::vector<glm::mat4> scales;
-    std::vector<glm::mat4> rotations;
-    
-    loadWorld("world1.txt", filenames, translations, scales, rotations);
-    int numModels = filenames.size();
-    
-    // Vectors that we will pass into loadAssImp and get back filled with relevant data for the scene to be
-    // drawn.
-    
-    std::vector<glm::vec3> vertices;
-    std::vector<glm::vec2> texture_uvs;
-    std::vector<glm::vec3> vertex_normals;
-    std::vector<unsigned short> indexedVertices;
-    std::vector<unsigned short> numVerticesPerMesh;
-    std::vector<unsigned short> numIndicesPerMesh;
-    std::vector<aiString> texturePaths;
-    std::vector<unsigned short> textureIndices;
-    std::vector<unsigned short> numTexturesPerModel;
-    
-    int numMeshes = 0;
-    int meshesPerModel[numModels];
-    int cumulativeMeshes[numModels];
-    
-    for (int i = 0; i < numModels; i++)
-    {
-        meshesPerModel[i] = loadAssImp(filenames[i], vertices, texture_uvs, vertex_normals, indexedVertices, numVerticesPerMesh, numIndicesPerMesh, texturePaths, textureIndices, numTexturesPerModel);
-        numMeshes += meshesPerModel[i];
-        cumulativeMeshes[i] = numMeshes;
-        
-    }
-    
-    // Load the textures specified by the texture paths we got from Assimp and make them OpenGL textures;
-    // store the OpenGL handles for each texture we create in the textures array.
-    
-    std::vector<GLuint> textures; // To store texture handles once loaded from texturePaths obtained above
-    
-    // This will give us back a bunch of OpenGL-internal texture handles for the BMPs we have loaded
-    // (which are now OpenGL textures that we must call by these handles).
-    for (int i = 0; i < texturePaths.size(); i++)
-    {
-        textures.push_back(loadBMP(texturePaths[i].C_Str()));
-        std::cout << texturePaths[i].C_Str() << " \n";
-    }
-    
-    unsigned short cumulativeTextures[numModels];
-    
-    int total = 0;
-    
-    for (int i = 0; i < numTexturesPerModel.size(); i++)
-    {
-        //std::cout << numTexturesPerModel[i] << "\n";
-        total += numTexturesPerModel[i];
-        cumulativeTextures[i] = total;
-    }
-    
-    // Get a handle for our "myTextureSampler" uniform
-    GLuint textureID = glGetUniformLocation(programID, "myTextureSampler");
-    
-    // We will make a buffer of each type (vertex, uv, normal, and index) for each mesh. The data is not
-    // actually split up in memory; we just tell each buffer to start reading in at the correct address in
-    // memory. For instance, all the vertices in all the meshes of the scene are in a single std::vector.
-    // However, they are copied into separate buffers in OpenGL by the code below. The offset variable is
-    // used to bump our position in the std::vector array forward by the correct amount with each pass.
-    
-    GLuint vertexbuffer[numMeshes];
-    glGenBuffers(numMeshes, vertexbuffer);
-    int offset = 0;
-    for (int i = 0; i < numMeshes; i++)
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[i]);
-        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertices[0+offset], GL_STATIC_DRAW);
-        offset += numVerticesPerMesh[i];
-    }
-    
-    // Same as above for uv (texture) coordinates
-    GLuint uvbuffer[numMeshes];
-    glGenBuffers(numMeshes, uvbuffer);
-    offset = 0;
-    for (int i = 0; i < numMeshes; i++)
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, uvbuffer[i]);
-        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*2, &texture_uvs[0+offset], GL_STATIC_DRAW);
-        offset += numVerticesPerMesh[i];
-    }
-    
-    // Same as above for vertex normals
-    GLuint normalbuffer[numMeshes];
-    glGenBuffers(numMeshes, normalbuffer);
-    offset = 0;
-    for (int i = 0; i < numMeshes; i++)
-    {
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer[i]);
-        glBufferData(GL_ARRAY_BUFFER, numVerticesPerMesh[i]*sizeof(float)*3, &vertex_normals[0+offset], GL_STATIC_DRAW);
-        offset += numVerticesPerMesh[i];
-    }
-
-    // This set of buffers consists of element array buffers (one for each mesh). These buffers contain
-    // indices. Because they have a type of unsigned short (multiples of 1) and not a type of vec3
-    // (multiples of 3), we need to multiply by three to get the correct offset, since there are actually
-    // three unsigned shorts (3x the size in memory) for each index in the mesh.
-    
-    GLuint indexbuffer[numMeshes];
-    glGenBuffers(numMeshes, indexbuffer);
-    offset = 0;
-    for (int i = 0; i < numMeshes; i++)
-    {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer[i]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndicesPerMesh[i]*sizeof(unsigned short)*3, &indexedVertices[0+offset], GL_STATIC_DRAW);
-        offset += numIndicesPerMesh[i]*3; // Has to be a 3 - these are just ints, not vecs
-    }
-    
-    drawWorldOnLoop(window, programID, ViewMatrixID, LightPositionID, CameraPositionID, numMeshes, cumulativeMeshes, textures, textureIndices, cumulativeTextures, translations, rotations, scales, MatrixID, ModelMatrixID, textureID, vertexbuffer, normalbuffer, uvbuffer, indexbuffer,numIndicesPerMesh);
-    
-    // Cleanup VBO and shader
-    
-    for (int i = 0; i < numMeshes; i++)
-    {
-        glDeleteBuffers(1, &vertexbuffer[i]);
-        glDeleteBuffers(1, &uvbuffer[i]);
-        glDeleteBuffers(1, &normalbuffer[i]);
-        glDeleteBuffers(1, &indexbuffer[i]);
-    }
-    glDeleteProgram(programID);
-    glDeleteTextures(1, &textureID);
-    glDeleteVertexArrays(1, &VertexArrayID);
-    
-    
-    // Close OpenGL window and terminate GLFW
-    glfwTerminate();
-    
-    return 0;
-    
 }
