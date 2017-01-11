@@ -151,10 +151,9 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 {
                     if (isspace(line[i]))
                     {
-                        end = i-1;
+                        end = i;
                         transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
                         begin = i+1;
-                        end = i+1;
                         transformsCounter++;
                     }
                 }
@@ -174,40 +173,42 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 {
                     if (isspace(line[i]))
                     {
-                        end = i-1;
+                        end = i;
                         transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
                         begin = i+1;
-                        end = i+1;
                         transformsCounter++;
                     }
                 }
                 
                 transforms[transformsCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
                 
-                scalingMatrices.push_back(glm::translate(vec3(transforms[0], transforms[1], transforms[2])));
+                scalingMatrices.push_back(glm::scale(vec3(transforms[0], transforms[1], transforms[2])));
+                
+                std::cout << "Scaling: " << transforms[0] << " " << transforms[1] << " " << transforms[2] << "\n";
             }
             else if (counter % 4 == 3)
             {
                 int begin = 0;
                 int end = 0;
-                float transforms [3];
+                float transforms [4];
                 int transformsCounter = 0;
                 
                 for (int i = 0; i < line.length(); i++)
                 {
                     if (isspace(line[i]))
                     {
-                        end = i-1;
+                        end = i;
                         transforms[transformsCounter] = (float)::atof(line.substr(begin, end).c_str());
                         begin = i+1;
-                        end = i+1;
                         transformsCounter++;
                     }
                 }
                 
                 transforms[transformsCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
                 
-                rotationMatrices.push_back(glm::translate(vec3(transforms[0], transforms[1], transforms[2])));
+                rotationMatrices.push_back(glm::rotate(glm::radians(transforms[0]), vec3(transforms[1], transforms[2], transforms[3])));
+                
+                std::cout << "Rotation: " << transforms[0] << " " << transforms[1] << " " << transforms[2] << " " << transforms[3] << "\n";
             }
             //std::cout << line << "\n";
             counter++;
@@ -424,6 +425,7 @@ int main(){
     GLuint MatrixID = glGetUniformLocation(programID, "MY_MATRIX");
     GLuint ViewMatrixID = glGetUniformLocation(programID, "VIEW_MATRIX");
     GLuint ModelMatrixID = glGetUniformLocation(programID, "MODEL_MATRIX");
+    //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(programID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
     GLuint LightPositionID = glGetUniformLocation(programID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(programID, "CAMERA_POSITION_WORLDSPACE");
     
@@ -663,8 +665,8 @@ int main(){
         
         //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
         //glm::mat4 myTranslationMatrix = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-        glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-        glm::mat4 myRotationMatrix = glm::mat4();
+        //glm::mat4 myScalingMatrix = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+        //glm::mat4 myRotationMatrix = glm::mat4();
         
         glm::mat4 viewMatrix = glm::lookAt(
                                              camera, // position of camera
@@ -711,11 +713,14 @@ int main(){
                 glBindTexture(GL_TEXTURE_2D, textures[textureIndices[i]+cumulativeTextures[modelNumber-1]]);
             }
             
-            glm::mat4 myModelMatrix = translations[modelNumber] * myRotationMatrix * myScalingMatrix;
+            glm::mat4 myModelMatrix = translations[modelNumber] * rotations[modelNumber] * scales[modelNumber];
+            //glm::mat4 myModelMatrixInverseTranspose = glm::transpose(glm::inverse(glm::mat3(translations[modelNumber] * rotations[modelNumber] * scales[modelNumber])));
             glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
             
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending the matrix to the shader
             glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &myModelMatrix[0][0]);
+            //glUniformMatrix4fv(ModelMatrixInverseTransposeID, 1, GL_FALSE, &myModelMatrixInverseTranspose[0][0]);
+
             
             // Set our "myTextureSampler" sampler to user Texture Unit 0
             glUniform1i(textureID, 0);
