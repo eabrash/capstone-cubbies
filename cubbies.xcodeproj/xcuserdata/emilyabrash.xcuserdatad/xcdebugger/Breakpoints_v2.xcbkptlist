@@ -127,7 +127,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "344"
             endingLineNumber = "344"
-            landmarkName = "loadAssImp(const char *filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
+            landmarkName = "loadAssImp(std::string filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -143,7 +143,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "345"
             endingLineNumber = "345"
-            landmarkName = "loadAssImp(const char *filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
+            landmarkName = "loadAssImp(std::string filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -159,7 +159,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "347"
             endingLineNumber = "347"
-            landmarkName = "loadAssImp(const char *filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
+            landmarkName = "loadAssImp(std::string filename, std::vector&lt;glm::vec3&gt; &amp;vertices, std::vector&lt;glm::vec2&gt; &amp;uvs, std::vector&lt;glm::vec3&gt; &amp;normals, std::vector&lt;unsigned short&gt; &amp;indices, std::vector&lt;unsigned short&gt; &amp;verticesPerMesh, std::vector&lt;unsigned short&gt; &amp;indicesPerMesh, std::vector&lt;aiString&gt; &amp;texturePaths, std::vector&lt;unsigned short&gt; &amp;textureIndices, std::vector&lt;unsigned short&gt; &amp;texturesPerModel)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -287,7 +287,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "145"
             endingLineNumber = "145"
-            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;const char *&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
+            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;std::string&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -303,7 +303,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "152"
             endingLineNumber = "152"
-            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;const char *&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
+            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;std::string&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -319,7 +319,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "156"
             endingLineNumber = "156"
-            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;const char *&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
+            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;std::string&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -335,7 +335,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "215"
             endingLineNumber = "215"
-            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;const char *&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
+            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;std::string&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -351,7 +351,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "141"
             endingLineNumber = "141"
-            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;const char *&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
+            landmarkName = "loadWorld(const char * world_file_path, std::vector&lt;std::string&gt; &amp;filenames, std::vector&lt;glm::mat4&gt; &amp;translationMatrices, std::vector&lt;glm::mat4&gt; &amp;scalingMatrices, std::vector&lt;glm::mat4&gt; &amp;rotationMatrices)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
