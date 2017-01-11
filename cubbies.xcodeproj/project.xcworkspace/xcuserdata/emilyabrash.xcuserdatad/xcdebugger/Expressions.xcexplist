@@ -6,16 +6,13 @@
          contextName = "main:cubbies.cpp">
          <PersistentStrings>
             <PersistentString
-               value = "indexbuffer[i]">
+               value = "meshes[0]">
             </PersistentString>
             <PersistentString
-               value = "memory read -t int -c8 `vertices`">
+               value = "j">
             </PersistentString>
             <PersistentString
-               value = "cumulativeMeshes[j]">
-            </PersistentString>
-            <PersistentString
-               value = "i">
+               value = "meshes.__begin_[j]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
