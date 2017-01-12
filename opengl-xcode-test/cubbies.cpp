@@ -92,6 +92,95 @@ void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, gl
 }
 
 
+void updateCameraPosition(GLFWwindow *window, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, float step, float angle)
+{
+    
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
+        //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
+        camera = camera + glm::normalize(glm::vec3(inCameraDirection.x, 0, inCameraDirection.z))*step;
+        
+    }
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
+        //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
+        camera = camera + glm::normalize(glm::vec3(inCameraDirection.x, 0, inCameraDirection.z))*(-step);
+    }
+    
+    // Strafe sideways
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        camera = camera + glm::mat3(p,q,r)*glm::vec3(-step,0,0);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera = camera + glm::mat3(p,q,r)*glm::vec3(step,0,0);
+    }
+    
+    glm::mat3 rotation = glm::mat3();
+    
+    //Turn viewer's gaze up or down
+    
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        // Rotate about x-axis; don't let the viewer look beyond 90 degrees down (stop slightly short)
+        
+        if (glm::dot(glm::vec3(0, 1, 0), r) > -0.95)
+        {
+            // This approach ensures that we specifically rotate about the model's own x-axis
+            // p (expressed in world coordinates), not around the x-axis of the world
+            
+            glm::mat4 rotationMatrix = glm::rotate(-angle, p);
+            
+            glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
+            glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
+            
+            q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
+            r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
+        }
+    }
+    else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        // Rotate about x-axis; don't let the viewer look beyond 90 degrees up (stop slightly short)
+        
+        if (glm::dot(glm::vec3(0, 1, 0), r) < 0.95)
+        {
+            glm::mat4 rotationMatrix = glm::rotate(angle, p);
+            
+            glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
+            glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
+            
+            q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
+            r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
+        }
+    }
+    
+    // Turn viewer's gaze and direction of motion to the side
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        //rotate about y-axis
+        rotation[0] = glm::vec3(cos(-angle), 0, -sin(-angle));
+        rotation[1] = glm::vec3(0, 1, 0);
+        rotation[2] = glm::vec3(sin(-angle), 0, cos(-angle));
+        
+        p = glm::normalize(rotation*p);
+        r = glm::normalize(rotation*r);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        //rotate about y-axis
+        rotation[0] = glm::vec3(cos(angle), 0, -sin(angle));
+        rotation[1] = glm::vec3(0, 1, 0);
+        rotation[2] = glm::vec3(sin(angle), 0, cos(angle));
+        
+        p = glm::normalize(rotation*p);
+        r = glm::normalize(rotation*r);
+    }
+
+}
+
 int main(){
     
     // GLFW setup
@@ -188,95 +277,18 @@ int main(){
     glm::vec3 p = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
     glm::vec3 q = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
     glm::vec3 r = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
+    float angle = 0.01; // Increment to look up or down by
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
         // Move forward or back
         // Projection of vector onto plane explanation: https://www.maplesoft.com/support/help/Maple/view.aspx?path=MathApps/ProjectionOfVectorOntoPlane
         
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
-            //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
-            camera = camera + glm::normalize(glm::vec3(inCameraDirection.x, 0, inCameraDirection.z))*step;
-            
-        }
-        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
-            //std::cout << "inCameraDirection: " << inCameraDirection.x << inCameraDirection.y <<inCameraDirection.z << "\n";
-            camera = camera + glm::normalize(glm::vec3(inCameraDirection.x, 0, inCameraDirection.z))*(-step);
-        }
         
-        // Strafe sideways
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS ||
+            glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            camera = camera + glm::mat3(p,q,r)*glm::vec3(-step,0,0);
-        }
-        else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            camera = camera + glm::mat3(p,q,r)*glm::vec3(step,0,0);
-        }
-        
-        glm::mat3 rotation = glm::mat3();
-        float angle = 0.01; // Increment to look up or down by
-        
-        //Turn viewer's gaze up or down
-        
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            // Rotate about x-axis; don't let the viewer look beyond 90 degrees down (stop slightly short)
-            
-            if (glm::dot(glm::vec3(0, 1, 0), r) > -0.95)
-            {
-                // This approach ensures that we specifically rotate about the model's own x-axis
-                // p (expressed in world coordinates), not around the x-axis of the world
-                
-                glm::mat4 rotationMatrix = glm::rotate(-angle, p);
-                
-                glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
-                glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
-                
-                q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
-                r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
-            }
-        }
-        else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            // Rotate about x-axis; don't let the viewer look beyond 90 degrees up (stop slightly short)
-            
-            if (glm::dot(glm::vec3(0, 1, 0), r) < 0.95)
-            {
-                glm::mat4 rotationMatrix = glm::rotate(angle, p);
-                
-                glm::vec4 rotatedQ = rotationMatrix*glm::vec4(q,0);
-                glm::vec4 rotatedR = rotationMatrix*glm::vec4(r,0);
-                
-                q = glm::vec3(rotatedQ.x, rotatedQ.y, rotatedQ.z);
-                r = glm::vec3(rotatedR.x, rotatedR.y, rotatedR.z);
-            }
-        }
-        
-        // Turn viewer's gaze and direction of motion to the side
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-            //rotate about y-axis
-            rotation[0] = glm::vec3(cos(-angle), 0, -sin(-angle));
-            rotation[1] = glm::vec3(0, 1, 0);
-            rotation[2] = glm::vec3(sin(-angle), 0, cos(-angle));
-            
-            p = glm::normalize(rotation*p);
-            r = glm::normalize(rotation*r);
-        }
-        else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-            //rotate about y-axis
-            rotation[0] = glm::vec3(cos(angle), 0, -sin(angle));
-            rotation[1] = glm::vec3(0, 1, 0);
-            rotation[2] = glm::vec3(sin(angle), 0, cos(angle));
-            
-            p = glm::normalize(rotation*p);
-            r = glm::normalize(rotation*r);
+            updateCameraPosition(window, camera, p, q, r, step, angle);
         }
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
