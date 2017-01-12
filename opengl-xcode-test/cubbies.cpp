@@ -266,7 +266,7 @@ Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputSc
         // From http://www.lighthouse3d.com/cg-topics/code-samples/importing-3d-models-with-assimp/
         
         scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, index, &filepath);
-        texturePaths.push_back(filepath);
+        //texturePaths.push_back(filepath);
         
         //        std::cout << filepath.C_Str() << "\n";
         //        std::cout << index << "\n";
@@ -303,12 +303,6 @@ Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputSc
         modelMeshes.push_back(*currentMesh);
     }
 }
-
-
-
-// Function declarations
-
-//void drawWorldOnLoop(GLFWwindow *window, GLuint ProgramID, GLuint ViewMatrixID, GLuint LightPositionID, GLuint CameraPositionID, int numMeshes, int *cumulativeMeshes, std::vector<GLuint> &textures, std::vector<unsigned short> &textureIndices, unsigned short *cumulativeTextures, std::vector<glm::mat4> &translations, std::vector<glm::mat4> &rotations, std::vector<glm::mat4> &scales, GLuint MatrixID, GLuint ModelMatrixID, GLuint TextureID, GLuint *vertexbuffer, GLuint *normalbuffer, GLuint *uvbuffer, GLuint *indexbuffer, std::vector<unsigned short> &numIndicesPerMesh);
 
 // Not yet tested. Must figure out where to calculate the bounding boxes using this function.
 
@@ -568,9 +562,6 @@ int main(){
         {
             std::vector<Mesh> meshes = models[i]->getMeshes();
             std::vector<GLuint> textures = models[i]->getTextures();
-            glm::mat4 translation = models[i]->getTranslation();
-            glm::mat4 scale = models[i]->getScale();
-            glm::mat4 rotation = models[i]->getRotation();
             
             glm::mat4 myModelMatrix = models[i]->getTranslation() * models[i]->getRotation() * models[i]->getScale();
             glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
