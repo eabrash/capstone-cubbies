@@ -3,7 +3,7 @@ class Model
 public:
     Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation);
     ~Model();
-    std::vector<Mesh> getMeshes();
+    std::vector<Mesh> * getMeshes();
     glm::mat4 getTranslation();
     glm::mat4 getRotation();
     glm::mat4 getScale();

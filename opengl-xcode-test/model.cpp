@@ -40,9 +40,9 @@ void Model::setScale(glm::mat4 newScale)
     scale = newScale;
 }
 
-std::vector<Mesh> Model::getMeshes()
+std::vector<Mesh> * Model::getMeshes()
 {
-    return modelMeshes;
+    return &modelMeshes;
 }
 
 glm::mat4 Model::getTranslation()

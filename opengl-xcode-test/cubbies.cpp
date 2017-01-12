@@ -301,7 +301,7 @@ int main(){
         
         for (int i = 0; i < numModels; i++)
         {
-            std::vector<Mesh> meshes = models[i]->getMeshes();
+            std::vector<Mesh> *pMeshes = models[i]->getMeshes();
             std::vector<GLuint> textures = models[i]->getTextures();
             
             glm::mat4 myModelMatrix = models[i]->getTranslation() * models[i]->getRotation() * models[i]->getScale();
@@ -314,17 +314,17 @@ int main(){
             {
                 // Bind our texture in Texture Unit 0
                 glActiveTexture(GL_TEXTURE0);
-                int textureIndex = meshes[j].getTextureIndex();
+                int textureIndex = (*pMeshes)[j].getTextureIndex();
                 glBindTexture(GL_TEXTURE_2D, textures[textureIndex]);
             
                 // Set our "myTextureSampler" sampler to user Texture Unit 0
                 glUniform1i(TextureID, 0);
                 
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes[j].getIndexBuffer());
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*pMeshes)[j].getIndexBuffer());
                 
                 // 1st attribute buffer: locations of vertices
                 glEnableVertexAttribArray(0);
-                glBindBuffer(GL_ARRAY_BUFFER, meshes[j].getVertexBuffer());
+                glBindBuffer(GL_ARRAY_BUFFER, (*pMeshes)[j].getVertexBuffer());
                 glVertexAttribPointer(
                                       0,
                                       3,                                // size
@@ -336,7 +336,7 @@ int main(){
                 
                 // 2nd attribute buffer: UVs
                 glEnableVertexAttribArray(1);
-                glBindBuffer(GL_ARRAY_BUFFER, meshes[j].getUVBuffer());
+                glBindBuffer(GL_ARRAY_BUFFER, (*pMeshes)[j].getUVBuffer());
                 glVertexAttribPointer(
                                       1,                                // attribute
                                       2,                                // size : U+V => 2
@@ -348,7 +348,7 @@ int main(){
                 
                 // 3rd attribute buffer: UVs
                 glEnableVertexAttribArray(2);
-                glBindBuffer(GL_ARRAY_BUFFER, meshes[j].getNormalBuffer());
+                glBindBuffer(GL_ARRAY_BUFFER, (*pMeshes)[j].getNormalBuffer());
                 glVertexAttribPointer(
                                       2,                                // attribute
                                       3,                                // size
@@ -358,7 +358,7 @@ int main(){
                                       (void*)0                          // array buffer offset
                                       );
                 
-                glDrawElements(GL_TRIANGLES, meshes[j].getNumFaces() * 3, GL_UNSIGNED_SHORT, (void*)0);
+                glDrawElements(GL_TRIANGLES, (*pMeshes)[j].getNumFaces() * 3, GL_UNSIGNED_SHORT, (void*)0);
                 //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
                 
                 glDisableVertexAttribArray(0);

@@ -3,20 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "main:cubbies.cpp">
-         <PersistentStrings>
-            <PersistentString
-               value = "meshes[0]">
-            </PersistentString>
-            <PersistentString
-               value = "j">
-            </PersistentString>
-            <PersistentString
-               value = "meshes.__begin_[j]">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "loadWorld(char const*, std::__1::vector&lt;char const*, std::__1::allocator&lt;char const*&gt; &gt;&amp;, std::__1::vector&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tmat4x4&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;):cubbies.cpp">
          <PersistentStrings>
             <PersistentString
