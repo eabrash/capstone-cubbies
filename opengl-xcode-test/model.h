@@ -12,6 +12,7 @@ public:
     void setScale(glm::mat4 newScale);
     std::vector<GLuint> getTextures();
     int getNumMeshes();
+    bool collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r);
 private:
     std::vector<Mesh> modelMeshes;
     glm::mat4 translation;

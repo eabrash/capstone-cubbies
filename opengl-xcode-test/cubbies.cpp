@@ -47,49 +47,49 @@
 
 // Not yet tested. Must figure out where to calculate the bounding boxes using this function.
 
-void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, glm::vec3 &minBound, glm::vec3 &maxBound)
-{
-    glm::vec3 mins = verticesOfModel[0];
-    glm::vec3 maxes = verticesOfModel[0];
-    
-    for (int i = 0; i < verticesOfModel.size(); i++)
-    {
-        glm::vec3 vertexInWorld = (modelMatrix * glm::vec4(verticesOfModel[i],0));
-        
-        if (vertexInWorld.x > maxes.x)
-        {
-            maxes.x = vertexInWorld.x;
-        }
-        
-        if (vertexInWorld.y > maxes.y)
-        {
-            maxes.y = vertexInWorld.y;
-        }
-        
-        if (vertexInWorld.z > maxes.z)
-        {
-            maxes.z = vertexInWorld.z;
-        }
-        
-        if (vertexInWorld.x < mins.x)
-        {
-            mins.x = vertexInWorld.x;
-        }
-        
-        if (vertexInWorld.y < mins.y)
-        {
-            mins.y = vertexInWorld.y;
-        }
-        
-        if (vertexInWorld.z < mins.z)
-        {
-            mins.z = vertexInWorld.z;
-        }
-    }
-    
-    minBound = mins;
-    maxBound = maxes;
-}
+//void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, glm::vec3 &minBound, glm::vec3 &maxBound)
+//{
+//    glm::vec3 mins = verticesOfModel[0];
+//    glm::vec3 maxes = verticesOfModel[0];
+//    
+//    for (int i = 0; i < verticesOfModel.size(); i++)
+//    {
+//        glm::vec3 vertexInWorld = (modelMatrix * glm::vec4(verticesOfModel[i],0));
+//        
+//        if (vertexInWorld.x > maxes.x)
+//        {
+//            maxes.x = vertexInWorld.x;
+//        }
+//        
+//        if (vertexInWorld.y > maxes.y)
+//        {
+//            maxes.y = vertexInWorld.y;
+//        }
+//        
+//        if (vertexInWorld.z > maxes.z)
+//        {
+//            maxes.z = vertexInWorld.z;
+//        }
+//        
+//        if (vertexInWorld.x < mins.x)
+//        {
+//            mins.x = vertexInWorld.x;
+//        }
+//        
+//        if (vertexInWorld.y < mins.y)
+//        {
+//            mins.y = vertexInWorld.y;
+//        }
+//        
+//        if (vertexInWorld.z < mins.z)
+//        {
+//            mins.z = vertexInWorld.z;
+//        }
+//    }
+//
+//    minBound = mins;
+//    maxBound = maxes;
+//}
 
 
 void updateCameraPosition(GLFWwindow *window, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, float step, float angle)
@@ -284,11 +284,26 @@ int main(){
         // Move forward or back
         // Projection of vector onto plane explanation: https://www.maplesoft.com/support/help/Maple/view.aspx?path=MathApps/ProjectionOfVectorOntoPlane
         
+        glm::vec3 oldCamera = glm::vec3(0.0f, 5.0f, 6.0f);
+        glm::vec3 oldP = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
+        glm::vec3 oldQ = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
+        glm::vec3 oldR = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
         
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS ||
-            glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             updateCameraPosition(window, camera, p, q, r, step, angle);
+        }
+        
+        for (int i = 0; i < numModels; i++)
+        {
+            if (models[i]->collidedWithPlayer(camera, p, q, r))
+            {
+                camera = oldCamera;
+                p = oldP;
+                q = oldQ;
+                r = oldR;
+                break;
+            }
         }
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
