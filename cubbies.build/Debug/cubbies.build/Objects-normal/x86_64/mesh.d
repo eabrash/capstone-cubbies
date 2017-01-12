@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/cubbies.cpp \
+  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/mesh.cpp \
   /usr/local/include/GL/glew.h /usr/local/include/GLFW/glfw3.h \
   /usr/local/include/glm/glm.hpp \
   /usr/local/include/glm/detail/_fixes.hpp \
@@ -98,7 +98,7 @@ dependencies: \
   /usr/local/include/glm/gtx/transform.inl \
   /usr/local/include/glm/gtx/rotate_vector.hpp \
   /usr/local/include/glm/gtx/rotate_vector.inl \
-  /usr/local/include/FreeImage.h /usr/local/include/assimp/Importer.hpp \
+  /usr/local/include/assimp/Importer.hpp \
   /usr/local/include/assimp/types.h /usr/local/include/assimp/defs.h \
   /usr/local/include/assimp/vector3.h \
   /usr/local/include/assimp/./Compiler/pushpack1.h \
@@ -120,8 +120,4 @@ dependencies: \
   /usr/local/include/assimp/material.inl \
   /usr/local/include/assimp/anim.h /usr/local/include/assimp/metadata.h \
   /usr/local/include/assimp/postprocess.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/shaderprogram.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/worldloader.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/imageloader.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/modelloader_assimp.h \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/mesh.h
