@@ -14,6 +14,7 @@
 		3770D9531E26C3A70064F1F3 /* imageloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3770D9521E26C3A70064F1F3 /* imageloader.cpp */; };
 		3770D9561E26CE0D0064F1F3 /* modelloader_assimp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3770D9551E26CE0D0064F1F3 /* modelloader_assimp.cpp */; };
 		3770D9601E2703740064F1F3 /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3770D95F1E2703740064F1F3 /* mesh.cpp */; };
+		3770D9631E2704500064F1F3 /* model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3770D9621E2704500064F1F3 /* model.cpp */; };
 		3792F6C91E1AFC890019370B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6C81E1AFC890019370B /* OpenGL.framework */; };
 		3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */; };
 		3792F6CD1E1AFD830019370B /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */; };
@@ -47,6 +48,8 @@
 		3770D9571E26CEA70064F1F3 /* modelloader_assimp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = modelloader_assimp.h; sourceTree = "<group>"; };
 		3770D95D1E2703500064F1F3 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
 		3770D95F1E2703740064F1F3 /* mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
+		3770D9611E27043A0064F1F3 /* model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = model.h; sourceTree = "<group>"; };
+		3770D9621E2704500064F1F3 /* model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = model.cpp; sourceTree = "<group>"; };
 		3792F6BE1E1AF9E80019370B /* cubbies */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cubbies; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6C81E1AFC890019370B /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.0.0.dylib; path = ../../../../usr/local/lib/libGLEW.2.0.0.dylib; sourceTree = "<group>"; };
@@ -111,6 +114,8 @@
 				3770D9571E26CEA70064F1F3 /* modelloader_assimp.h */,
 				3770D95D1E2703500064F1F3 /* mesh.h */,
 				3770D95F1E2703740064F1F3 /* mesh.cpp */,
+				3770D9611E27043A0064F1F3 /* model.h */,
+				3770D9621E2704500064F1F3 /* model.cpp */,
 			);
 			path = "opengl-xcode-test";
 			sourceTree = "<group>";
@@ -172,6 +177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3792F6D71E1B07680019370B /* cubbies.cpp in Sources */,
+				3770D9631E2704500064F1F3 /* model.cpp in Sources */,
 				3770D9501E26BED00064F1F3 /* worldloader.cpp in Sources */,
 				3770D9601E2703740064F1F3 /* mesh.cpp in Sources */,
 				3770D9531E26C3A70064F1F3 /* imageloader.cpp in Sources */,
