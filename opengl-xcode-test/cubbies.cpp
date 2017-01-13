@@ -273,7 +273,7 @@ int main(){
     glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 5.5f, 6.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 5.5f, 0.0f);
     glm::vec3 p = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
     glm::vec3 q = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
     glm::vec3 r = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front

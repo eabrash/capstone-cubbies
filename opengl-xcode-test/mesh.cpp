@@ -57,54 +57,74 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
 //    glm::vec3 minsWorldspace = objectToWorldspace * glm::vec4(minsObjectSpace,0);
 //    glm::vec3 maxesWorldspace = objectToWorldspace * glm::vec4(maxesObjectSpace,0);
     
-    glm::vec3 p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
-    glm::vec3 p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
-    glm::vec3 p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
+    glm::vec3 p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1);
+    glm::vec3 p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    glm::vec3 p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
     
     planeNormals[0] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[0] = p1;
     
-    p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
-    p2 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
-    p3 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1);
+    p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    
+    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[1] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[1] = p1;
     
-    p1 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
-    p2 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
-    p3 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
+    p1 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[2] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[2] = p1;
     
-    p1 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
-    p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
-    p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
+    p1 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[3] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[3] = p1;
     
-    p1 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
-    p2 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
-    p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[4] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[4] = p1;
     
-    p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
-    p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
-    p3 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    
+    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[5] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[5] = p1;
     
-    std::cout << "PLANE NORMALS: \n";
+    //std::cout << "PLANE NORMALS: \n";
     
     for (int i = 0; i < 6; i++)
     {
-        //planeNormals[i] = glm::normalize(glm::vec3(objectToWorldspace * glm::vec4(planeNormals[i], 1)));
-        std::cout << planeNormals[i].x << " " << planeNormals[i].y << " " << planeNormals[i].z << "\n";
+        //planeNormals[i] = objectToWorldspace * glm::vec4(planeNormals[i], 1);
+        //std::cout << planeNormals[i].x << " " << planeNormals[i].y << " " << planeNormals[i].z << "\n";
     }
     
     for (int i = 0; i < length; i++)

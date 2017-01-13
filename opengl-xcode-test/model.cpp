@@ -50,7 +50,7 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
     
     glm::vec3 boundingBox[8];
     
-    glm::vec3 mins = glm::vec3(-0.125, -5, -0.125);
+    glm::vec3 mins = glm::vec3(-0.125, -4.6, -0.125);
     glm::vec3 maxes = glm::vec3(0.125, 0.125, 0.125);
     
     boundingBox[0] = glm::vec3(mins.x, maxes.y, mins.z);
@@ -73,18 +73,19 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
     cameraToWorldspace[2] = glm::vec4(rFlat, 0);
     cameraToWorldspace[3] = glm::vec4(camera, 1);
     
-    //std::cout << "CAMERA BOUNDING BOX:\n";
+    std::cout << "CAMERA BOUNDING BOX:\n";
     
     for (int i = 0; i < 8; i++)
     {
         boundingBox[i] = cameraToWorldspace * glm::vec4(boundingBox[i].x, boundingBox[i].y, boundingBox[i].z, 1);
-        //std::cout << boundingBox[i].x << " " << boundingBox[i].y << " " << boundingBox[i].z << "\n";
+        std::cout << boundingBox[i].x << " " << boundingBox[i].y << " " << boundingBox[i].z << "\n";
     }
     
     // for each mesh in the object
     
     for (int i = 0; i < modelMeshes.size(); i++)
     {
+        //std::cout << "WENT IN HERE" << "\n";
         
         // see if corners of camera bounding box penetrate the mesh bounding box (dot neg with all faces)
         // if any corner of the camera bounding box penetrates any mesh, return true (collision)
@@ -94,7 +95,6 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
             return true;
         };
             
-        // if any corner of the camera bounding box penetrates any mesh of the model, return true (collision)
     }
     
     // if we reached the end and did not detect collision with any mesh, there is no collision
