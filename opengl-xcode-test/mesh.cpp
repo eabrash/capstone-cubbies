@@ -52,51 +52,66 @@
 bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 objectToWorldspace)
 {
     glm::vec3 planeNormals[6];
+    glm::vec3 pointsOnPlanes[6];
     
-    glm::vec3 minsWorldspace = objectToWorldspace * glm::vec4(minsObjectSpace,0);
-    glm::vec3 maxesWorldspace = objectToWorldspace * glm::vec4(maxesObjectSpace,0);
+//    glm::vec3 minsWorldspace = objectToWorldspace * glm::vec4(minsObjectSpace,0);
+//    glm::vec3 maxesWorldspace = objectToWorldspace * glm::vec4(maxesObjectSpace,0);
     
-    glm::vec3 p1 = glm::vec3(minsWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
-    glm::vec3 p2 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
-    glm::vec3 p3 = glm::vec3(maxesWorldspace.x, maxesWorldspace.y, maxesWorldspace.z);
+    glm::vec3 p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    glm::vec3 p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    glm::vec3 p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
     
     planeNormals[0] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[0] = p1;
     
-    p1 = glm::vec3(minsWorldspace.x, minsWorldspace.y, minsWorldspace.z);
-    p2 = glm::vec3(minsWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
-    p3 = glm::vec3(minsWorldspace.x, maxesWorldspace.y, maxesWorldspace.z);
+    p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
+    p2 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    p3 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
     
     planeNormals[1] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[1] = p1;
     
-    p1 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, minsWorldspace.z);
-    p2 = glm::vec3(minsWorldspace.x, minsWorldspace.y, minsWorldspace.z);
-    p3 = glm::vec3(minsWorldspace.x, maxesWorldspace.y, minsWorldspace.z);
+    p1 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
+    p2 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
+    p3 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
     
     planeNormals[2] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[2] = p1;
     
-    p1 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
-    p2 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, minsWorldspace.z);
-    p3 = glm::vec3(maxesWorldspace.x, maxesWorldspace.y, minsWorldspace.z);
+    p1 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
+    p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
     
     planeNormals[3] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[3] = p1;
     
-    p1 = glm::vec3(minsWorldspace.x, maxesWorldspace.y, maxesWorldspace.z);
-    p2 = glm::vec3(maxesWorldspace.x, maxesWorldspace.y, maxesWorldspace.z);
-    p3 = glm::vec3(maxesWorldspace.x, maxesWorldspace.y, minsWorldspace.z);
+    p1 = glm::vec3(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
+    p2 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z);
+    p3 = glm::vec3(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z);
     
     planeNormals[4] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[4] = p1;
     
-    p1 = glm::vec3(minsWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
-    p2 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, minsWorldspace.z);
-    p3 = glm::vec3(maxesWorldspace.x, minsWorldspace.y, maxesWorldspace.z);
+    p1 = glm::vec3(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
+    p2 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z);
+    p3 = glm::vec3(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z);
     
     planeNormals[5] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
+    pointsOnPlanes[5] = p1;
+    
+    std::cout << "PLANE NORMALS: \n";
+    
+    for (int i = 0; i < 6; i++)
+    {
+        //planeNormals[i] = glm::normalize(glm::vec3(objectToWorldspace * glm::vec4(planeNormals[i], 1)));
+        std::cout << planeNormals[i].x << " " << planeNormals[i].y << " " << planeNormals[i].z << "\n";
+    }
     
     for (int i = 0; i < length; i++)
     {
-        if (glm::dot(vertices[i], planeNormals[0]) < 0 && glm::dot(vertices[i], planeNormals[1]) < 0 &&
-            glm::dot(vertices[i], planeNormals[2]) < 0 && glm::dot(vertices[i], planeNormals[3]) < 0 &&
-            glm::dot(vertices[i], planeNormals[4]) < 0 && glm::dot(vertices[i], planeNormals[5]) < 0)
+        if (glm::dot((vertices[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((vertices[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
+            glm::dot((vertices[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((vertices[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
+            glm::dot((vertices[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((vertices[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
         {
             return true;
         }

@@ -273,7 +273,7 @@ int main(){
     glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
     
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 5.0f, 6.0f);
+    glm::vec3 camera = glm::vec3(0.0f, 5.5f, 6.0f);
     glm::vec3 p = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
     glm::vec3 q = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
     glm::vec3 r = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
@@ -284,10 +284,10 @@ int main(){
         // Move forward or back
         // Projection of vector onto plane explanation: https://www.maplesoft.com/support/help/Maple/view.aspx?path=MathApps/ProjectionOfVectorOntoPlane
         
-        glm::vec3 oldCamera = glm::vec3(0.0f, 5.0f, 6.0f);
-        glm::vec3 oldP = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
-        glm::vec3 oldQ = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
-        glm::vec3 oldR = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
+        glm::vec3 oldCamera = camera;
+        glm::vec3 oldP = p;       // +Y-axis of camera (basis vector) - up
+        glm::vec3 oldQ = q;       // +X-axis of camera (basis vector) - right
+        glm::vec3 oldR = r;      // -Z-axis of camera (basis vector) - front
         
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {

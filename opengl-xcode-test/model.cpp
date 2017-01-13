@@ -50,8 +50,8 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
     
     glm::vec3 boundingBox[8];
     
-    glm::vec3 mins = glm::vec3(-1, -5, -0.5);
-    glm::vec3 maxes = glm::vec3(1, 1, 0.5);
+    glm::vec3 mins = glm::vec3(-0.125, -5, -0.125);
+    glm::vec3 maxes = glm::vec3(0.125, 0.125, 0.125);
     
     boundingBox[0] = glm::vec3(mins.x, maxes.y, mins.z);
     boundingBox[1] = glm::vec3(maxes.x, maxes.y, mins.z);
@@ -61,6 +61,25 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
     boundingBox[5] = glm::vec3(maxes.x, mins.y, maxes.z);
     boundingBox[6] = glm::vec3(mins.x, mins.y, maxes.z);
     boundingBox[7] = glm::vec3(mins.x, mins.y, mins.z);
+    
+    glm::vec3 pFlat = glm::normalize(glm::vec3(p.x, 0, p.z));
+    glm::vec3 qFlat = glm::vec3(0,1,0);
+    glm::vec3 rFlat = glm::normalize(glm::vec3(r.x, 0, r.z));
+    
+    glm::mat4 cameraToWorldspace;
+    
+    cameraToWorldspace[0] = glm::vec4(pFlat, 0);
+    cameraToWorldspace[1] = glm::vec4(qFlat, 0);
+    cameraToWorldspace[2] = glm::vec4(rFlat, 0);
+    cameraToWorldspace[3] = glm::vec4(camera, 1);
+    
+    //std::cout << "CAMERA BOUNDING BOX:\n";
+    
+    for (int i = 0; i < 8; i++)
+    {
+        boundingBox[i] = cameraToWorldspace * glm::vec4(boundingBox[i].x, boundingBox[i].y, boundingBox[i].z, 1);
+        //std::cout << boundingBox[i].x << " " << boundingBox[i].y << " " << boundingBox[i].z << "\n";
+    }
     
     // for each mesh in the object
     
