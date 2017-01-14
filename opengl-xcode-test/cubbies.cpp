@@ -219,7 +219,7 @@ int main(){
     
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Input mode on window is to detect keystrokes
     
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     
     // Turn on culling; cull triangles with their back facing the camera
     glEnable(GL_CULL_FACE);
@@ -257,9 +257,13 @@ int main(){
     std::vector<glm::mat4> translations;
     std::vector<glm::mat4> scales;
     std::vector<glm::mat4> rotations;
+    std::vector<bool> movables;
     
-    loadWorld("world1.txt", filenames, translations, scales, rotations);
+    loadWorld("world1.txt", filenames, translations, scales, rotations, movables);
+
     int numModels = filenames.size();
+    
+    int focalModel = -1; // Negative number means that no model is selected
     
     // Read in each .obj file to create a model. Mesh objects from each .obj file are stored inside the
     // model object in a std::vector.
@@ -269,7 +273,7 @@ int main(){
     std::vector<Model*> models;
     for (int i = 0; i < numModels; i++)
     {
-        Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i]);
+        Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i]);
         models.push_back(newModel);
         numMeshes += newModel->getNumMeshes();
     }
@@ -297,7 +301,14 @@ int main(){
         
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            updateCameraPosition(window, camera, p, q, r, step, angle);
+            if (focalModel < 0)
+            {
+                updateCameraPosition(window, camera, p, q, r, step, angle);  // Camera is moved
+            }
+            else
+            {
+                // Adjust the position of the focal object
+            }
         }
         
         for (int i = 0; i < numModels; i++)
@@ -311,10 +322,7 @@ int main(){
                 break;
             }
         }
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
-        
-        glEnable(GL_DEPTH_TEST);
+    
         
         glm::mat4 viewMatrix = glm::lookAt(
                                            camera, // position of camera
@@ -330,9 +338,16 @@ int main(){
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
         
+        // From opengl-tutorial.org, "Picking with an OpenGL Hack"
+        // http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
+        
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
         {
             glUseProgram(PickingProgramID); // Use the shader program to do the drawing
+            
+            glClearColor(1.0, 1.0, 1.0, 0.0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
+            glEnable(GL_DEPTH_TEST);
             
             for (int i = 0; i < numModels; i++)
             {
@@ -386,7 +401,7 @@ int main(){
             
             glfwGetCursorPos(window, &xPos, &yPos);
             
-            std::cout << "xPos: " << xPos << ", yPos: " << yPos << "\n";
+            //std::cout << "xPos: " << xPos << ", yPos: " << yPos << "\n";
             
 //            double adjustedXPos = (2.0f * xPos) / WINDOW_WIDTH - 1.0f;
 //            double adjustedYPos = 1.0f - (2.0f * yPos) / WINDOW_HEIGHT;
@@ -394,16 +409,31 @@ int main(){
             double adjustedXPos = xPos*2-1;
             double adjustedYPos = (WINDOW_HEIGHT-yPos)*2-1;
             
-            std::cout << "adjustedXPos = " << adjustedXPos << ", adjustedYPos = " << adjustedYPos << "\n";
+            //std::cout << "adjustedXPos = " << adjustedXPos << ", adjustedYPos = " << adjustedYPos << "\n";
             
             glReadPixels(adjustedXPos, adjustedYPos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColorData);
             
             int modelNumber = pixelColorData[0] + pixelColorData[1]*256 + pixelColorData[2]*256*256;
             std::cout << modelNumber << " was clicked\n";
             
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+            if (modelNumber != 0xFFFFFF && models[modelNumber]->isMovable())
+            {
+                focalModel = modelNumber; // Arrows now move selected model
+            }
+            else
+            {
+                focalModel = -1; // Clicked off - arrows now move player
+            }
+            
+//            glfwSwapBuffers(window);
+//            glfwPollEvents();
         }
+        
+        // Dark blue background
+        glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+        // Re-clear the screen for real rendering
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
         
         glUseProgram(ProgramID); // Use the shader program to do the drawing
         

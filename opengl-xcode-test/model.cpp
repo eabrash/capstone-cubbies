@@ -44,6 +44,16 @@
 //};
 
 
+bool Model::isMovable()
+{
+    return movable;
+}
+
+void Model::setMovable(bool isMovable)
+{
+    movable = isMovable;
+}
+
 bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
 {
     // get the corners of the camera bounding box
@@ -146,12 +156,13 @@ std::vector<GLuint> Model::getTextures()
     return textures;
 }
 
-Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation)
+Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, bool movableStatus)
 {
     
     translation = inputTranslation;
     scale = inputScale;
     rotation = inputRotation;
+    movable = movableStatus;
     
     Assimp::Importer importer;
     
