@@ -197,8 +197,11 @@ int main(){
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
+    const int WINDOW_HEIGHT = 600;
+    const int WINDOW_WIDTH = 600;
+    
     GLFWwindow * window = nullptr;
-    window = glfwCreateWindow( 500, 500, "Cubbies", NULL, NULL);
+    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Cubbies", NULL, NULL);
     if (window == nullptr)
     {
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
@@ -338,6 +341,8 @@ int main(){
                 int g = (i & 0x0000FF00) >>  8; // Bit mask: take next least sig 2 bits and make be R
                 int b = (i & 0x00FF0000) >> 16; // Bit mask: take second most sig 2 bits and make be R
                 
+                std::cout << "r: " << r << ", g: " << g << ", b: " << b << "\n";
+                
                 std::vector<Mesh> *pMeshes = models[i]->getMeshes();
 
                 glm::mat4 myModelMatrix = models[i]->getTranslation() * models[i]->getRotation() * models[i]->getScale();
@@ -378,11 +383,22 @@ int main(){
             
             double xPos = 0;
             double yPos = 0;
+            
             glfwGetCursorPos(window, &xPos, &yPos);
             
-            glReadPixels(xPos, yPos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColorData);
+            std::cout << "xPos: " << xPos << ", yPos: " << yPos << "\n";
             
-            int modelNumber = pixelColorData[0] + pixelColorData[1]*255 + pixelColorData[2]*255*255;
+//            double adjustedXPos = (2.0f * xPos) / WINDOW_WIDTH - 1.0f;
+//            double adjustedYPos = 1.0f - (2.0f * yPos) / WINDOW_HEIGHT;
+            
+            double adjustedXPos = xPos*2-1;
+            double adjustedYPos = (WINDOW_HEIGHT-yPos)*2-1;
+            
+            std::cout << "adjustedXPos = " << adjustedXPos << ", adjustedYPos = " << adjustedYPos << "\n";
+            
+            glReadPixels(adjustedXPos, adjustedYPos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColorData);
+            
+            int modelNumber = pixelColorData[0] + pixelColorData[1]*256 + pixelColorData[2]*256*256;
             std::cout << modelNumber << " was clicked\n";
             
             glfwSwapBuffers(window);

@@ -68,9 +68,9 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
     p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1);
     p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
     
-    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
-    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
-    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
+//    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+//    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+//    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[1] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[1] = p1;
@@ -79,9 +79,9 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
     p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
     p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
     
-    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
-    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
-    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
+//    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+//    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+//    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[2] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[2] = p1;
@@ -90,9 +90,9 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
     p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
     p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
     
-    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
-    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
-    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
+//    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+//    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+//    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[3] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[3] = p1;
@@ -101,9 +101,9 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
     p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
     p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
     
-    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
-    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
-    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
+//    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+//    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+//    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[4] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[4] = p1;
@@ -112,9 +112,9 @@ bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 
     p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
     p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
     
-    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
-    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
-    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
+//    std::cout << p1.x << " " << p1.y << " " << p1.z << "\n";
+//    std::cout << p2.x << " " << p2.y << " " << p2.z << "\n";
+//    std::cout << p3.x << " " << p3.y << " " << p3.z << "\n";
     
     planeNormals[5] = glm::normalize(glm::cross((p2-p1), (p3-p2)));
     pointsOnPlanes[5] = p1;
