@@ -227,13 +227,13 @@ int main(){
     glDepthFunc(GL_LESS);   // Keep the fragment w/shorter distance to camera
     
     // Make the VAO
-    
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);     // This is the VAO
     
     // Create and compile our GLSL program from the shaders
     GLuint ProgramID = LoadShaders("VertexShader.txt", "FragmentShader.txt");
+    GLuint PickingProgramID = LoadShaders("PickingVertexShader.txt", "PickingFragmentShader.txt");
     
     // This section is getting handles for uniforms in the shader
     GLuint MatrixID = glGetUniformLocation(ProgramID, "MY_MATRIX");
@@ -243,6 +243,9 @@ int main(){
     GLuint CameraPositionID = glGetUniformLocation(ProgramID, "CAMERA_POSITION_WORLDSPACE");
     GLuint TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
     //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(ProgramID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
+    
+    GLuint PickingMatrixID = glGetUniformLocation(PickingProgramID, "MY_PICKING_MATRIX");
+    GLuint PickingColorID = glGetUniformLocation(PickingProgramID, "MY_PICKING_COLOR");
     
     // Load the file that tells us what models we will have in the world and what their initial
     // transformations will be.
@@ -310,8 +313,6 @@ int main(){
         
         glEnable(GL_DEPTH_TEST);
         
-        glUseProgram(ProgramID); // Use the shader program to do the drawing
-        
         glm::mat4 viewMatrix = glm::lookAt(
                                            camera, // position of camera
                                            camera + r, // where to look
@@ -325,6 +326,70 @@ int main(){
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
+        
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
+        {
+            glUseProgram(PickingProgramID); // Use the shader program to do the drawing
+            
+            for (int i = 0; i < numModels; i++)
+            {
+                // Convert "i", the integer mesh ID, into an RGB color
+                int r = (i & 0x000000FF) >>  0; // Bit mask: take least sig 2 bits and make be R
+                int g = (i & 0x0000FF00) >>  8; // Bit mask: take next least sig 2 bits and make be R
+                int b = (i & 0x00FF0000) >> 16; // Bit mask: take second most sig 2 bits and make be R
+                
+                std::vector<Mesh> *pMeshes = models[i]->getMeshes();
+
+                glm::mat4 myModelMatrix = models[i]->getTranslation() * models[i]->getRotation() * models[i]->getScale();
+                glm::mat4 mymatrix = projectionMatrix * viewMatrix * myModelMatrix;
+                
+                glUniformMatrix4fv(PickingMatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending matrix to the shader
+                glUniform4f(PickingColorID, r/255.0f, g/255.0f, b/255.0f, 1.0f);
+                
+                for (int j = 0; j < models[i]->getNumMeshes(); j++)
+                {
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*pMeshes)[j].getIndexBuffer());
+                    
+                    // 1st attribute buffer: locations of vertices
+                    glEnableVertexAttribArray(0);
+                    glBindBuffer(GL_ARRAY_BUFFER, (*pMeshes)[j].getVertexBuffer());
+                    glVertexAttribPointer(
+                                          0,
+                                          3,                                // size
+                                          GL_FLOAT,                         // type
+                                          GL_FALSE,                         // normalized?
+                                          0,                                // stride
+                                          (void*)0                          // array buffer offset
+                                          );
+                    
+                    glDrawElements(GL_TRIANGLES, (*pMeshes)[j].getNumFaces() * 3, GL_UNSIGNED_SHORT, (void*)0);
+                    //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+                    
+                    glDisableVertexAttribArray(0);
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                }
+            }
+            
+            glFlush();
+            glFinish();
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Something about how glReadPixels deals with "memory alignment:
+            
+            unsigned char pixelColorData[4];
+            
+            double xPos = 0;
+            double yPos = 0;
+            glfwGetCursorPos(window, &xPos, &yPos);
+            
+            glReadPixels(xPos, yPos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColorData);
+            
+            int modelNumber = pixelColorData[0] + pixelColorData[1]*255 + pixelColorData[2]*255*255;
+            std::cout << modelNumber << " was clicked\n";
+            
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+        
+        glUseProgram(ProgramID); // Use the shader program to do the drawing
         
         for (int i = 0; i < numModels; i++)
         {
