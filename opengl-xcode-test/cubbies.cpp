@@ -32,64 +32,92 @@
 #include "mesh.h"
 #include "model.h"
 
-//class BoundingBox
-//{
-//public:
-//    BoundingBox(std::vector<glm::vec3> vertices);
-//    ~BoundingBox();
-//    glm::vec3 getMin();
-//    glm::vec3 getMax();
-//private:
-//    glm::vec3 min;
-//    glm::vec3 max;
-//};
+void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera)
+{
+    // Move object forward/backward
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        glm::mat4 rotation = focalModel->getRotation();
+        glm::mat4 scale = focalModel->getScale();
+        
+        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        
+        glm::vec3 modelToCamera = camera - position;
+        
+        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
 
+        float zStep = step * modelToCamera.z/hypotenuse;
+        float xStep = step * modelToCamera.x/hypotenuse;
+        
+        translation[3][0] = translation[3][0] - xStep;
+        translation[3][2] = translation[3][2] - zStep;
+        
+        focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        glm::mat4 rotation = focalModel->getRotation();
+        glm::mat4 scale = focalModel->getScale();
+        
+        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        
+        glm::vec3 modelToCamera = camera - position;
+        
+        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        
+        float zStep = step * modelToCamera.z/hypotenuse;
+        float xStep = step * modelToCamera.x/hypotenuse;
+        
+        translation[3][0] = translation[3][0] + xStep;
+        translation[3][2] = translation[3][2] + zStep;
+        
+        focalModel->setTranslation(translation);
+    }
+    
+    //Strafe sideways
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        glm::mat4 rotation = focalModel->getRotation();
+        glm::mat4 scale = focalModel->getScale();
+        
+        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        
+        glm::vec3 modelToCamera = glm::abs(camera - position);
+        
+        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        
+        float zStep = step * modelToCamera.z/hypotenuse;
+        float xStep = step * modelToCamera.x/hypotenuse;
+        
+        translation[3][0] = translation[3][0] - zStep;
+        translation[3][2] = translation[3][2] + xStep;
+        
+        focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        glm::mat4 rotation = focalModel->getRotation();
+        glm::mat4 scale = focalModel->getScale();
+        
+        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        
+        glm::vec3 modelToCamera = glm::abs(camera - position);
+        
+        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        
+        float zStep = step * modelToCamera.z/hypotenuse;
+        float xStep = step * modelToCamera.x/hypotenuse;
+        
+        translation[3][0] = translation[3][0] + zStep;
+        translation[3][2] = translation[3][2] - xStep;
 
-// Not yet tested. Must figure out where to calculate the bounding boxes using this function.
-
-//void getAABB(glm::mat4 &modelMatrix, std::vector<glm::vec3> &verticesOfModel, glm::vec3 &minBound, glm::vec3 &maxBound)
-//{
-//    glm::vec3 mins = verticesOfModel[0];
-//    glm::vec3 maxes = verticesOfModel[0];
-//    
-//    for (int i = 0; i < verticesOfModel.size(); i++)
-//    {
-//        glm::vec3 vertexInWorld = (modelMatrix * glm::vec4(verticesOfModel[i],0));
-//        
-//        if (vertexInWorld.x > maxes.x)
-//        {
-//            maxes.x = vertexInWorld.x;
-//        }
-//        
-//        if (vertexInWorld.y > maxes.y)
-//        {
-//            maxes.y = vertexInWorld.y;
-//        }
-//        
-//        if (vertexInWorld.z > maxes.z)
-//        {
-//            maxes.z = vertexInWorld.z;
-//        }
-//        
-//        if (vertexInWorld.x < mins.x)
-//        {
-//            mins.x = vertexInWorld.x;
-//        }
-//        
-//        if (vertexInWorld.y < mins.y)
-//        {
-//            mins.y = vertexInWorld.y;
-//        }
-//        
-//        if (vertexInWorld.z < mins.z)
-//        {
-//            mins.z = vertexInWorld.z;
-//        }
-//    }
-//
-//    minBound = mins;
-//    maxBound = maxes;
-//}
+        focalModel->setTranslation(translation);
+    }
+}
 
 
 void updateCameraPosition(GLFWwindow *window, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, float step, float angle)
@@ -178,7 +206,6 @@ void updateCameraPosition(GLFWwindow *window, glm::vec3 &camera, glm::vec3 &p, g
         p = glm::normalize(rotation*p);
         r = glm::normalize(rotation*r);
     }
-
 }
 
 int main(){
@@ -307,7 +334,7 @@ int main(){
             }
             else
             {
-                // Adjust the position of the focal object
+                updateObjectPosition(window, models[focalModel], step, angle, camera);
             }
         }
         
