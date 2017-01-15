@@ -35,8 +35,12 @@
 
 // Move a selected object F/B or R/L
 
-void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
+void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
 {
+    glm::mat4 originalTranslation = focalModel->getTranslation();
+    glm::mat4 originalRotation = focalModel->getRotation();
+    glm::mat4 originalScale = focalModel->getScale();
+    
     // Move object forward/backward
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -105,6 +109,35 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
         translation[3][2] = translation[3][2] + xStep;
 
         focalModel->setTranslation(translation);
+    }
+    
+    // Check if the movement caused the object to collide with either the camera or the other objects
+    // in the scene - reset its position if so
+    
+    // With the camera
+    
+    if (focalModel->collidedWithPlayer(camera, p, q, r))
+    {
+        focalModel->setTranslation(originalTranslation);
+        focalModel->setRotation(originalRotation);
+        focalModel->setScale(originalScale);
+    }
+
+    // With other objects
+    
+    for (int i = 0; i < models.size(); i++)
+    {
+        if (i != focalModelIndex)
+        {
+            if (models[i]->collidedWithObject(focalModel))
+            {
+                std::cout << "COLLISION DETECTED with model" << i << "\n";
+                focalModel->setTranslation(originalTranslation);
+                focalModel->setRotation(originalRotation);
+                focalModel->setScale(originalScale);
+                break;
+            }
+        }
     }
 }
 
@@ -324,7 +357,7 @@ int main(){
             }
             else
             {
-                updateObjectPosition(window, models[focalModel], step, angle, camera, p, q, r);
+                updateObjectPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel);
             }
         }
         

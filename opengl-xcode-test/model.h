@@ -13,6 +13,7 @@ public:
     std::vector<GLuint> getTextures();
     int getNumMeshes();
     bool collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r);
+    bool collidedWithObject(Model *object);
     bool isMovable();
     void setMovable(bool isMovable);
 private:

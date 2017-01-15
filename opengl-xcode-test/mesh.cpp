@@ -49,6 +49,16 @@
 //};
 
 
+glm::vec3 Mesh::getMinsObjectSpace()
+{
+    return minsObjectSpace;
+}
+
+glm::vec3 Mesh::getMaxesObjectSpace()
+{
+    return maxesObjectSpace;
+}
+
 bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 objectToWorldspace)
 {
     glm::vec3 planeNormals[6];

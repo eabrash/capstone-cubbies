@@ -43,6 +43,59 @@
 //    std::vector<GLuint> textures;
 //};
 
+bool Model::collidedWithObject(Model *object)
+{
+    // get the corners of the camera bounding box
+    
+    std::vector<Mesh> *pObjectMeshes = object->getMeshes();
+    
+    // For each mesh in the passed-in object...
+    
+    for (int j = 0; j < pObjectMeshes->size(); j++)
+    {
+        
+        glm::vec3 boundingBox[8];
+        
+        glm::vec3 mins = (*pObjectMeshes)[j].getMinsObjectSpace();
+        glm::vec3 maxes = (*pObjectMeshes)[j].getMaxesObjectSpace();
+        
+        boundingBox[0] = glm::vec3(mins.x, maxes.y, mins.z);
+        boundingBox[1] = glm::vec3(maxes.x, maxes.y, mins.z);
+        boundingBox[2] = glm::vec3(maxes.x, maxes.y, maxes.z);
+        boundingBox[3] = glm::vec3(mins.x, maxes.y, maxes.z);
+        boundingBox[4] = glm::vec3(maxes.x, mins.y, mins.z);
+        boundingBox[5] = glm::vec3(maxes.x, mins.y, maxes.z);
+        boundingBox[6] = glm::vec3(mins.x, mins.y, maxes.z);
+        boundingBox[7] = glm::vec3(mins.x, mins.y, mins.z);
+        
+        glm::mat4 objectToWorldspace = object->getTranslation() * object->getRotation() * object->getScale();
+        
+        std::cout << "OBJECT BOUNDING BOX:\n";
+        
+        for (int i = 0; i < 8; i++)
+        {
+            boundingBox[i] = objectToWorldspace * glm::vec4(boundingBox[i].x, boundingBox[i].y, boundingBox[i].z, 1);
+            std::cout << boundingBox[i].x << " " << boundingBox[i].y << " " << boundingBox[i].z << "\n";
+        }
+        
+        // for each mesh in the "this" object...
+        
+        for (int i = 0; i < modelMeshes.size(); i++)
+        {
+            // see if corners of camera bounding box penetrate the mesh bounding box (dot neg with all faces)
+            // if any corner of the camera bounding box penetrates any mesh, return true (collision)
+            
+            if (modelMeshes[i].intersectsWithBoundingBox(boundingBox, 8, translation*rotation*scale))
+            {
+                return true;
+            };
+        }
+    }
+    
+    // if we reached the end and did not detect collision with any mesh, there is no collision
+    return false;
+
+}
 
 bool Model::isMovable()
 {

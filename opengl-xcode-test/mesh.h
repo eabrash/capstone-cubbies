@@ -14,6 +14,8 @@ public:
     GLuint getIndexBuffer();
     int getNumFaces();
     bool intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 objectToWorldspace);
+    glm::vec3 getMinsObjectSpace();
+    glm::vec3 getMaxesObjectSpace();
 private:
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
