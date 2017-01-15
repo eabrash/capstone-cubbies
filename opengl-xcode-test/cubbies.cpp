@@ -111,6 +111,29 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
         focalModel->setTranslation(translation);
     }
     
+    //Rotate in X-Z plane
+    
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        glm::mat4 rotation = glm::mat4();
+        
+        rotation[0] = glm::vec4(cos(-angle), 0, -sin(-angle), 0);
+        rotation[1] = glm::vec4(0, 1, 0, 0);
+        rotation[2] = glm::vec4(sin(-angle), 0, cos(-angle), 0);
+        
+        focalModel->setRotation(rotation * focalModel->getRotation());
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        glm::mat4 rotation = glm::mat4();
+        
+        rotation[0] = glm::vec4(cos(angle), 0, -sin(angle), 0);
+        rotation[1] = glm::vec4(0, 1, 0, 0);
+        rotation[2] = glm::vec4(sin(angle), 0, cos(angle), 0);
+        
+        focalModel->setRotation(rotation * focalModel->getRotation());
+    }
+    
     // Check if the movement caused the object to collide with either the camera or the other objects
     // in the scene - reset its position if so
     
