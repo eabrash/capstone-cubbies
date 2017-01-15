@@ -13,6 +13,7 @@ out vec3 color;
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
 uniform vec3 LIGHT_POSITION_WORLDSPACE;
+uniform bool IN_FOCUS;
 
 void main()
 {
@@ -21,7 +22,16 @@ void main()
 
     vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
 
-    vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+    vec3 MaterialAmbientColor;
+
+    if (IN_FOCUS)
+    {
+        MaterialAmbientColor = vec3(0.3,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+    }
+    else
+    {
+        MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+    }
 
     vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
 

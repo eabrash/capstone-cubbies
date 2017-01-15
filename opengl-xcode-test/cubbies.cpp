@@ -32,46 +32,43 @@
 #include "mesh.h"
 #include "model.h"
 
-void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera)
+
+// Move a selected object F/B or R/L
+
+void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
 {
     // Move object forward/backward
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
         glm::mat4 translation = focalModel->getTranslation();
-        glm::mat4 rotation = focalModel->getRotation();
-        glm::mat4 scale = focalModel->getScale();
         
-        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        //glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
         
-        glm::vec3 modelToCamera = camera - position;
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
         
-        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        float hypotenuse = glm::sqrt(inCameraDirection.x * inCameraDirection.x + inCameraDirection.z * inCameraDirection.z);
 
-        float zStep = step * modelToCamera.z/hypotenuse;
-        float xStep = step * modelToCamera.x/hypotenuse;
+        float zStep = step * inCameraDirection.z/hypotenuse;
+        float xStep = step * inCameraDirection.x/hypotenuse;
         
-        translation[3][0] = translation[3][0] - xStep;
-        translation[3][2] = translation[3][2] - zStep;
+        translation[3][0] = translation[3][0] + xStep;
+        translation[3][2] = translation[3][2] + zStep;
         
         focalModel->setTranslation(translation);
     }
     else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
         glm::mat4 translation = focalModel->getTranslation();
-        glm::mat4 rotation = focalModel->getRotation();
-        glm::mat4 scale = focalModel->getScale();
         
-        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
         
-        glm::vec3 modelToCamera = camera - position;
+        float hypotenuse = glm::sqrt(inCameraDirection.x * inCameraDirection.x + inCameraDirection.z * inCameraDirection.z);
         
-        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
-        
-        float zStep = step * modelToCamera.z/hypotenuse;
-        float xStep = step * modelToCamera.x/hypotenuse;
-        
-        translation[3][0] = translation[3][0] + xStep;
-        translation[3][2] = translation[3][2] + zStep;
+        float zStep = step * inCameraDirection.z/hypotenuse;
+        float xStep = step * inCameraDirection.x/hypotenuse;
+
+        translation[3][0] = translation[3][0] - xStep;
+        translation[3][2] = translation[3][2] - zStep;
         
         focalModel->setTranslation(translation);
     }
@@ -80,40 +77,32 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
         glm::mat4 translation = focalModel->getTranslation();
-        glm::mat4 rotation = focalModel->getRotation();
-        glm::mat4 scale = focalModel->getScale();
         
-        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
         
-        glm::vec3 modelToCamera = glm::abs(camera - position);
+        float hypotenuse = glm::sqrt(inCameraDirection.x * inCameraDirection.x + inCameraDirection.z * inCameraDirection.z);
         
-        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        float zStep = step * inCameraDirection.z/hypotenuse;
+        float xStep = step * inCameraDirection.x/hypotenuse;
         
-        float zStep = step * modelToCamera.z/hypotenuse;
-        float xStep = step * modelToCamera.x/hypotenuse;
-        
-        translation[3][0] = translation[3][0] - zStep;
-        translation[3][2] = translation[3][2] + xStep;
+        translation[3][0] = translation[3][0] + zStep;
+        translation[3][2] = translation[3][2] - xStep;
         
         focalModel->setTranslation(translation);
     }
     else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         glm::mat4 translation = focalModel->getTranslation();
-        glm::mat4 rotation = focalModel->getRotation();
-        glm::mat4 scale = focalModel->getScale();
         
-        glm::vec3 position = translation * rotation * scale * glm::vec4(0,0,0,1);
+        glm::vec3 inCameraDirection = glm::mat3(p,q,r)*glm::vec3(0,0,1);
         
-        glm::vec3 modelToCamera = glm::abs(camera - position);
+        float hypotenuse = glm::sqrt(inCameraDirection.x * inCameraDirection.x + inCameraDirection.z * inCameraDirection.z);
         
-        float hypotenuse = glm::sqrt(modelToCamera.x * modelToCamera.x + modelToCamera.z * modelToCamera.z);
+        float zStep = step * inCameraDirection.z/hypotenuse;
+        float xStep = step * inCameraDirection.x/hypotenuse;
         
-        float zStep = step * modelToCamera.z/hypotenuse;
-        float xStep = step * modelToCamera.x/hypotenuse;
-        
-        translation[3][0] = translation[3][0] + zStep;
-        translation[3][2] = translation[3][2] - xStep;
+        translation[3][0] = translation[3][0] - zStep;
+        translation[3][2] = translation[3][2] + xStep;
 
         focalModel->setTranslation(translation);
     }
@@ -272,6 +261,7 @@ int main(){
     GLuint LightPositionID = glGetUniformLocation(ProgramID, "LIGHT_POSITION_WORLDSPACE");
     GLuint CameraPositionID = glGetUniformLocation(ProgramID, "CAMERA_POSITION_WORLDSPACE");
     GLuint TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
+    GLuint FocalID = glGetUniformLocation(ProgramID, "IN_FOCUS");
     //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(ProgramID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
     
     GLuint PickingMatrixID = glGetUniformLocation(PickingProgramID, "MY_PICKING_MATRIX");
@@ -334,7 +324,7 @@ int main(){
             }
             else
             {
-                updateObjectPosition(window, models[focalModel], step, angle, camera);
+                updateObjectPosition(window, models[focalModel], step, angle, camera, p, q, r);
             }
         }
         
@@ -474,6 +464,15 @@ int main(){
             
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mymatrix[0][0]); // Sending matrix to the shader
             glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &myModelMatrix[0][0]);
+            
+            if (i == focalModel)
+            {
+                glUniform1i(FocalID, 1);
+            }
+            else
+            {
+                glUniform1i(FocalID, 0);
+            }
             
             for (int j = 0; j < models[i]->getNumMeshes(); j++)
             {
