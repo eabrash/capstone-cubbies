@@ -32,8 +32,14 @@
 #include "mesh.h"
 #include "model.h"
 
+//
 
-// Move a selected object F/B or R/L
+void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
+{
+    
+}
+
+// Move a selected floor-resting object F/B or R/L, or rotate it
 
 void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
 {
@@ -164,6 +170,7 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
     }
 }
 
+// Adjust position or orientation of camera in response to keypress
 
 void updateCameraPosition(GLFWwindow *window, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, float step, float angle)
 {
@@ -270,7 +277,7 @@ int main(){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     const int WINDOW_HEIGHT = 600;
-    const int WINDOW_WIDTH = 600;
+    const int WINDOW_WIDTH = 800;
     
     GLFWwindow * window = nullptr;
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Cubbies", NULL, NULL);
@@ -330,7 +337,7 @@ int main(){
     std::vector<glm::mat4> translations;
     std::vector<glm::mat4> scales;
     std::vector<glm::mat4> rotations;
-    std::vector<bool> movables;
+    std::vector<int> movables;
     
     loadWorld("world1.txt", filenames, translations, scales, rotations, movables);
 
@@ -380,7 +387,14 @@ int main(){
             }
             else
             {
-                updateObjectPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel);
+                if (models[focalModel]->isMovable() == 1)   // Object rests on floor
+                {
+                    updateObjectPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel);
+                }
+                else if (models[focalModel]->isMovable() == 2) // Object is posted vertically on wall
+                {
+                    updateWallArtPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel);
+                }
             }
         }
         
@@ -405,7 +419,7 @@ int main(){
         
         //std::cout << "Camera position: " << camera.x << ", " << camera.y << ", " << camera.z << "\n";
         
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)1.0, 0.1f, 1000.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)4/3, 0.1f, 1000.0f);
         
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);

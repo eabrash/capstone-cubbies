@@ -30,7 +30,7 @@
 // Load bitmap for texture. This method uses the FreeImage library for loading. FreeImage can load various
 // image types, but this function is only intended for BMP files.
 
-void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<bool> &movableFlags)
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags)
 {
     std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
     
@@ -118,11 +118,15 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
             {
                 if (line == "0")
                 {
-                    movableFlags.push_back(false);
+                    movableFlags.push_back(0);
                 }
                 else if (line == "1")
                 {
-                    movableFlags.push_back(true);
+                    movableFlags.push_back(1);
+                }
+                else if (line == "2")
+                {
+                      movableFlags.push_back(2);
                 }
             }
             //std::cout << line << "\n";

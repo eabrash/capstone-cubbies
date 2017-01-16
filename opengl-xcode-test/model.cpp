@@ -97,12 +97,12 @@ bool Model::collidedWithObject(Model *object)
 
 }
 
-bool Model::isMovable()
+int Model::isMovable()
 {
     return movable;
 }
 
-void Model::setMovable(bool isMovable)
+void Model::setMovable(int isMovable)
 {
     movable = isMovable;
 }
@@ -209,7 +209,7 @@ std::vector<GLuint> Model::getTextures()
     return textures;
 }
 
-Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, bool movableStatus)
+Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, int movableStatus)
 {
     
     translation = inputTranslation;
