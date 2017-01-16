@@ -1,7 +1,7 @@
 class Model
 {
 public:
-    Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, int movableStatus);
+    Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, int movableStatus, bool splitMeshStatus);
     ~Model();
     std::vector<Mesh> * getMeshes();
     glm::mat4 getTranslation();
@@ -16,6 +16,12 @@ public:
     bool collidedWithObject(Model *object);
     int isMovable();
     void setMovable(int isMovable);
+    bool modelMeshesSplit();
+    glm::vec3 getMinsObjectSpace();
+    glm::vec3 getMaxesObjectSpace();
+    std::vector<glm::vec3> getBoundingBox();
+    std::vector<glm::vec3> getNormals();
+    std::vector<glm::vec3> getPointsOnBoundingBoxFaces();
 private:
     std::vector<Mesh> modelMeshes;
     glm::mat4 translation;
@@ -23,4 +29,7 @@ private:
     glm::mat4 scale;
     std::vector<GLuint> textures;
     int movable;
+    bool splitMesh;
+    glm::vec3 minsObjectSpace;
+    glm::vec3 maxesObjectSpace;
 };

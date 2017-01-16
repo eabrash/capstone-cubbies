@@ -30,7 +30,7 @@
 // Load bitmap for texture. This method uses the FreeImage library for loading. FreeImage can load various
 // image types, but this function is only intended for BMP files.
 
-void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags)
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes)
 {
     std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
     
@@ -40,11 +40,11 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
         int counter = 0;
         while(getline(worldDataStream, line)) // Keep getting lines from file while it has more
         {
-            if (counter % 5 == 0)
+            if (counter % 6 == 0)
             {
                 filenames.push_back(line);
             }
-            else if (counter % 5 == 1)
+            else if (counter % 6 == 1)
             {
                 int begin = 0;
                 int end = 0;
@@ -66,7 +66,7 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 
                 translationMatrices.push_back(glm::translate(glm::vec3(transforms[0], transforms[1], transforms[2])));
             }
-            else if (counter % 5 == 2)
+            else if (counter % 6 == 2)
             {
                 int begin = 0;
                 int end = 0;
@@ -90,7 +90,7 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 
                 std::cout << "Scaling: " << transforms[0] << " " << transforms[1] << " " << transforms[2] << "\n";
             }
-            else if (counter % 5 == 3)
+            else if (counter % 6 == 3)
             {
                 int begin = 0;
                 int end = 0;
@@ -114,7 +114,7 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 
                 std::cout << "Rotation: " << transforms[0] << " " << transforms[1] << " " << transforms[2] << " " << transforms[3] << "\n";
             }
-            else if (counter % 5 == 4)
+            else if (counter % 6 == 4)
             {
                 if (line == "0")
                 {
@@ -129,6 +129,18 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                       movableFlags.push_back(2);
                 }
             }
+            else if (counter % 6 == 5)
+            {
+                if (line == "0")
+                {
+                    splitMeshes.push_back(false);
+                }
+                else if (line == "1")
+                {
+                    splitMeshes.push_back(true);
+                }
+            }
+            
             //std::cout << line << "\n";
             counter++;
         }

@@ -59,7 +59,93 @@ glm::vec3 Mesh::getMaxesObjectSpace()
     return maxesObjectSpace;
 }
 
-bool Mesh::intersectsWithBoundingBox(glm::vec3 *vertices, int length, glm::mat4 objectToWorldspace)
+std::vector<glm::vec3> Mesh::getNormals(glm::mat4 objectToWorldspace)
+{
+    std::vector<glm::vec3> planeNormals;
+    
+    glm::vec3 p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1);
+    glm::vec3 p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    glm::vec3 p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1);
+    p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    p1 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    p1 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, maxesObjectSpace.y, minsObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    p1 = objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    p2 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1);
+    p3 = objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1);
+    
+    planeNormals.push_back(glm::normalize(glm::cross((p2-p1), (p3-p2))));
+    
+    return planeNormals;
+}
+
+std::vector<glm::vec3> Mesh::getPointsOnBoundingBoxFaces(glm::mat4 objectToWorldspace)
+{
+    std::vector<glm::vec3> pointsOnPlanes;
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z,1));
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1));
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, minsObjectSpace.z, 1));
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(maxesObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1));
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(minsObjectSpace.x, maxesObjectSpace.y, maxesObjectSpace.z, 1));
+    
+    pointsOnPlanes.push_back(objectToWorldspace * glm::vec4(minsObjectSpace.x, minsObjectSpace.y, maxesObjectSpace.z, 1));
+    
+    return pointsOnPlanes;
+}
+
+std::vector<glm::vec3> Mesh::getBoundingBox(glm::mat4 objectToWorldspace)
+{
+    std::vector<glm::vec3> boundingBox;
+    
+    glm::vec3 mins = minsObjectSpace;
+    glm::vec3 maxes = maxesObjectSpace;
+    
+    boundingBox.push_back(glm::vec3(mins.x, maxes.y, mins.z));
+    boundingBox.push_back(glm::vec3(maxes.x, maxes.y, mins.z));
+    boundingBox.push_back(glm::vec3(maxes.x, maxes.y, maxes.z));
+    boundingBox.push_back(glm::vec3(mins.x, maxes.y, maxes.z));
+    boundingBox.push_back(glm::vec3(maxes.x, mins.y, mins.z));
+    boundingBox.push_back(glm::vec3(maxes.x, mins.y, maxes.z));
+    boundingBox.push_back(glm::vec3(mins.x, mins.y, maxes.z));
+    boundingBox.push_back(glm::vec3(mins.x, mins.y, mins.z));
+    
+    for (int i = 0; i < 8; i++)
+    {
+        boundingBox[i] = objectToWorldspace * glm::vec4(boundingBox[i], 1);
+    }
+    
+    return boundingBox;
+}
+
+bool Mesh::intersectsWithBoundingBox(std::vector<glm::vec3> vertices, int length, glm::mat4 objectToWorldspace)
 {
     glm::vec3 planeNormals[6];
     glm::vec3 pointsOnPlanes[6];

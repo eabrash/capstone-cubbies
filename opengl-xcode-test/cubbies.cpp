@@ -338,8 +338,9 @@ int main(){
     std::vector<glm::mat4> scales;
     std::vector<glm::mat4> rotations;
     std::vector<int> movables;
+    std::vector<bool> splitMeshes;
     
-    loadWorld("world1.txt", filenames, translations, scales, rotations, movables);
+    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes);
 
     int numModels = filenames.size();
     
@@ -353,7 +354,7 @@ int main(){
     std::vector<Model*> models;
     for (int i = 0; i < numModels; i++)
     {
-        Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i]);
+        Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i],splitMeshes[i]);
         models.push_back(newModel);
         numMeshes += newModel->getNumMeshes();
     }
