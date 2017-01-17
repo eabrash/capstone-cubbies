@@ -36,7 +36,76 @@
 
 void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
 {
+    glm::mat4 originalTranslation = focalModel->getTranslation();
     
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        translation[3][1] += step;
+        focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        glm::mat4 translation = focalModel->getTranslation();
+        translation[3][1] -= step;
+        focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        // Needs to be the l and r of model, not l and r of world
+        glm::mat4 objectToWorld = focalModel->getTranslation() * focalModel->getRotation() * focalModel->getScale();
+        
+        glm::mat4 originalTranslation = focalModel->getTranslation();
+        
+        glm::vec3 p = glm::normalize(glm::vec3(objectToWorld * glm::vec4(1, 0, 0, 0)));
+        glm::vec3 q = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 1, 0, 0)));
+        glm::vec3 r = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 0, 1, 0)));
+        
+        glm::vec3 adjustedStep = step * r; // Why is this R and not P?
+        
+        glm::mat4 translation = focalModel->getTranslation();
+        
+        translation[3][0] += adjustedStep.x;
+        translation[3][1] += adjustedStep.y;
+        translation[3][2] += adjustedStep.z;
+        
+        focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        glm::mat4 objectToWorld = focalModel->getTranslation() * focalModel->getRotation() * focalModel->getScale();
+        
+        glm::mat4 originalTranslation = focalModel->getTranslation();
+        
+        glm::vec3 p = glm::normalize(glm::vec3(objectToWorld * glm::vec4(1, 0, 0, 0)));
+        glm::vec3 q = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 1, 0, 0)));
+        glm::vec3 r = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 0, 1, 0)));
+        
+        glm::vec3 adjustedStep = step * r;
+        
+        glm::mat4 translation = focalModel->getTranslation();
+        
+        translation[3][0] -= adjustedStep.x;
+        translation[3][1] -= adjustedStep.y;
+        translation[3][2] -= adjustedStep.z;
+        
+        focalModel->setTranslation(translation);
+    }
+    
+    // Add handling of collision with camera box also.
+    // Image can go off edge of wall (nothing to stop it at the moment). Needs to check if there is scenery
+    // underneath it.
+    
+    for (int i = 0; i < models.size(); i++)
+    {
+        if (i != focalModelIndex)
+        {
+            if (focalModel->collidedWithObject(models[i]))
+            {
+                focalModel->setTranslation(originalTranslation);
+            }
+        }
+    }
 }
 
 // Move a selected floor-resting object F/B or R/L, or rotate it

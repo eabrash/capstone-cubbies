@@ -34,9 +34,15 @@ blueandwhitecone.obj
 0.0 1.0 0.0 0.0
 1
 0
-framedcats.obj
-7.0 4.0 0.0
+catbasket.obj
+7.06 4.0 0.0
 1.0 1.0 1.0
 180.0 0.0 1.0 0.0
+2
+0
+indivframedcat.obj
+0.0 4.0 -7.25
+1.0 1.0 1.0
+-90.0 0.0 1.0 0.0
 2
 0
