@@ -158,9 +158,31 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
     {
         if (i != focalModelIndex)
         {
+            std::vector<glm::vec3> boundingBoxTarget = models[i]->getBoundingBox();
+            std::vector<glm::vec3> boundingBoxFocal = focalModel->getBoundingBox();
+            
+            
+            if (i == 0)
+            {
+                std::cout << "TARGET BOUNDING BOX: \n";
+                
+                for (int i = 0; i < boundingBoxTarget.size(); i++)
+                {
+                    std::cout << boundingBoxTarget[i].x << " " << boundingBoxTarget[i].y << " " << boundingBoxTarget[i].z << "\n";
+                }
+                
+                std::cout << "FOCAL BOUNDING BOX: \n";
+                
+                for (int i = 0; i < boundingBoxFocal.size(); i++)
+                {
+                    std::cout << boundingBoxFocal[i].x << " " << boundingBoxFocal[i].y << " " << boundingBoxFocal[i].z << "\n";
+                }
+            }
+            
             if (models[i]->collidedWithObject(focalModel))
             {
-                std::cout << "COLLISION DETECTED with model" << i << "\n";
+                std::cout << "COLLISION DETECTED: model " << focalModelIndex << " with model " << i << "\n";
+
                 focalModel->setTranslation(originalTranslation);
                 focalModel->setRotation(originalRotation);
                 focalModel->setScale(originalScale);
@@ -444,7 +466,7 @@ int main(){
                 int g = (i & 0x0000FF00) >>  8; // Bit mask: take next least sig 2 bits and make be R
                 int b = (i & 0x00FF0000) >> 16; // Bit mask: take second most sig 2 bits and make be R
                 
-                std::cout << "r: " << r << ", g: " << g << ", b: " << b << "\n";
+                //std::cout << "r: " << r << ", g: " << g << ", b: " << b << "\n";
                 
                 std::vector<Mesh> *pMeshes = models[i]->getMeshes();
 
@@ -502,7 +524,7 @@ int main(){
             glReadPixels(adjustedXPos, adjustedYPos, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixelColorData);
             
             int modelNumber = pixelColorData[0] + pixelColorData[1]*256 + pixelColorData[2]*256*256;
-            std::cout << modelNumber << " was clicked\n";
+            //std::cout << modelNumber << " was clicked\n";
             
             if (modelNumber != 0xFFFFFF && models[modelNumber]->isMovable())
             {

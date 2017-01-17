@@ -207,9 +207,9 @@ bool Model::collidedWithObject(Model *object)
                 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
                     {
                         return true;
                     }
@@ -235,9 +235,9 @@ bool Model::collidedWithObject(Model *object)
                 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
                     {
                         return true;
                     }
@@ -255,9 +255,9 @@ bool Model::collidedWithObject(Model *object)
                 
                 for (int i = 0; i < 8; i++)
                 {
-                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+                    if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                        glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
                     {
                         return true;
                     }
@@ -275,9 +275,9 @@ bool Model::collidedWithObject(Model *object)
             
             for (int i = 0; i < 8; i++)
             {
-                if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                    glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                    glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+                if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                    glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                    glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
                 {
                     return true;
                 }
@@ -294,9 +294,9 @@ bool Model::collidedWithObject(Model *object)
             
             for (int i = 0; i < 8; i++)
             {
-                if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                    glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                    glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+                if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                    glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                    glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
                 {
                     return true;
                 }
@@ -466,9 +466,9 @@ bool Model::collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::
         
         for (int i = 0; i < 8; i++)
         {
-            if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) < 0 &&
-                glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) < 0 &&
-                glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) < 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) < 0)
+            if (glm::dot((boundingBox[i]-pointsOnPlanes[0]), planeNormals[0]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[1]), planeNormals[1]) <= 0 &&
+                glm::dot((boundingBox[i]-pointsOnPlanes[2]), planeNormals[2]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[3]), planeNormals[3]) <= 0 &&
+                glm::dot((boundingBox[i]-pointsOnPlanes[4]), planeNormals[4]) <= 0 && glm::dot((boundingBox[i]-pointsOnPlanes[5]), planeNormals[5]) <= 0)
             {
                 return true;
             }
