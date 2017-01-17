@@ -161,23 +161,22 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
             std::vector<glm::vec3> boundingBoxTarget = models[i]->getBoundingBox();
             std::vector<glm::vec3> boundingBoxFocal = focalModel->getBoundingBox();
             
-            
-            if (i == 0)
-            {
-                std::cout << "TARGET BOUNDING BOX: \n";
-                
-                for (int i = 0; i < boundingBoxTarget.size(); i++)
-                {
-                    std::cout << boundingBoxTarget[i].x << " " << boundingBoxTarget[i].y << " " << boundingBoxTarget[i].z << "\n";
-                }
-                
-                std::cout << "FOCAL BOUNDING BOX: \n";
-                
-                for (int i = 0; i < boundingBoxFocal.size(); i++)
-                {
-                    std::cout << boundingBoxFocal[i].x << " " << boundingBoxFocal[i].y << " " << boundingBoxFocal[i].z << "\n";
-                }
-            }
+//            if (i == 0)
+//            {
+//                std::cout << "TARGET BOUNDING BOX: \n";
+//                
+//                for (int i = 0; i < boundingBoxTarget.size(); i++)
+//                {
+//                    std::cout << boundingBoxTarget[i].x << " " << boundingBoxTarget[i].y << " " << boundingBoxTarget[i].z << "\n";
+//                }
+//                
+//                std::cout << "FOCAL BOUNDING BOX: \n";
+//                
+//                for (int i = 0; i < boundingBoxFocal.size(); i++)
+//                {
+//                    std::cout << boundingBoxFocal[i].x << " " << boundingBoxFocal[i].y << " " << boundingBoxFocal[i].z << "\n";
+//                }
+//            }
             
             if (models[i]->collidedWithObject(focalModel))
             {
