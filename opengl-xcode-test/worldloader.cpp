@@ -31,7 +31,7 @@
 // image types, but this function is only intended for BMP files. Based on file loading code from opengl-
 // tutorials.
 
-void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes, glm::vec3 &lightPositionWorld, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r)
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes, glm::vec3 &lightPositionWorld, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, std::vector<std::string> &photoNames)
 {
     std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
     
@@ -231,14 +231,18 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                 if (line == "0")
                 {
                     movableFlags.push_back(0);
+                    photoNames.push_back("0");
                 }
                 else if (line == "1")
                 {
                     movableFlags.push_back(1);
+                    photoNames.push_back("0");
                 }
                 else if (line == "2")
                 {
-                      movableFlags.push_back(2);
+                    movableFlags.push_back(2);
+                    getline(worldDataStream, line);
+                    photoNames.push_back(line);
                 }
             }
             else if (counter % 6 == 5)

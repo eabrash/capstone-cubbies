@@ -42,7 +42,7 @@
 // From Chris Kloberdanz: http://pubs.opengroup.org/onlinepubs/009695399/functions/readdir_r.html
 // Reference for dirent.h: http://pubs.opengroup.org/onlinepubs/009695399/functions/readdir_r.html
 
-bool loadPhotos(std::vector<GLuint> &photoTextures)
+bool loadPhotos(std::vector<std::string> &photoNames, std::vector<GLuint> &photoTextures)
 {
     DIR* myDirectory; // Directory stream
     myDirectory = opendir("photos");
@@ -58,6 +58,7 @@ bool loadPhotos(std::vector<GLuint> &photoTextures)
             
             if (fileName.length() >= 4 && fileName.substr(fileName.length()-4, 4) == ".bmp")
             {
+                photoNames.push_back(fileName);
                 fileName = "photos/" + fileName;
                 photoTextures.push_back(loadBMP(fileName.c_str()));
                 std::cout << fileName << "\n";
@@ -470,6 +471,7 @@ int main(){
     std::vector<glm::mat4> rotations;
     std::vector<int> movables;
     std::vector<bool> splitMeshes;
+    std::vector<std::string> photoNames;
     
     glm::vec3 lightPositionWorld;
     glm::vec3 camera;
@@ -477,11 +479,12 @@ int main(){
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
+    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r, photoNames);
 
     std::vector<GLuint> photoTextures;
+    std::vector<std::string> photoFilenames;
     
-    loadPhotos(photoTextures);
+    loadPhotos(photoFilenames, photoTextures);
     
     int numModels = filenames.size();
     
@@ -498,9 +501,20 @@ int main(){
         Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i],splitMeshes[i]);
         models.push_back(newModel);
         
+        // Store the pictures loaded in picture frames in the photo library
+        
         if (newModel->isMovable() == 2)
         {
-            photoTextures.push_back(newModel->getTextures()[1]);
+            std::vector<GLuint> textures = newModel->getTextures();
+            
+            for (int j = 0; j < photoFilenames.size(); j++)
+            {
+                if (photoNames[i] == photoFilenames[j])
+                {
+                    textures[1] = photoTextures[j];
+                    newModel->setTextures(textures);
+                }
+            }
         }
         
         numMeshes += newModel->getNumMeshes();
@@ -786,7 +800,7 @@ int main(){
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
-    writeWorld(models, lightPositionWorld, camera, p, q, r);
+    writeWorld(models, lightPositionWorld, camera, p, q, r, photoFilenames, photoTextures);
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

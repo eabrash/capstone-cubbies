@@ -15,7 +15,7 @@
 #include "worldwriter.h"
 #include "model.h"
 
-void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
+void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<std::string> photoFilenames, std::vector<GLuint> photoTextures)
 {
     std::ofstream worldDataStream("output.txt", std::ios::out); // Stream from file
     
@@ -43,6 +43,25 @@ void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::
         worldDataStream << myAngle << " " << myAxis.x << " " << myAxis.y << " " << myAxis.z << "\n";
         
         worldDataStream << models[i]->isMovable() << "\n";
+        
+        if (models[i]->isMovable() == 2)    // Framed photo
+        {
+            bool foundPhoto = false;
+            
+            for (int j = 0; j < photoTextures.size(); j++)
+            {
+                if (photoTextures[j] == models[i]->getTextures()[1])
+                {
+                    worldDataStream << photoFilenames[j] << "\n";
+                    foundPhoto = true;
+                }
+            }
+            
+            if (!foundPhoto)
+            {
+                worldDataStream << "0" << "\n";
+            }
+        }
         
         if (models[i]->modelMeshesSplit())
         {
