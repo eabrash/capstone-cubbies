@@ -105,4 +105,25 @@ dependencies: \
   /usr/local/include/glm/gtx/norm.inl \
   /usr/local/include/glm/gtx/quaternion.inl \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/worldwriter.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/model.h
+  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/model.h \
+  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/mesh.h \
+  /usr/local/include/assimp/scene.h /usr/local/include/assimp/types.h \
+  /usr/local/include/assimp/defs.h /usr/local/include/assimp/vector3.h \
+  /usr/local/include/assimp/./Compiler/pushpack1.h \
+  /usr/local/include/assimp/./Compiler/poppack1.h \
+  /usr/local/include/assimp/vector2.h /usr/local/include/assimp/color4.h \
+  /usr/local/include/assimp/matrix3x3.h \
+  /usr/local/include/assimp/matrix4x4.h \
+  /usr/local/include/assimp/quaternion.h \
+  /usr/local/include/assimp/vector2.inl \
+  /usr/local/include/assimp/vector3.inl \
+  /usr/local/include/assimp/color4.inl \
+  /usr/local/include/assimp/quaternion.inl \
+  /usr/local/include/assimp/matrix3x3.inl \
+  /usr/local/include/assimp/matrix4x4.inl \
+  /usr/local/include/assimp/texture.h /usr/local/include/assimp/mesh.h \
+  /usr/local/include/assimp/light.h /usr/local/include/assimp/camera.h \
+  /usr/local/include/assimp/material.h \
+  /usr/local/include/assimp/material.inl \
+  /usr/local/include/assimp/anim.h /usr/local/include/assimp/metadata.h \
+  /usr/local/include/GL/glew.h

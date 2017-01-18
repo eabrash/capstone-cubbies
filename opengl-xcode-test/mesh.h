@@ -1,3 +1,12 @@
+#ifndef MESH_H
+#define MESH_H
+
+#include <assimp/scene.h>
+#include <GL/glew.h>
+
+// Help with headers:
+// http://www.acodersjourney.com/2016/05/top-10-c-header-file-mistakes-and-how-to-fix-them/
+
 class Mesh
 {
 public:
@@ -34,3 +43,5 @@ private:
     glm::vec3 minsObjectSpace;
     glm::vec3 maxesObjectSpace;
 };
+
+#endif

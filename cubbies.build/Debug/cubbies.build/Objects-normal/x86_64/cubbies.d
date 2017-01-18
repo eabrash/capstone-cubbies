@@ -130,4 +130,5 @@ dependencies: \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/shaderprogram.h \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/worldloader.h \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/mesh.h \
-  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/model.h
+  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/model.h \
+  /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/worldwriter.h

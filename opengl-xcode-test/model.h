@@ -1,3 +1,10 @@
+#ifndef MODEL_H
+#define MODEL_H
+
+#include "mesh.h"
+#include <GL/glew.h>
+
+
 class Model
 {
 public:
@@ -35,3 +42,5 @@ private:
     glm::vec3 maxesObjectSpace;
     std::string modelFileName;
 };
+
+#endif
