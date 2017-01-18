@@ -39,7 +39,7 @@ blueandwhitecone.obj
 0.0 1.0 0.0 0.0
 1
 0
-catbasket.obj
+framedkitten.obj
 7.06 4.0 0.0
 1.0 1.0 1.0
 180.0 0.0 1.0 0.0

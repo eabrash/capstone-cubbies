@@ -73,30 +73,9 @@ bool loadPhotos(std::vector<GLuint> &photoTextures)
         std::cout << "Problem finding directory" << "\n";
         return false;
     }
-    
-    //        DIR* dirFile = opendir( "photos" );
-    //        if ( dirFile )
-    //        {
-    //            struct dirent* hFile;
-    //            while (( hFile = readdir( dirFile )) != NULL )
-    //            {
-    //                if ( !strcmp( hFile->d_name, "."  )) continue; //strcmp returns 0 (false) if the two things are equal
-    //                if ( !strcmp( hFile->d_name, ".." )) continue;
-    //
-    //                // dirFile.name is the name of the file. Do whatever string comparison
-    //                // you want here. Something like:
-    //                if ( strstr( hFile->d_name, ".bmp" ))
-    //                    printf( "found an .bmp file: %s", hFile->d_name );
-    //            }
-    //            closedir( dirFile );
-    //        }
-    //        else
-    //        {
-    //            std::cout << "COULDN'T FIND DIRECTORY\n";
-    //        }
 }
 
-void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex, std::vector<GLuint> photoTextures)
+void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex, std::vector<GLuint> photoTextures, bool rightKeyPressedLastFrame)
 {
     glm::mat4 originalTranslation = focalModel->getTranslation();
     
@@ -145,13 +124,28 @@ void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, fl
         
         focalModel->setTranslation(translation);
     }
-    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS && !rightKeyPressedLastFrame)
     {
         std::cout << "CHANGING THE PICTURE\n";
         
         std::vector<GLuint> textures = focalModel->getTextures();
         
-        textures[1] = photoTextures[0]; // Only giving black screen
+        int next = -1;
+        
+        for (int i = 0; i < photoTextures.size(); i++)
+        {
+            if (textures[1] == photoTextures[i])
+            {
+                next = (i+1) % photoTextures.size();
+                textures[1] = photoTextures[next]; // Only giving black screen
+                break;
+            }
+        }
+        
+        if (next == -1)
+        {
+            textures[1] = photoTextures[0];
+        }
         
         focalModel->setTextures(textures);
     }
@@ -483,7 +477,7 @@ int main(){
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
+    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
 
     std::vector<GLuint> photoTextures;
     
@@ -503,6 +497,12 @@ int main(){
     {
         Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i],splitMeshes[i]);
         models.push_back(newModel);
+        
+        if (newModel->isMovable() == 2)
+        {
+            photoTextures.push_back(newModel->getTextures()[1]);
+        }
+        
         numMeshes += newModel->getNumMeshes();
     }
     
@@ -512,6 +512,7 @@ int main(){
     float angle = 0.01; // Increment to look up or down by
     
     int numLoopIterations = 0;
+    bool rightKeyPressedLastFrame = false;
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
@@ -523,7 +524,7 @@ int main(){
         glm::vec3 oldQ = q;       // +X-axis of camera (basis vector) - right
         glm::vec3 oldR = r;      // -Z-axis of camera (basis vector) - front
         
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS  || glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             if (focalModel < 0)
             {
@@ -537,8 +538,17 @@ int main(){
                 }
                 else if (models[focalModel]->isMovable() == 2) // Object is posted vertically on wall
                 {
-                    updateWallArtPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel, photoTextures);
+                    updateWallArtPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel, photoTextures, rightKeyPressedLastFrame);
                 }
+            }
+            
+            if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            {
+                rightKeyPressedLastFrame = true;
+            }
+            else
+            {
+                rightKeyPressedLastFrame = false;
             }
         }
         
