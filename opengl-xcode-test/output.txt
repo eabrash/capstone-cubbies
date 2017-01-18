@@ -48,6 +48,6 @@ catbasket.obj
 indivframedcat.obj
 0 4 -7.25
 1 1 1
-270 0 1 0
+90 0 -1 0
 2
 0

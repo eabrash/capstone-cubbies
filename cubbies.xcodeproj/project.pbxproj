@@ -18,6 +18,7 @@
 		3792F6CB1E1AFD110019370B /* libGLEW.2.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CA1E1AFD110019370B /* libGLEW.2.0.0.dylib */; };
 		3792F6CD1E1AFD830019370B /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */; };
 		3792F6D71E1B07680019370B /* cubbies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3792F6D41E1B07680019370B /* cubbies.cpp */; };
+		37DECDBB1E2EFE20004E52A9 /* worldwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37DECDBA1E2EFE20004E52A9 /* worldwriter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +57,8 @@
 		3792F6D41E1B07680019370B /* cubbies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cubbies.cpp; path = "../opengl-xcode-test/cubbies.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6D51E1B07680019370B /* FragmentShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FragmentShader.txt; sourceTree = "<group>"; };
 		3792F6D61E1B07680019370B /* VertexShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VertexShader.txt; sourceTree = "<group>"; };
+		37DECDBA1E2EFE20004E52A9 /* worldwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = worldwriter.cpp; sourceTree = "<group>"; };
+		37DECDBC1E2EFE3D004E52A9 /* worldwriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = worldwriter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +118,8 @@
 				3770D9621E2704500064F1F3 /* model.cpp */,
 				3770D9641E29A3B10064F1F3 /* PickingVertexShader.txt */,
 				3770D9651E29A4110064F1F3 /* PickingFragmentShader.txt */,
+				37DECDBA1E2EFE20004E52A9 /* worldwriter.cpp */,
+				37DECDBC1E2EFE3D004E52A9 /* worldwriter.h */,
 			);
 			path = "opengl-xcode-test";
 			sourceTree = "<group>";
@@ -181,6 +186,7 @@
 				3770D9601E2703740064F1F3 /* mesh.cpp in Sources */,
 				3770D9531E26C3A70064F1F3 /* imageloader.cpp in Sources */,
 				3770D94D1E26BD020064F1F3 /* shaderprogram.cpp in Sources */,
+				37DECDBB1E2EFE20004E52A9 /* worldwriter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

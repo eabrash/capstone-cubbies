@@ -32,56 +32,7 @@
 #include "worldloader.h"
 #include "mesh.h"
 #include "model.h"
-
-
-void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
-{
-    std::ofstream worldDataStream("output.txt", std::ios::out); // Stream from file
-    
-    worldDataStream << lightPositionWorld.x << " " << lightPositionWorld.y << " " << lightPositionWorld.z << "\n";
-    worldDataStream << camera.x << " " << camera.y << " " << camera.z << "\n";
-    worldDataStream << p.x << " " << p.y << " " << p.z << "\n";
-    worldDataStream << q.x << " " << q.y << " " << q.z << "\n";
-    worldDataStream << r.x << " " << r.y << " " << r.z << "\n";
-    
-    //    bench_only.obj    NAME
-    //    6.0 0.1 0.0       TRANSLATION
-    //    1.0 1.0 1.0       SCALE
-    //    0.0 0.0 1.0 0.0   ROTATION
-    //    1                 1-floor-resting/2-wall-hanging/0-scenery
-    //    0                 0-single bounding box/1-by mesh bounding boxes
-    
-    for (int i = 0; i < models.size(); i++)
-    {
-        worldDataStream << models[i]->getModelFile() << "\n";
-        
-        glm::mat4 translation = models[i]->getTranslation();
-        worldDataStream << translation[3][0] << " " << translation[3][1] << " " << translation[3][2] << "\n";
-        glm::mat4 scale = models[i]->getScale();
-        worldDataStream << scale[0][0] << " " << scale[1][1] << " " << scale[2][2] << "\n";
-        glm::mat4 rotation = models[i]->getRotation();
-        
-        glm::quat rotationQuat = glm::quat_cast(rotation);
-        
-        float myAngle = glm::degrees(glm::angle(rotationQuat));
-        glm::vec3 myAxis = glm::axis(rotationQuat);
-        
-        worldDataStream << myAngle << " " << myAxis.x << " " << myAxis.y << " " << myAxis.z << "\n";
-        
-        worldDataStream << models[i]->isMovable() << "\n";
-        
-        if (models[i]->modelMeshesSplit())
-        {
-            worldDataStream << 1 << "\n";
-        }
-        else
-        {
-            worldDataStream << 0 << "\n";
-        }
-    }
-    worldDataStream.close();
-}
-
+#include "worldwriter.h"
 
 void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
 {
@@ -104,10 +55,6 @@ void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, fl
         // Needs to be the l and r of model, not l and r of world
         glm::mat4 objectToWorld = focalModel->getTranslation() * focalModel->getRotation() * focalModel->getScale();
         
-        glm::mat4 originalTranslation = focalModel->getTranslation();
-        
-        glm::vec3 p = glm::normalize(glm::vec3(objectToWorld * glm::vec4(1, 0, 0, 0)));
-        glm::vec3 q = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 1, 0, 0)));
         glm::vec3 r = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 0, 1, 0)));
         
         glm::vec3 adjustedStep = step * r; // Why is this R and not P?
@@ -124,10 +71,6 @@ void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, fl
     {
         glm::mat4 objectToWorld = focalModel->getTranslation() * focalModel->getRotation() * focalModel->getScale();
         
-        glm::mat4 originalTranslation = focalModel->getTranslation();
-        
-        glm::vec3 p = glm::normalize(glm::vec3(objectToWorld * glm::vec4(1, 0, 0, 0)));
-        glm::vec3 q = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 1, 0, 0)));
         glm::vec3 r = glm::normalize(glm::vec3(objectToWorld * glm::vec4(0, 0, 1, 0)));
         
         glm::vec3 adjustedStep = step * r;
@@ -278,23 +221,6 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
         {
             std::vector<glm::vec3> boundingBoxTarget = models[i]->getBoundingBox();
             std::vector<glm::vec3> boundingBoxFocal = focalModel->getBoundingBox();
-            
-//            if (i == 0)
-//            {
-//                std::cout << "TARGET BOUNDING BOX: \n";
-//                
-//                for (int i = 0; i < boundingBoxTarget.size(); i++)
-//                {
-//                    std::cout << boundingBoxTarget[i].x << " " << boundingBoxTarget[i].y << " " << boundingBoxTarget[i].z << "\n";
-//                }
-//                
-//                std::cout << "FOCAL BOUNDING BOX: \n";
-//                
-//                for (int i = 0; i < boundingBoxFocal.size(); i++)
-//                {
-//                    std::cout << boundingBoxFocal[i].x << " " << boundingBoxFocal[i].y << " " << boundingBoxFocal[i].z << "\n";
-//                }
-//            }
             
             if (models[i]->collidedWithObject(focalModel))
             {

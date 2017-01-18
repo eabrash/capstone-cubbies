@@ -97,6 +97,12 @@ dependencies: \
   /usr/local/include/glm/gtx/transform.inl \
   /usr/local/include/glm/gtx/rotate_vector.hpp \
   /usr/local/include/glm/gtx/rotate_vector.inl \
-  /usr/local/include/GL/glew.h /usr/local/include/GLFW/glfw3.h \
+  /usr/local/include/glm/gtx/quaternion.hpp \
+  /usr/local/include/glm/gtx/../gtc/quaternion.hpp \
+  /usr/local/include/glm/gtx/../gtc/quaternion.inl \
+  /usr/local/include/glm/gtx/../gtc/quaternion_simd.inl \
+  /usr/local/include/glm/gtx/../gtx/norm.hpp \
+  /usr/local/include/glm/gtx/norm.inl \
+  /usr/local/include/glm/gtx/quaternion.inl \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/worldwriter.h \
   /Users/emilyabrash/Documents/opengl-xcode-test/opengl-xcode-test/model.h

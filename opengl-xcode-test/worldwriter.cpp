@@ -6,29 +6,24 @@
 #include <iostream>
 #include <fstream>
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "worldwriter.h"
 #include "model.h"
 
-void writeWorld(std::vector<Model *> models)
+void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
 {
     std::ofstream worldDataStream("output.txt", std::ios::out); // Stream from file
     
-    //    bench_only.obj    NAME
-    //    6.0 0.1 0.0       TRANSLATION
-    //    1.0 1.0 1.0       SCALE
-    //    0.0 0.0 1.0 0.0   ROTATION
-    //    1                 1-floor-resting/2-wall-hanging/0-scenery
-    //    0                 0-single bounding box/1-by mesh bounding boxes
+    worldDataStream << lightPositionWorld.x << " " << lightPositionWorld.y << " " << lightPositionWorld.z << "\n";
+    worldDataStream << camera.x << " " << camera.y << " " << camera.z << "\n";
+    worldDataStream << p.x << " " << p.y << " " << p.z << "\n";
+    worldDataStream << q.x << " " << q.y << " " << q.z << "\n";
+    worldDataStream << r.x << " " << r.y << " " << r.z << "\n";
     
     for (int i = 0; i < models.size(); i++)
     {
@@ -39,7 +34,13 @@ void writeWorld(std::vector<Model *> models)
         glm::mat4 scale = models[i]->getScale();
         worldDataStream << scale[0][0] << " " << scale[1][1] << " " << scale[2][2] << "\n";
         glm::mat4 rotation = models[i]->getRotation();
-        worldDataStream << "\n";
+        
+        glm::quat rotationQuat = glm::quat_cast(rotation);
+        
+        float myAngle = glm::degrees(glm::angle(rotationQuat));
+        glm::vec3 myAxis = glm::axis(rotationQuat);
+        
+        worldDataStream << myAngle << " " << myAxis.x << " " << myAxis.y << " " << myAxis.z << "\n";
         
         worldDataStream << models[i]->isMovable() << "\n";
         
