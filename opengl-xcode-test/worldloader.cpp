@@ -30,13 +30,124 @@
 // Load bitmap for texture. This method uses the FreeImage library for loading. FreeImage can load various
 // image types, but this function is only intended for BMP files.
 
-void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes)
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes, glm::vec3 &lightPositionWorld, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r)
 {
     std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
     
     if(worldDataStream.is_open())
     {
         std::string line = "";
+        
+        //Get light position
+        getline(worldDataStream, line);
+        
+        int begin = 0;
+        int end = 0;
+        float light [3];
+        int lightCounter = 0;
+        
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (isspace(line[i]))
+            {
+                end = i;
+                light[lightCounter] = (float)::atof(line.substr(begin, end).c_str());
+                begin = i+1;
+                lightCounter++;
+            }
+        }
+        
+        light[lightCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+        lightPositionWorld = glm::vec3(light[0], light[1], light[2]);
+        
+        //Get camera position
+        getline(worldDataStream, line);
+        
+        begin = 0;
+        end = 0;
+        float cameraArray[3];
+        int cameraCounter = 0;
+        
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (isspace(line[i]))
+            {
+                end = i;
+                cameraArray[cameraCounter] = (float)::atof(line.substr(begin, end).c_str());
+                begin = i+1;
+                cameraCounter++;
+            }
+        }
+        
+        cameraArray[cameraCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+        camera = glm::vec3(cameraArray[0], cameraArray[1], cameraArray[2]);
+        
+        //Get camera axis - p
+        getline(worldDataStream, line);
+        
+        begin = 0;
+        end = 0;
+        float pArray[3];
+        int pCounter = 0;
+        
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (isspace(line[i]))
+            {
+                end = i;
+                pArray[pCounter] = (float)::atof(line.substr(begin, end).c_str());
+                begin = i+1;
+                pCounter++;
+            }
+        }
+        
+        pArray[pCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+        p = glm::vec3(pArray[0], pArray[1], pArray[2]);
+        
+        //Get camera axis - q
+        getline(worldDataStream, line);
+        
+        begin = 0;
+        end = 0;
+        float qArray[3];
+        int qCounter = 0;
+        
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (isspace(line[i]))
+            {
+                end = i;
+                qArray[qCounter] = (float)::atof(line.substr(begin, end).c_str());
+                begin = i+1;
+                qCounter++;
+            }
+        }
+        
+        qArray[qCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+        q = glm::vec3(qArray[0], qArray[1], qArray[2]);
+        
+        //Get camera axis - r
+        getline(worldDataStream, line);
+        
+        begin = 0;
+        end = 0;
+        float rArray[3];
+        int rCounter = 0;
+        
+        for (int i = 0; i < line.length(); i++)
+        {
+            if (isspace(line[i]))
+            {
+                end = i;
+                rArray[rCounter] = (float)::atof(line.substr(begin, end).c_str());
+                begin = i+1;
+                rCounter++;
+            }
+        }
+        
+        rArray[rCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+        r = glm::vec3(rArray[0], rArray[1], rArray[2]);
+        
         int counter = 0;
         while(getline(worldDataStream, line)) // Keep getting lines from file while it has more
         {

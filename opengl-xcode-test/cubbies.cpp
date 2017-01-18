@@ -34,9 +34,15 @@
 #include "model.h"
 
 
-void writeWorld(std::vector<Model *> models)
+void writeWorld(std::vector<Model *> models, glm::vec3 lightPositionWorld, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r)
 {
     std::ofstream worldDataStream("output.txt", std::ios::out); // Stream from file
+    
+    worldDataStream << lightPositionWorld.x << " " << lightPositionWorld.y << " " << lightPositionWorld.z << "\n";
+    worldDataStream << camera.x << " " << camera.y << " " << camera.z << "\n";
+    worldDataStream << p.x << " " << p.y << " " << p.z << "\n";
+    worldDataStream << q.x << " " << q.y << " " << q.z << "\n";
+    worldDataStream << r.x << " " << r.y << " " << r.z << "\n";
     
     //    bench_only.obj    NAME
     //    6.0 0.1 0.0       TRANSLATION
@@ -473,7 +479,13 @@ int main(){
     std::vector<int> movables;
     std::vector<bool> splitMeshes;
     
-    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes);
+    glm::vec3 lightPositionWorld;
+    glm::vec3 camera;
+    glm::vec3 p;
+    glm::vec3 q;
+    glm::vec3 r;
+    
+    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
 
     int numModels = filenames.size();
     
@@ -494,13 +506,7 @@ int main(){
     
     // Main drawing loop
     
-    glm::vec3 lightPositionWorld = glm::vec3(0.0f, 7.0f, 0.0f);
-    
     float step = 0.05;
-    glm::vec3 camera = glm::vec3(0.0f, 5.5f, 0.0f);
-    glm::vec3 p = glm::vec3(1,0,0);       // +Y-axis of camera (basis vector) - up
-    glm::vec3 q = glm::vec3(0,1,0);       // +X-axis of camera (basis vector) - right
-    glm::vec3 r = glm::vec3(0,0,-1);      // -Z-axis of camera (basis vector) - front
     float angle = 0.01; // Increment to look up or down by
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
@@ -754,7 +760,7 @@ int main(){
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
-    writeWorld(models);
+    writeWorld(models, lightPositionWorld, camera, p, q, r);
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
