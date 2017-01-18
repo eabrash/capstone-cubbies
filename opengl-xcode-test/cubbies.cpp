@@ -27,14 +27,76 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include <dirent.h>
+
 // Self-made files from the project
 #include "shaderprogram.h"
 #include "worldloader.h"
 #include "mesh.h"
 #include "model.h"
 #include "worldwriter.h"
+#include "imageloader.h"
 
-void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
+// Code for reading files in a directory...
+// From Rafael Baptista: http://stackoverflow.com/questions/11140483/how-to-get-list-of-files-with-a-specific-extension-in-a-given-folder
+// From Chris Kloberdanz: http://pubs.opengroup.org/onlinepubs/009695399/functions/readdir_r.html
+// Reference for dirent.h: http://pubs.opengroup.org/onlinepubs/009695399/functions/readdir_r.html
+
+bool loadPhotos(std::vector<GLuint> &photoTextures)
+{
+    DIR* myDirectory; // Directory stream
+    myDirectory = opendir("photos");
+    
+    if (myDirectory != nullptr)
+    {
+        struct dirent *directoryEntry; // Directory entry, i.e., file
+        std::vector<std::string> photoFileNames;
+        
+        while ((directoryEntry = readdir(myDirectory)) != nullptr)
+        {
+            std::string fileName(directoryEntry->d_name);
+            
+            if (fileName.length() >= 4 && fileName.substr(fileName.length()-4, 4) == ".bmp")
+            {
+                fileName = "photos/" + fileName;
+                photoTextures.push_back(loadBMP(fileName.c_str()));
+                std::cout << fileName << "\n";
+            }
+        }
+        
+        closedir(myDirectory);
+        
+        return true;
+    }
+    else
+    {
+        std::cout << "Problem finding directory" << "\n";
+        return false;
+    }
+    
+    //        DIR* dirFile = opendir( "photos" );
+    //        if ( dirFile )
+    //        {
+    //            struct dirent* hFile;
+    //            while (( hFile = readdir( dirFile )) != NULL )
+    //            {
+    //                if ( !strcmp( hFile->d_name, "."  )) continue; //strcmp returns 0 (false) if the two things are equal
+    //                if ( !strcmp( hFile->d_name, ".." )) continue;
+    //
+    //                // dirFile.name is the name of the file. Do whatever string comparison
+    //                // you want here. Something like:
+    //                if ( strstr( hFile->d_name, ".bmp" ))
+    //                    printf( "found an .bmp file: %s", hFile->d_name );
+    //            }
+    //            closedir( dirFile );
+    //        }
+    //        else
+    //        {
+    //            std::cout << "COULDN'T FIND DIRECTORY\n";
+    //        }
+}
+
+void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex, std::vector<GLuint> photoTextures)
 {
     glm::mat4 originalTranslation = focalModel->getTranslation();
     
@@ -82,6 +144,16 @@ void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, fl
         translation[3][2] -= adjustedStep.z;
         
         focalModel->setTranslation(translation);
+    }
+    else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        std::cout << "CHANGING THE PICTURE\n";
+        
+        std::vector<GLuint> textures = focalModel->getTextures();
+        
+        textures[1] = photoTextures[0]; // Only giving black screen
+        
+        focalModel->setTextures(textures);
     }
     
     // Add handling of collision with camera box also.
@@ -413,6 +485,10 @@ int main(){
     
     loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
 
+    std::vector<GLuint> photoTextures;
+    
+    loadPhotos(photoTextures);
+    
     int numModels = filenames.size();
     
     int focalModel = -1; // Negative number means that no model is selected
@@ -461,7 +537,7 @@ int main(){
                 }
                 else if (models[focalModel]->isMovable() == 2) // Object is posted vertically on wall
                 {
-                    updateWallArtPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel);
+                    updateWallArtPosition(window, models[focalModel], step, angle, camera, p, q, r, models, focalModel, photoTextures);
                 }
             }
         }
@@ -490,8 +566,8 @@ int main(){
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)4/3, 0.1f, 1000.0f);
         
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
-        glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
+        glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
         
         // From opengl-tutorial.org, "Picking with an OpenGL Hack"
         // http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
@@ -659,7 +735,6 @@ int main(){
                                       0,                                // stride
                                       (void*)0                          // array buffer offset
                                       );
-                
                 glDrawElements(GL_TRIANGLES, (*pMeshes)[j].getNumFaces() * 3, GL_UNSIGNED_SHORT, (void*)0);
                 //glDrawArrays(GL_TRIANGLES, 0, vertices.size());
                 
@@ -670,7 +745,7 @@ int main(){
             }
         }
         
-        // Why is this necessary to prevent a flash of heavily
+        // Why is this necessary to prevent a flash of heavily shadowed image on startup?
         if (numLoopIterations > 0)
         {
             glfwSwapBuffers(window);
@@ -682,15 +757,21 @@ int main(){
         }
     }
     
-    // Cleanup VBO and shader
+    // Cleanup VBO and shader - NEEDS TO BE FIXED
     
-    for (int i = 0; i < numMeshes; i++)
+    for (int i = 0; i < numModels; i++)
     {
-//        glDeleteBuffers(1, &vertexbuffer[i]);
-//        glDeleteBuffers(1, &uvbuffer[i]);
-//        glDeleteBuffers(1, &normalbuffer[i]);
-//        glDeleteBuffers(1, &indexbuffer[i]);
+        std::vector<Mesh> *pMeshes = models[i]->getMeshes();
+        
+        for (int j = 0; j < numMeshes; j++)
+        {
+//            glDeleteBuffers(1, vertexbuffer[i]);
+//            glDeleteBuffers(1, &uvbuffer[i]);
+//            glDeleteBuffers(1, &normalbuffer[i]);
+//            glDeleteBuffers(1, &indexbuffer[i]);
+        }
     }
+    
     glDeleteProgram(ProgramID);
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);

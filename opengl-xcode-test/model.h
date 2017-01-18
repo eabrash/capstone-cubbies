@@ -18,6 +18,7 @@ public:
     void setRotation(glm::mat4 newRotation);
     void setScale(glm::mat4 newScale);
     std::vector<GLuint> getTextures();
+    void setTextures(std::vector<GLuint> newTextures);
     int getNumMeshes();
     bool collidedWithPlayer(glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r);
     bool collidedWithObject(Model *object);

@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "414"
-            endingLineNumber = "414"
+            startingLineNumber = "487"
+            endingLineNumber = "487"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "612"
-            endingLineNumber = "612"
+            startingLineNumber = "688"
+            endingLineNumber = "688"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "613"
-            endingLineNumber = "613"
+            startingLineNumber = "689"
+            endingLineNumber = "689"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "604"
-            endingLineNumber = "604"
+            startingLineNumber = "680"
+            endingLineNumber = "680"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "608"
-            endingLineNumber = "608"
+            startingLineNumber = "684"
+            endingLineNumber = "684"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "653"
-            endingLineNumber = "653"
+            startingLineNumber = "729"
+            endingLineNumber = "729"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
+            startingLineNumber = "730"
+            endingLineNumber = "730"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/model.cpp"
-            timestampString = "506389408.353863"
+            timestampString = "506415426.100402"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "633"
-            endingLineNumber = "633"
+            startingLineNumber = "638"
+            endingLineNumber = "638"
             landmarkName = "Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, int movableStatus, bool splitMeshStatus)"
             landmarkType = "5">
             <Locations>
@@ -247,11 +247,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "418"
-            endingLineNumber = "418"
+            startingLineNumber = "494"
+            endingLineNumber = "494"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -391,11 +391,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "445"
-            endingLineNumber = "445"
+            startingLineNumber = "521"
+            endingLineNumber = "521"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -407,11 +407,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
             landmarkName = "updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
             landmarkType = "7">
          </BreakpointContent>
@@ -423,11 +423,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
             landmarkType = "7">
          </BreakpointContent>
@@ -439,11 +439,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
             landmarkName = "updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
             landmarkType = "7">
          </BreakpointContent>
@@ -455,11 +455,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "275"
+            endingLineNumber = "275"
             landmarkName = "updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
             landmarkType = "7">
          </BreakpointContent>
@@ -471,11 +471,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
+            startingLineNumber = "277"
+            endingLineNumber = "277"
             landmarkName = "updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
             landmarkType = "7">
          </BreakpointContent>
@@ -487,11 +487,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "413"
-            endingLineNumber = "413"
+            startingLineNumber = "485"
+            endingLineNumber = "485"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -503,11 +503,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
+            startingLineNumber = "477"
+            endingLineNumber = "477"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -565,12 +565,44 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "506400625.336196"
+            timestampString = "506455890.41425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex)"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex, std::vector&lt;GLuint&gt; photoTextures)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "506455890.41425"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "506455890.41425"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
+            landmarkName = "updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector&lt;Model*&gt; &amp;models, int focalModelIndex, std::vector&lt;GLuint&gt; photoTextures)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

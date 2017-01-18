@@ -529,6 +529,11 @@ std::vector<GLuint> Model::getTextures()
     return textures;
 }
 
+void Model::setTextures(std::vector<GLuint> newTextures)
+{
+    textures = newTextures;
+}
+
 Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputScale, glm::mat4 inputRotation, int movableStatus, bool splitMeshStatus)
 {
     
