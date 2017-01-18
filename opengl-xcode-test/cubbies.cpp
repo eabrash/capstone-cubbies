@@ -485,7 +485,7 @@ int main(){
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
+    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r);
 
     int numModels = filenames.size();
     
@@ -508,6 +508,8 @@ int main(){
     
     float step = 0.05;
     float angle = 0.01; // Increment to look up or down by
+    
+    int numLoopIterations = 0;
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
@@ -573,7 +575,7 @@ int main(){
             glUseProgram(PickingProgramID); // Use the shader program to do the drawing
             
             glClearColor(1.0, 1.0, 1.0, 0.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen to dark blue, also depth buffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear screen, also depth buffer
             glEnable(GL_DEPTH_TEST);
             
             for (int i = 0; i < numModels; i++)
@@ -742,9 +744,16 @@ int main(){
             }
         }
         
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-        
+        // Why is this necessary to prevent a flash of heavily
+        if (numLoopIterations > 0)
+        {
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+        else
+        {
+            numLoopIterations++;
+        }
     }
     
     // Cleanup VBO and shader
