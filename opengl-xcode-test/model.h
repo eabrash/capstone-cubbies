@@ -22,6 +22,7 @@ public:
     std::vector<glm::vec3> getBoundingBox();
     std::vector<glm::vec3> getNormals();
     std::vector<glm::vec3> getPointsOnBoundingBoxFaces();
+    std::string getModelFile();
 private:
     std::vector<Mesh> modelMeshes;
     glm::mat4 translation;
@@ -32,4 +33,5 @@ private:
     bool splitMesh;
     glm::vec3 minsObjectSpace;
     glm::vec3 maxesObjectSpace;
+    std::string modelFileName;
 };

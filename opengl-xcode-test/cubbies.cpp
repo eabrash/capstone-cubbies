@@ -20,6 +20,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <FreeImage.h>
 
 #include <assimp/Importer.hpp>
@@ -32,7 +33,49 @@
 #include "mesh.h"
 #include "model.h"
 
-//
+
+void writeWorld(std::vector<Model *> models)
+{
+    std::ofstream worldDataStream("output.txt", std::ios::out); // Stream from file
+    
+    //    bench_only.obj    NAME
+    //    6.0 0.1 0.0       TRANSLATION
+    //    1.0 1.0 1.0       SCALE
+    //    0.0 0.0 1.0 0.0   ROTATION
+    //    1                 1-floor-resting/2-wall-hanging/0-scenery
+    //    0                 0-single bounding box/1-by mesh bounding boxes
+    
+    for (int i = 0; i < models.size(); i++)
+    {
+        worldDataStream << models[i]->getModelFile() << "\n";
+        
+        glm::mat4 translation = models[i]->getTranslation();
+        worldDataStream << translation[3][0] << " " << translation[3][1] << " " << translation[3][2] << "\n";
+        glm::mat4 scale = models[i]->getScale();
+        worldDataStream << scale[0][0] << " " << scale[1][1] << " " << scale[2][2] << "\n";
+        glm::mat4 rotation = models[i]->getRotation();
+        
+        glm::quat rotationQuat = glm::quat_cast(rotation);
+        
+        float myAngle = glm::degrees(glm::angle(rotationQuat));
+        glm::vec3 myAxis = glm::axis(rotationQuat);
+        
+        worldDataStream << myAngle << " " << myAxis.x << " " << myAxis.y << " " << myAxis.z << "\n";
+        
+        worldDataStream << models[i]->isMovable() << "\n";
+        
+        if (models[i]->modelMeshesSplit())
+        {
+            worldDataStream << 1 << "\n";
+        }
+        else
+        {
+            worldDataStream << 0 << "\n";
+        }
+    }
+    worldDataStream.close();
+}
+
 
 void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, float angle, glm::vec3 camera, glm::vec3 p, glm::vec3 q, glm::vec3 r, std::vector<Model*> &models, int focalModelIndex)
 {
@@ -430,7 +473,7 @@ int main(){
     std::vector<int> movables;
     std::vector<bool> splitMeshes;
     
-    loadWorld("world1.txt", filenames, translations, scales, rotations, movables, splitMeshes);
+    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes);
 
     int numModels = filenames.size();
     
@@ -711,6 +754,7 @@ int main(){
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
+    writeWorld(models);
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

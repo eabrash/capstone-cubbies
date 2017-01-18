@@ -43,6 +43,11 @@
 //    std::vector<GLuint> textures;
 //};
 
+std::string Model::getModelFile()
+{
+    return modelFileName;
+}
+
 std::vector<glm::vec3> Model::getNormals()
 {
     std::vector<glm::vec3> planeNormals;
@@ -532,6 +537,7 @@ Model::Model(std::string filename, glm::mat4 inputTranslation, glm::mat4 inputSc
     rotation = inputRotation;
     movable = movableStatus;
     splitMesh = splitMeshStatus;
+    modelFileName = filename;
     
     Assimp::Importer importer;
     
