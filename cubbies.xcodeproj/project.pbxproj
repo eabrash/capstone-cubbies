@@ -56,7 +56,7 @@
 		3792F6CC1E1AFD830019370B /* libglfw.3.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.2.dylib; path = "glfw-3.2.1/build/src/Debug/libglfw.3.2.dylib"; sourceTree = "<group>"; };
 		3792F6D41E1B07680019370B /* cubbies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cubbies.cpp; path = "../opengl-xcode-test/cubbies.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3792F6D51E1B07680019370B /* FragmentShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FragmentShader.txt; sourceTree = "<group>"; };
-		3792F6D61E1B07680019370B /* VertexShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VertexShader.txt; sourceTree = "<group>"; };
+		3792F6D61E1B07680019370B /* VertexShader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = VertexShader.txt; path = "../opengl-xcode-test/VertexShader.txt"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37DECDBA1E2EFE20004E52A9 /* worldwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = worldwriter.cpp; sourceTree = "<group>"; };
 		37DECDBC1E2EFE3D004E52A9 /* worldwriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = worldwriter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
