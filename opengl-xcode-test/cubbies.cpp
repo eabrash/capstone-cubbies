@@ -479,7 +479,7 @@ int main(){
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r, photoNames);
+    loadWorld("spain_flat.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r, photoNames);
 
     std::vector<GLuint> photoTextures;
     std::vector<std::string> photoFilenames;
@@ -566,17 +566,17 @@ int main(){
             }
         }
         
-        for (int i = 0; i < numModels; i++)
-        {
-            if (models[i]->collidedWithPlayer(camera, p, q, r))
-            {
-                camera = oldCamera;
-                p = oldP;
-                q = oldQ;
-                r = oldR;
-                break;
-            }
-        }
+//        for (int i = 0; i < numModels; i++)
+//        {
+//            if (models[i]->collidedWithPlayer(camera, p, q, r))
+//            {
+//                camera = oldCamera;
+//                p = oldP;
+//                q = oldQ;
+//                r = oldR;
+//                break;
+//            }
+//        }
     
         
         glm::mat4 viewMatrix = glm::lookAt(
@@ -587,7 +587,7 @@ int main(){
         
         //std::cout << "Camera position: " << camera.x << ", " << camera.y << ", " << camera.z << "\n";
         
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)4/3, 0.1f, 1000.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)4/3, 0.1f, 200000.0f);
         
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);

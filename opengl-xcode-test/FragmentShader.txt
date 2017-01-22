@@ -18,7 +18,7 @@ uniform bool IN_FOCUS;
 void main()
 {
     vec3 LightColor = vec3(1,1,1);
-    float LightPower = 50.0f;
+    float LightPower = 80.0f;
 
     vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
 
@@ -30,7 +30,7 @@ void main()
     }
     else
     {
-        MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+        MaterialAmbientColor = vec3(0.8, 0.8, 0.8) * MaterialDiffuseColor; //Dilute version of color the object emits itself
     }
 
     vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
