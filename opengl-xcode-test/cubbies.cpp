@@ -409,7 +409,7 @@ int main(){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     const int WINDOW_HEIGHT = 600;
-    const int WINDOW_WIDTH = 800;
+    const int WINDOW_WIDTH = 1200;
     
     GLFWwindow * window = nullptr;
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Cubbies", NULL, NULL);
@@ -454,6 +454,7 @@ int main(){
     GLuint ViewMatrixID = glGetUniformLocation(ProgramID, "VIEW_MATRIX");
     GLuint ModelMatrixID = glGetUniformLocation(ProgramID, "MODEL_MATRIX");
     GLuint LightPositionID = glGetUniformLocation(ProgramID, "LIGHT_POSITION_WORLDSPACE");
+    GLuint LightPosition2ID = glGetUniformLocation(ProgramID, "LIGHT_POSITION_WORLDSPACE_2");
     GLuint CameraPositionID = glGetUniformLocation(ProgramID, "CAMERA_POSITION_WORLDSPACE");
     GLuint TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
     GLuint FocalID = glGetUniformLocation(ProgramID, "IN_FOCUS");
@@ -475,12 +476,13 @@ int main(){
     std::vector<std::string> photoNames;
     
     glm::vec3 lightPositionWorld;
+    glm::vec3 lightPositionWorld2;
     glm::vec3 camera;
     glm::vec3 p;
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("spain_flat.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, camera, p, q, r, photoNames);
+    loadWorld("spain_flat.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, lightPositionWorld2, camera, p, q, r, photoNames);
 
     std::vector<GLuint> photoTextures;
     std::vector<std::string> photoFilenames;
@@ -591,11 +593,12 @@ int main(){
         
         //std::cout << "Camera position: " << camera.x << ", " << camera.y << ", " << camera.z << "\n";
         
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)4/3, 0.1f, 200000.0f);
+        glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)1200/600, 0.1f, 200000.0f);
         
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
         glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
+        glUniform3f(LightPosition2ID, lightPositionWorld2.x, lightPositionWorld2.y, lightPositionWorld2.z);
         
         // From opengl-tutorial.org, "Picking with an OpenGL Hack"
         // http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
@@ -813,7 +816,7 @@ int main(){
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
-    writeWorld(models, lightPositionWorld, camera, p, q, r, photoFilenames, photoTextures);
+    writeWorld(models, lightPositionWorld, lightPositionWorld2, camera, p, q, r, photoFilenames, photoTextures);
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();
