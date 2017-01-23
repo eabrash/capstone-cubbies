@@ -1,5 +1,5 @@
 # Blender MTL File: 'walls_modern.blend'
-# Material Count: 6
+# Material Count: 5
 
 newmtl Material
 Ns 96.078431
@@ -12,28 +12,6 @@ d 1.000000
 illum 2
 map_Kd gray.bmp
 
-newmtl Material_brown.bmp
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd brown.bmp
-
-newmtl Material_purple.bmp
-Ns 96.078431
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd purple.bmp
-
 newmtl None
 Ns 0
 Ka 0.000000 0.000000 0.000000
@@ -41,7 +19,7 @@ Kd 0.8 0.8 0.8
 Ks 0.8 0.8 0.8
 d 1
 illum 2
-map_Kd spanishtilefloor.bmp
+map_Kd woodtexture.bmp
 
 newmtl None_bricks.bmp
 Ns 0
@@ -52,11 +30,20 @@ d 1
 illum 2
 map_Kd bricks.bmp
 
-newmtl None_kittendaisy.bmp
+newmtl None_gray.bmp
 Ns 0
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8
 Ks 0.8 0.8 0.8
 d 1
 illum 2
-map_Kd kittendaisy.bmp
+map_Kd gray.bmp
+
+newmtl None_spanishtilefloor.bmp
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Kd spanishtilefloor.bmp

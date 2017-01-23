@@ -244,6 +244,11 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
                     getline(worldDataStream, line);
                     photoNames.push_back(line);
                 }
+                else if (line == "3")
+                {
+                    movableFlags.push_back(3);
+                    photoNames.push_back("0");
+                }
             }
             else if (counter % 6 == 5)
             {

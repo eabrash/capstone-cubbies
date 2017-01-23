@@ -14,41 +14,49 @@ out vec3 color;
 uniform sampler2D myTextureSampler;
 uniform vec3 LIGHT_POSITION_WORLDSPACE;
 uniform bool IN_FOCUS;
+uniform bool IS_BACKGROUND;
 
 void main()
 {
-    vec3 LightColor = vec3(1,1,1);
-    float LightPower = 50.0f;
-
-    vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
-
-    vec3 MaterialAmbientColor;
-
-    if (IN_FOCUS)
+    if (IS_BACKGROUND) // The background is not affected by Phong shading
     {
-        MaterialAmbientColor = vec3(0.3,0.1,0.1) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+        color = texture( myTextureSampler, UV ).rgb;
     }
     else
     {
-        MaterialAmbientColor = vec3(0.8, 0.8, 0.8) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+        vec3 LightColor = vec3(1,1,1);
+        float LightPower = 50.0f;
+
+        vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
+
+        vec3 MaterialAmbientColor;
+
+        if (IN_FOCUS)
+        {
+            MaterialAmbientColor = vec3(0.6,0.5,0.5) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+        }
+        else
+        {
+            MaterialAmbientColor = vec3(0.5, 0.5, 0.5) * MaterialDiffuseColor; //Dilute version of color the object emits itself
+        }
+
+        vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
+
+        // Distance from the point to the light
+        float distance = length(LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace);
+
+        vec3 n = normalize(Normal_worldspace);
+        vec3 l = normalize(LightDirection);
+
+        vec3 E = normalize(EyeDirection);
+        vec3 R = reflect(-l,n);
+        float cosAlpha = clamp( dot( E,R ), 0,1 );
+
+        float cosTheta = clamp(dot(n,l), 0, 1);
+
+        // Output color = color of the texture at the specified UV
+        color = MaterialAmbientColor +
+                MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+                MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
     }
-
-    vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
-
-    // Distance from the point to the light
-    float distance = length(LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace);
-
-    vec3 n = normalize(Normal_worldspace);
-    vec3 l = normalize(LightDirection);
-
-    vec3 E = normalize(EyeDirection);
-    vec3 R = reflect(-l,n);
-    float cosAlpha = clamp( dot( E,R ), 0,1 );
-
-    float cosTheta = clamp(dot(n,l), 0, 1);
-
-    // Output color = color of the texture at the specified UV
-    color = MaterialAmbientColor +
-            MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-            MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 }

@@ -157,7 +157,7 @@ void updateWallArtPosition(GLFWwindow *window, Model *focalModel, float step, fl
     
     for (int i = 0; i < models.size(); i++)
     {
-        if (i != focalModelIndex)
+        if (i != focalModelIndex && models[i]->isMovable() != 3)
         {
             if (focalModel->collidedWithObject(models[i]))
             {
@@ -284,7 +284,7 @@ void updateObjectPosition(GLFWwindow *window, Model *focalModel, float step, flo
     
     for (int i = 0; i < models.size(); i++)
     {
-        if (i != focalModelIndex)
+        if (i != focalModelIndex && models[i]->isMovable() != 3)
         {
             std::vector<glm::vec3> boundingBoxTarget = models[i]->getBoundingBox();
             std::vector<glm::vec3> boundingBoxFocal = focalModel->getBoundingBox();
@@ -457,6 +457,7 @@ int main(){
     GLuint CameraPositionID = glGetUniformLocation(ProgramID, "CAMERA_POSITION_WORLDSPACE");
     GLuint TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
     GLuint FocalID = glGetUniformLocation(ProgramID, "IN_FOCUS");
+    GLuint BackgroundStateID = glGetUniformLocation(ProgramID, "IS_BACKGROUND");
     //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(ProgramID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
     
     GLuint PickingMatrixID = glGetUniformLocation(PickingProgramID, "MY_PICKING_MATRIX");
@@ -566,17 +567,20 @@ int main(){
             }
         }
         
-//        for (int i = 0; i < numModels; i++)
-//        {
-//            if (models[i]->collidedWithPlayer(camera, p, q, r))
-//            {
-//                camera = oldCamera;
-//                p = oldP;
-//                q = oldQ;
-//                r = oldR;
-//                break;
-//            }
-//        }
+        for (int i = 0; i < numModels; i++)
+        {
+            // If isMovable() == 3, the object in question is the background sphere and should not be
+            // considered - the world should be laid out so the player cannot approach the background
+            
+            if (models[i]->isMovable() != 3 && models[i]->collidedWithPlayer(camera, p, q, r))
+            {
+                camera = oldCamera;
+                p = oldP;
+                q = oldQ;
+                r = oldR;
+                break;
+            }
+        }
     
         
         glm::mat4 viewMatrix = glm::lookAt(
@@ -671,7 +675,7 @@ int main(){
             int modelNumber = pixelColorData[0] + pixelColorData[1]*256 + pixelColorData[2]*256*256;
             //std::cout << modelNumber << " was clicked\n";
             
-            if (modelNumber != 0xFFFFFF && models[modelNumber]->isMovable())
+            if (modelNumber != 0xFFFFFF && models[modelNumber]->isMovable() != 0 && models[modelNumber]->isMovable() != 3)
             {
                 focalModel = modelNumber; // Arrows now move selected model
             }
@@ -710,6 +714,15 @@ int main(){
             else
             {
                 glUniform1i(FocalID, 0);
+            }
+            
+            if (models[i]->isMovable() == 3)
+            {
+                glUniform1i(BackgroundStateID, 1);
+            }
+            else
+            {
+                 glUniform1i(BackgroundStateID, 0);
             }
             
             for (int j = 0; j < models[i]->getNumMeshes(); j++)

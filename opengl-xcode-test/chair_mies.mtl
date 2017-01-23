@@ -1,0 +1,24 @@
+# Blender MTL File: 'mies_armchairgpl (1).blend'
+# Material Count: 2
+
+newmtl mies-metal
+Ns 96.078431
+Ka 0.579503 0.579503 0.579503
+Kd 0.800000 0.800000 0.800000
+Ks 0.764459 0.764459 0.764459
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 5
+map_Kd spanishtilefloor.bmp
+
+newmtl mies-stoffa
+Ns 88.235294
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.218009 0.255247
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd tilecolors.bmp
