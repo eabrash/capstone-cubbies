@@ -19,6 +19,8 @@ GLuint loadBMP(const char * imagepath)
     
     BYTE *bitmapBytes = (BYTE*)FreeImage_GetBits(bitmap);
     
+    unsigned int bpp = FreeImage_GetBPP(bitmap);
+    
     // Create one OpenGL texture
     GLuint textureID;
     glGenTextures(1, &textureID);
@@ -26,8 +28,18 @@ GLuint loadBMP(const char * imagepath)
     // "Bind" the newly created texture : all future texture functions will modify this texture.
     glBindTexture(GL_TEXTURE_2D, textureID);
     
-    // Give the image to OpenGL
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmapBytes);
+    //Use of BPP to differentiate RGB and RGBA images from
+    //https://solarianprogrammer.com/2013/05/17/opengl-101-textures/
+    
+    if (bpp == 24)
+    {
+        // Give the image to OpenGL
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGR, GL_UNSIGNED_BYTE, bitmapBytes);
+    }
+    else if (bpp == 32)
+    {
+         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap), 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmapBytes);
+    }
     
     std::cout << "FreeImage_GetWidth: " << FreeImage_GetWidth(bitmap) << ", FreeImage_GetHeight: " << FreeImage_GetHeight(bitmap) << "\n";
     

@@ -3,13 +3,13 @@
 1 0 0
 0 1 0
 0 0 -1
-walls_spain_panorama.obj
+walls_modern.obj
 0.0 0.0 0.0
 1.0 1.0 1.0
 0.0 1.0 0.0 0.0
 0
 1
-hawaiisphere.obj
+hillsidesphere.obj
 0 30 0
 100 100 100
 0.0 0.0 1.0 0.0

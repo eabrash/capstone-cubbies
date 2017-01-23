@@ -18,7 +18,7 @@ uniform bool IN_FOCUS;
 void main()
 {
     vec3 LightColor = vec3(1,1,1);
-    float LightPower = 80.0f;
+    float LightPower = 50.0f;
 
     vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
 
