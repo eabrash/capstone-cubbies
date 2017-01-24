@@ -1,22 +1,22 @@
 #version 330 core
 
+// Values that stay constant for the whole mesh.
+uniform sampler2D myTextureSampler;
+uniform int NUM_LIGHTS;
+uniform vec3 LIGHT_POSITION_WORLDSPACE[2];
+uniform bool IN_FOCUS;
+uniform bool IS_BACKGROUND;
+
 // Interpolated values from the vertex shaders
 in vec2 UV;
 in vec3 Vertex_Position_In_Worldspace;
 in vec3 Normal_worldspace;
 in vec3 EyeDirection;
-in vec3 LightDirection;
-in vec3 LightDirection2;
+in vec3 LightDirection[2];
 
 // Ouput data
 out vec3 color;
 
-// Values that stay constant for the whole mesh.
-uniform sampler2D myTextureSampler;
-uniform vec3 LIGHT_POSITION_WORLDSPACE;
-uniform vec3 LIGHT_POSITION_WORLDSPACE_2;
-uniform bool IN_FOCUS;
-uniform bool IS_BACKGROUND;
 
 void main()
 {
@@ -27,10 +27,6 @@ void main()
     else
     {
         vec3 LightColor = vec3(1,1,1);
-        float LightPower = 4000.0f;
-
-        vec3 LightColor2 = vec3(1,1,1);
-        float LightPower2 = 10.0f;
 
         vec3 MaterialDiffuseColor = texture( myTextureSampler, UV ).rgb; //The color pulled from the sampler
 
@@ -47,36 +43,34 @@ void main()
 
         vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1); // Color of specular, seems to be gray
 
-        // Distance from the point to the first light
-        float distance = length(LIGHT_POSITION_WORLDSPACE - Vertex_Position_In_Worldspace);
+        color = MaterialAmbientColor;
+        float LightPower = 10.0;
 
-        vec3 n = normalize(Normal_worldspace);
-        vec3 l = normalize(LightDirection);
+        for (int i = 0; i < NUM_LIGHTS; i++)
+        {
+            // Distance from the point to the light
+            float distance = length(LIGHT_POSITION_WORLDSPACE[i] - Vertex_Position_In_Worldspace);
 
-        vec3 E = normalize(EyeDirection);
-        vec3 R = reflect(-l,n);
-        float cosAlpha = clamp( dot( E,R ), 0,1 );
+            vec3 n = normalize(Normal_worldspace);
+            vec3 l = normalize(LightDirection[i]);
 
-        float cosTheta = clamp(dot(n,l), 0, 1);
+            vec3 E = normalize(EyeDirection);
+            vec3 R = reflect(-l,n);
+            float cosAlpha = clamp( dot( E,R ), 0,1 );
 
-        // Output color = color of the texture at the specified UV
-        color = MaterialAmbientColor +
-                MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-                MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+            float cosTheta = clamp(dot(n,l), 0, 1);
 
-        // Distance from the point to the first second light (repeat w/second light parameters)
-        distance = length(LIGHT_POSITION_WORLDSPACE_2 - Vertex_Position_In_Worldspace);
+            if (i == 0)
+            {
+                LightPower = 4000.0;
+            }
+            else
+            {
+                LightPower = 10.0;
+            }
 
-        l = normalize(LightDirection2);
-
-        E = normalize(EyeDirection);
-        R = reflect(-l,n);
-        cosAlpha = clamp( dot( E,R ), 0,1 );
-
-        cosTheta = clamp(dot(n,l), 0, 1);
-
-        // Output color = color of the texture at the specified UV
-        color += MaterialDiffuseColor * LightColor2 * LightPower2 * cosTheta / (distance*distance) +
-        MaterialSpecularColor * LightColor2 * LightPower2 * pow(cosAlpha,5) / (distance*distance);
+            // Output color = color of the texture at the specified UV
+            color += MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) + MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+        }
     }
 }

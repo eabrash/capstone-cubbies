@@ -1,5 +1,5 @@
 # Blender MTL File: 'walls_modern.blend'
-# Material Count: 5
+# Material Count: 4
 
 newmtl Material
 Ns 96.078431
@@ -13,15 +13,6 @@ illum 2
 map_Kd gray.bmp
 
 newmtl None
-Ns 0
-Ka 0.000000 0.000000 0.000000
-Kd 0.8 0.8 0.8
-Ks 0.8 0.8 0.8
-d 1
-illum 2
-map_Kd woodtexture.bmp
-
-newmtl None_bricks.bmp
 Ns 0
 Ka 0.000000 0.000000 0.000000
 Kd 0.8 0.8 0.8

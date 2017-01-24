@@ -31,7 +31,7 @@
 // image types, but this function is only intended for BMP files. Based on file loading code from opengl-
 // tutorials.
 
-void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes, glm::vec3 &lightPositionWorld, glm::vec3 &lightPositionWorld2, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, std::vector<std::string> &photoNames)
+void loadWorld(const char * world_file_path, std::vector<std::string> &filenames, std::vector<glm::mat4> &translationMatrices, std::vector<glm::mat4> &scalingMatrices, std::vector<glm::mat4> &rotationMatrices, std::vector<int> &movableFlags, std::vector<bool> &splitMeshes, std::vector<glm::vec3> &lightPositionsWorld, std::vector<float> &lightPowers, glm::vec3 &camera, glm::vec3 &p, glm::vec3 &q, glm::vec3 &r, std::vector<std::string> &photoNames)
 {
     std::ifstream worldDataStream(world_file_path, std::ios::in); // Stream from file
     
@@ -39,54 +39,50 @@ void loadWorld(const char * world_file_path, std::vector<std::string> &filenames
     {
         std::string line = "";
         
-        //Get light position
+        //Get number of light sources
+        
         getline(worldDataStream, line);
+        int numLights = (int)::atof(line.c_str());
         
-        int begin = 0;
-        int end = 0;
-        float light [3];
-        int lightCounter = 0;
-        
-        for (int i = 0; i < line.length(); i++)
+        for (int i = 0; i < numLights; i++)
         {
-            if (isspace(line[i]))
+            //Get light position
+            getline(worldDataStream, line);
+            
+            int begin = 0;
+            int end = 0;
+            float light [3];
+            int lightCounter = 0;
+            
+            for (int i = 0; i < line.length(); i++)
             {
-                end = i;
-                light[lightCounter] = (float)::atof(line.substr(begin, end).c_str());
-                begin = i+1;
-                lightCounter++;
+                if (isspace(line[i]))
+                {
+                    end = i;
+                    light[lightCounter] = (float)::atof(line.substr(begin, end).c_str());
+                    begin = i+1;
+                    lightCounter++;
+                }
             }
+            
+            light[lightCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
+            
+            lightPositionsWorld.push_back(glm::vec3(light[0], light[1], light[2]));
+            
+            //Get light power
+            getline(worldDataStream, line);
+            
+            begin = 0;
+            end = 0;
+            float lightPower = (float)::atof(line.c_str());
+            lightPowers.push_back(lightPower);
         }
-        
-        light[lightCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
-        lightPositionWorld = glm::vec3(light[0], light[1], light[2]);
-        
-        //Get second light's position
-        getline(worldDataStream, line);
-        
-        begin = 0;
-        end = 0;
-        lightCounter = 0;
-        
-        for (int i = 0; i < line.length(); i++)
-        {
-            if (isspace(line[i]))
-            {
-                end = i;
-                light[lightCounter] = (float)::atof(line.substr(begin, end).c_str());
-                begin = i+1;
-                lightCounter++;
-            }
-        }
-        
-        light[lightCounter] = (float)::atof(line.substr(begin, line.length()-1).c_str());
-        lightPositionWorld2 = glm::vec3(light[0], light[1], light[2]);
         
         //Get camera position
         getline(worldDataStream, line);
         
-        begin = 0;
-        end = 0;
+        int begin = 0;
+        int end = 0;
         float cameraArray[3];
         int cameraCounter = 0;
         

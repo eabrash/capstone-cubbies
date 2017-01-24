@@ -454,11 +454,11 @@ int main(){
     GLuint ViewMatrixID = glGetUniformLocation(ProgramID, "VIEW_MATRIX");
     GLuint ModelMatrixID = glGetUniformLocation(ProgramID, "MODEL_MATRIX");
     GLuint LightPositionID = glGetUniformLocation(ProgramID, "LIGHT_POSITION_WORLDSPACE");
-    GLuint LightPosition2ID = glGetUniformLocation(ProgramID, "LIGHT_POSITION_WORLDSPACE_2");
     GLuint CameraPositionID = glGetUniformLocation(ProgramID, "CAMERA_POSITION_WORLDSPACE");
     GLuint TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
     GLuint FocalID = glGetUniformLocation(ProgramID, "IN_FOCUS");
     GLuint BackgroundStateID = glGetUniformLocation(ProgramID, "IS_BACKGROUND");
+    GLuint NumLightsID = glGetUniformLocation(ProgramID, "NUM_LIGHTS");
     //GLuint ModelMatrixInverseTransposeID = glGetUniformLocation(ProgramID, "MODEL_MATRIX_INVERSE_TRANSPOSE");
     
     GLuint PickingMatrixID = glGetUniformLocation(PickingProgramID, "MY_PICKING_MATRIX");
@@ -475,14 +475,14 @@ int main(){
     std::vector<bool> splitMeshes;
     std::vector<std::string> photoNames;
     
-    glm::vec3 lightPositionWorld;
-    glm::vec3 lightPositionWorld2;
+    std::vector<glm::vec3> lightPositionsWorld;
+    std::vector<float> lightPowers;
     glm::vec3 camera;
     glm::vec3 p;
     glm::vec3 q;
     glm::vec3 r;
     
-    loadWorld("spain_flat.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionWorld, lightPositionWorld2, camera, p, q, r, photoNames);
+    loadWorld("output.txt", filenames, translations, scales, rotations, movables, splitMeshes, lightPositionsWorld, lightPowers, camera, p, q, r, photoNames);
 
     std::vector<GLuint> photoTextures;
     std::vector<std::string> photoFilenames;
@@ -597,8 +597,12 @@ int main(){
         
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &viewMatrix[0][0]); // Locn, count, transpose, value
         glUniform3f(CameraPositionID, camera.x, camera.y, camera.z);
-        glUniform3f(LightPositionID, lightPositionWorld.x, lightPositionWorld.y, lightPositionWorld.z);
-        glUniform3f(LightPosition2ID, lightPositionWorld2.x, lightPositionWorld2.y, lightPositionWorld2.z);
+        
+        // How to pass in an array of light positions (vec3s) from:
+        // https://www.opengl.org/discussion_boards/showthread.php/198200-Passing-array-of-vec3-to-fragment-shader
+        
+        glUniform3fv(LightPositionID, lightPositionsWorld.size(), &lightPositionsWorld[0].x);
+        glUniform1i(NumLightsID, lightPositionsWorld.size());
         
         // From opengl-tutorial.org, "Picking with an OpenGL Hack"
         // http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-an-opengl-hack/
@@ -816,7 +820,7 @@ int main(){
     glDeleteTextures(1, &TextureID);
     glDeleteVertexArrays(1, &VertexArrayID);
     
-    writeWorld(models, lightPositionWorld, lightPositionWorld2, camera, p, q, r, photoFilenames, photoTextures);
+    writeWorld(models, lightPositionsWorld, lightPowers, camera, p, q, r, photoFilenames, photoTextures);
     
     // Close OpenGL window and terminate GLFW
     glfwTerminate();

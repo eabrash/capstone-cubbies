@@ -1,0 +1,24 @@
+# Blender MTL File: 'chaise_de_jardin.blend'
+# Material Count: 2
+
+newmtl bois
+Ns 149.019608
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.179845 0.179845 0.179845
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd lightwood.bmp
+
+newmtl chrome
+Ns 560.784314
+Ka 0.269549 0.269549 0.269549
+Kd 0.640000 0.640000 0.640000
+Ks 1.429199 1.429199 1.429199
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 5
+map_Kd lightwood.bmp
