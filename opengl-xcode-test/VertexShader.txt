@@ -15,7 +15,7 @@ uniform mat4 MY_MATRIX;
 uniform mat4 VIEW_MATRIX;
 uniform mat4 MODEL_MATRIX;
 //uniform mat4 MODEL_MATRIX_INVERSE_TRANSPOSE;
-uniform vec3 LIGHT_POSITION_WORLDSPACE[2];
+uniform vec3 LIGHT_POSITION_WORLDSPACE[3];
 uniform vec3 CAMERA_POSITION_WORLDSPACE;
 
 // Output data (goes to fragment shader)
@@ -23,7 +23,7 @@ out vec2 UV;
 out vec3 Vertex_Position_In_Worldspace;
 out vec3 Normal_worldspace;
 out vec3 EyeDirection;
-out vec3 LightDirection[2];
+out vec3 LightDirection[3];
 
 void main()
 {

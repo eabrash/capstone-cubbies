@@ -523,6 +523,13 @@ int main(){
         numMeshes += newModel->getNumMeshes();
     }
     
+//    int i = 2;
+//    
+//    Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i],splitMeshes[i]);
+//    newModel->setTranslation(newModel->getTranslation() + glm::translate(glm::vec3(0,3,0)));
+//    models.push_back(newModel);
+//    numModels += 1;
+    
     // Main drawing loop
     
     float step = 0.05;
@@ -530,6 +537,8 @@ int main(){
     
     int numLoopIterations = 0;
     bool rightKeyPressedLastFrame = false;
+    bool plusKeyPressedLastFrame = false;
+    bool minusKeyPressedLastFrame = false;
     
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 )
     {
@@ -583,7 +592,61 @@ int main(){
                 break;
             }
         }
-    
+        
+        if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+        {
+            if (!plusKeyPressedLastFrame && models[focalModel]->isMovable() == 1)
+            {
+                Model *duplicateModel = new Model(*models[focalModel]);
+                duplicateModel->setTranslation(duplicateModel->getTranslation() + glm::translate(glm::vec3(0, 0, 4)));
+                models.push_back(duplicateModel);
+                numModels += 1;
+            }
+            
+            if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+            {
+                plusKeyPressedLastFrame = true;
+            }
+            else
+            {
+                plusKeyPressedLastFrame = false;
+            }
+        }
+        
+        if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+        {
+            if (!minusKeyPressedLastFrame && models[focalModel]->isMovable() == 1)
+            {
+//                int current = 0;
+//                for (int i = 0; i < numModels; i++)
+//                {
+//                    if (i == focalModel)
+//                    {
+//                        delete models[focalModel];
+//                        models[focalModel] = nullptr;
+//                    }
+//                    else
+//                    {
+//                        models[current] = models[i];
+//                        current++;
+//                    }
+//                }
+                
+                models.erase(models.begin() + focalModel);
+                
+                numModels -= 1;
+            }
+            
+            if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+            {
+                minusKeyPressedLastFrame = true;
+            }
+            else
+            {
+                minusKeyPressedLastFrame = false;
+            }
+        }
+
         
         glm::mat4 viewMatrix = glm::lookAt(
                                            camera, // position of camera

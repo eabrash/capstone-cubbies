@@ -3,7 +3,7 @@
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
 uniform int NUM_LIGHTS;
-uniform vec3 LIGHT_POSITION_WORLDSPACE[2];
+uniform vec3 LIGHT_POSITION_WORLDSPACE[3];
 uniform bool IN_FOCUS;
 uniform bool IS_BACKGROUND;
 
@@ -12,7 +12,7 @@ in vec2 UV;
 in vec3 Vertex_Position_In_Worldspace;
 in vec3 Normal_worldspace;
 in vec3 EyeDirection;
-in vec3 LightDirection[2];
+in vec3 LightDirection[3];
 
 // Ouput data
 out vec3 color;
