@@ -19,6 +19,20 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "main:cubbies.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "translation">
+            </PersistentString>
+            <PersistentString
+               value = "focalModel">
+            </PersistentString>
+            <PersistentString
+               value = "models">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "writeWorld(std::__1::vector&lt;Model*, std::__1::allocator&lt;Model*&gt; &gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::vector&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, std::__1::allocator&lt;std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt; &gt; &gt;, std::__1::vector&lt;unsigned int, std::__1::allocator&lt;unsigned int&gt; &gt;):worldwriter.cpp">
          <PersistentStrings>
             <PersistentString
@@ -41,10 +55,10 @@
          contextName = "updateWallArtPosition(GLFWwindow*, Model*, float, float, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::vector&lt;Model*, std::__1::allocator&lt;Model*&gt; &gt;&amp;, int, std::__1::vector&lt;unsigned int, std::__1::allocator&lt;unsigned int&gt; &gt;):cubbies.cpp">
       </ContextState>
       <ContextState
-         contextName = "loadAssImp(char*, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec2&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec2&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;aiString, std::__1::allocator&lt;aiString&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;):cubbies.cpp">
+         contextName = "Model::getBoundingBox():model.cpp">
       </ContextState>
       <ContextState
-         contextName = "Model::getBoundingBox():model.cpp">
+         contextName = "loadAssImp(char*, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec2&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec2&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;glm::tvec3&lt;float, (glm::precision)0&gt;, std::__1::allocator&lt;glm::tvec3&lt;float, (glm::precision)0&gt; &gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;, std::__1::vector&lt;aiString, std::__1::allocator&lt;aiString&gt; &gt;&amp;, std::__1::vector&lt;unsigned short, std::__1::allocator&lt;unsigned short&gt; &gt;&amp;):cubbies.cpp">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

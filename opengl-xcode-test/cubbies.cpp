@@ -595,12 +595,198 @@ int main(){
         
         if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
         {
-            if (!plusKeyPressedLastFrame && models[focalModel]->isMovable() == 1)
+            if (!plusKeyPressedLastFrame && focalModel != -1 && models[focalModel]->isMovable() == 1)
             {
+                // Make a (shallow) copy of the selected model
                 Model *duplicateModel = new Model(*models[focalModel]);
-                duplicateModel->setTranslation(duplicateModel->getTranslation() + glm::translate(glm::vec3(0, 0, 4)));
-                models.push_back(duplicateModel);
-                numModels += 1;
+                
+                // Determine the model's dimensions in x and z directions
+                glm::vec3 scaledMaxes = duplicateModel->getScale() * glm::vec4(duplicateModel->getMaxesObjectSpace(), 1);
+                glm::vec3 scaledMins = duplicateModel->getScale() * glm::vec4(duplicateModel->getMinsObjectSpace(), 1);
+                float xWidth = scaledMaxes.x - scaledMins.x + 0.01;
+                float zWidth = scaledMaxes.z - scaledMins.z + 0.01;
+                
+                bool foundValidPlacement = true; //Did we put the model in a collision-free location?
+                
+                // Move the new model along + z axis relative to old model
+                if (true)
+                {
+                    glm::mat4 newTranslation = duplicateModel->getRotation()*glm::translate(glm::vec3(0, 0, zWidth));
+                    glm::mat4 translation = models[focalModel]->getTranslation();
+                    
+                    float targetX = translation[3].x + newTranslation[3].x;
+                    float targetZ = translation[3].z + newTranslation[3].z;
+                    
+                    std::cout << "targetX = " << targetX << "\n";
+                    std::cout << "targetZ = " << targetZ << "\n";
+                    
+                    std::cout << "current X= " << translation[3].x << "\n";
+                    std::cout << "current Z = " << translation[3].z << "\n";
+                    
+                    
+                    while (glm::abs(translation[3].x-targetX) >= 0.001 || glm::abs(translation[3].z-targetZ)>=0.001)
+                    {
+                        translation[3].x += 0.01 * newTranslation[3].x;
+                        translation[3].z += 0.01 * newTranslation[3].z;
+                        duplicateModel->setTranslation(translation);
+                        
+                        for (int i = 0; i < numModels; i++)
+                        {
+                            if (i != focalModel && models[i]->isMovable() != 3 && duplicateModel->collidedWithObject(models[i]))
+                            {
+                                foundValidPlacement = false;
+                                break;
+                            }
+                        }
+                        
+                        if (foundValidPlacement && duplicateModel->collidedWithPlayer(camera, p, q, r))
+                        {
+                            foundValidPlacement = false;
+                        }
+                    }
+                }
+                
+                std::cout << "After moving to +zWidth: " << foundValidPlacement << "\n";
+                
+                // Move the new model along -z axis relative to old model
+                if (!foundValidPlacement)
+                {
+                    foundValidPlacement = true;
+                    
+                    glm::mat4 newTranslation = duplicateModel->getRotation()*glm::translate(glm::vec3(0, 0, -zWidth));
+                    glm::mat4 translation = models[focalModel]->getTranslation();
+                    
+                    float targetX = translation[3].x + newTranslation[3].x;
+                    float targetZ = translation[3].z + newTranslation[3].z;
+                    
+                                    std::cout << "targetX = " << targetX << "\n";
+                                    std::cout << "targetZ = " << targetZ << "\n";
+                    
+                                    std::cout << "current X= " << translation[3].x << "\n";
+                                    std::cout << "current Z = " << translation[3].z << "\n";
+                    
+                    
+                    while (glm::abs(translation[3].x-targetX) >= 0.001 || glm::abs(translation[3].z-targetZ)>=0.001)
+                    {
+                        translation[3].x += 0.01 * newTranslation[3].x;
+                        translation[3].z += 0.01 * newTranslation[3].z;
+                        duplicateModel->setTranslation(translation);
+                        
+                        for (int i = 0; i < numModels; i++)
+                        {
+                            if (i != focalModel && models[i]->isMovable() != 3 && duplicateModel->collidedWithObject(models[i]))
+                            {
+                                foundValidPlacement = false;
+                                std::cout << "INVALID B/C I CRUNCHED INTO MODEL " << i << "\n";
+                                break;
+                            }
+                        }
+                        
+                        if (foundValidPlacement && duplicateModel->collidedWithPlayer(camera, p, q, r))
+                        {
+                            std::cout << "INVALID B/C I CRUNCHED INTO THE PLAYER " << "\n";
+                            foundValidPlacement = false;
+                        }
+                    }
+                }
+                
+                std::cout << "After moving to -zWidth: " << foundValidPlacement << "\n";
+                
+                // Move the new model along +x axis relative to old model
+                if (!foundValidPlacement)
+                {
+                    foundValidPlacement = true;
+                    
+                    glm::mat4 newTranslation = duplicateModel->getRotation()*glm::translate(glm::vec3(xWidth, 0, 0));
+                    glm::mat4 translation = models[focalModel]->getTranslation();
+                    
+                    float targetX = translation[3].x + newTranslation[3].x;
+                    float targetZ = translation[3].z + newTranslation[3].z;
+                    
+                    std::cout << "targetX = " << targetX << "\n";
+                    std::cout << "targetZ = " << targetZ << "\n";
+    
+                    std::cout << "current X= " << translation[3].x << "\n";
+                    std::cout << "current Z = " << translation[3].z << "\n";
+                    
+                    
+                    while (glm::abs(translation[3].x-targetX) >= 0.001 || glm::abs(translation[3].z-targetZ)>=0.001)
+                    {
+                        translation[3].x += 0.01 * newTranslation[3].x;
+                        translation[3].z += 0.01 * newTranslation[3].z;
+                        duplicateModel->setTranslation(translation);
+                        
+                        for (int i = 0; i < numModels; i++)
+                        {
+                            if (i != focalModel && models[i]->isMovable() != 3 && duplicateModel->collidedWithObject(models[i]))
+                            {
+                                foundValidPlacement = false;
+                                break;
+                            }
+                        }
+                        
+                        if (foundValidPlacement && duplicateModel->collidedWithPlayer(camera, p, q, r))
+                        {
+                            foundValidPlacement = false;
+                        }
+                    }
+                }
+                
+                std::cout << "After moving to +xWidth: " << foundValidPlacement << "\n";
+                
+                // Move the new model along -x axis relative to old model
+                if (!foundValidPlacement)
+                {
+                    foundValidPlacement = true;
+                    
+                    glm::mat4 newTranslation = duplicateModel->getRotation()*glm::translate(glm::vec3(-xWidth, 0, 0));
+                    glm::mat4 translation = models[focalModel]->getTranslation();
+                    
+                    float targetX = translation[3].x + newTranslation[3].x;
+                    float targetZ = translation[3].z + newTranslation[3].z;
+                    
+                    //                std::cout << "targetX = " << targetX << "\n";
+                    //                std::cout << "targetZ = " << targetZ << "\n";
+                    //
+                    //                std::cout << "current X= " << translation[3].x << "\n";
+                    //                std::cout << "current Z = " << translation[3].z << "\n";
+                    
+                    
+                    while (glm::abs(translation[3].x-targetX) >= 0.001 || glm::abs(translation[3].z-targetZ)>=0.001)
+                    {
+                        translation[3].x += 0.01 * newTranslation[3].x;
+                        translation[3].z += 0.01 * newTranslation[3].z;
+                        duplicateModel->setTranslation(translation);
+                        
+                        for (int i = 0; i < numModels; i++)
+                        {
+                            if (i != focalModel && models[i]->isMovable() != 3 && duplicateModel->collidedWithObject(models[i]))
+                            {
+                                foundValidPlacement = false;
+                                break;
+                            }
+                        }
+                        
+                        if (foundValidPlacement && duplicateModel->collidedWithPlayer(camera, p, q, r))
+                        {
+                            foundValidPlacement = false;
+                        }
+                    }
+                }
+                
+                std::cout << "After moving to -xWidth: " << foundValidPlacement << "\n";
+                
+                if (foundValidPlacement)
+                {
+                    models.push_back(duplicateModel);
+                    numModels += 1;
+                    focalModel = numModels-1;
+                }
+//                else
+//                {
+//                    delete duplicateModel;
+//                    duplicateModel = nullptr;
+//                }
             }
             
             if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
@@ -617,24 +803,9 @@ int main(){
         {
             if (!minusKeyPressedLastFrame && models[focalModel]->isMovable() == 1)
             {
-//                int current = 0;
-//                for (int i = 0; i < numModels; i++)
-//                {
-//                    if (i == focalModel)
-//                    {
-//                        delete models[focalModel];
-//                        models[focalModel] = nullptr;
-//                    }
-//                    else
-//                    {
-//                        models[current] = models[i];
-//                        current++;
-//                    }
-//                }
-                
                 models.erase(models.begin() + focalModel);
-                
                 numModels -= 1;
+                focalModel = -1;
             }
             
             if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
@@ -831,7 +1002,7 @@ int main(){
                                       (void*)0                          // array buffer offset
                                       );
                 
-                // 3rd attribute buffer: UVs
+                // 3rd attribute buffer: normals
                 glEnableVertexAttribArray(2);
                 glBindBuffer(GL_ARRAY_BUFFER, (*pMeshes)[j].getNormalBuffer());
                 glVertexAttribPointer(
