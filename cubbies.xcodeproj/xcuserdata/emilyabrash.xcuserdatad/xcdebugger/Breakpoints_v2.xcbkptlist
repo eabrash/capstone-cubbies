@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "972"
-            endingLineNumber = "972"
+            startingLineNumber = "1077"
+            endingLineNumber = "1077"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "974"
-            endingLineNumber = "974"
+            startingLineNumber = "1079"
+            endingLineNumber = "1079"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "964"
-            endingLineNumber = "964"
+            startingLineNumber = "1069"
+            endingLineNumber = "1069"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "968"
-            endingLineNumber = "968"
+            startingLineNumber = "1073"
+            endingLineNumber = "1073"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1022"
-            endingLineNumber = "1022"
+            startingLineNumber = "1127"
+            endingLineNumber = "1127"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1023"
-            endingLineNumber = "1023"
+            startingLineNumber = "1128"
+            endingLineNumber = "1128"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -661,11 +661,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507069748.110919"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1072"
-            endingLineNumber = "1072"
+            startingLineNumber = "1177"
+            endingLineNumber = "1177"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -741,11 +741,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507057779.087218"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "842"
-            endingLineNumber = "842"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -757,11 +757,107 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "opengl-xcode-test/cubbies.cpp"
-            timestampString = "507056837.999505"
+            timestampString = "507057779.087218"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "788"
-            endingLineNumber = "788"
+            startingLineNumber = "790"
+            endingLineNumber = "790"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507067088.423845"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "963"
+            endingLineNumber = "963"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507069748.110919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1020"
+            endingLineNumber = "1020"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507069748.110919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1028"
+            endingLineNumber = "1028"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507069748.110919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1037"
+            endingLineNumber = "1037"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507069748.110919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1038"
+            endingLineNumber = "1038"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "opengl-xcode-test/cubbies.cpp"
+            timestampString = "507069748.110919"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1027"
+            endingLineNumber = "1027"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
