@@ -523,6 +523,8 @@ int main(){
         numMeshes += newModel->getNumMeshes();
     }
     
+    
+    
 //    int i = 2;
 //    
 //    Model *newModel = new Model(filenames[i], translations[i], scales[i], rotations[i], movables[i],splitMeshes[i]);
@@ -901,13 +903,25 @@ int main(){
             
             glfwGetCursorPos(window, &xPos, &yPos);
             
-            //std::cout << "xPos: " << xPos << ", yPos: " << yPos << "\n";
+            int width = 0;
+            int height = 0;
             
-//            double adjustedXPos = (2.0f * xPos) / WINDOW_WIDTH - 1.0f;
-//            double adjustedYPos = 1.0f - (2.0f * yPos) / WINDOW_HEIGHT;
+            glfwGetWindowSize(window, &width, &height);
             
-            double adjustedXPos = xPos*2-1;
-            double adjustedYPos = (WINDOW_HEIGHT-yPos)*2-1;
+            int fWidth = 0;
+            int fHeight =0;
+            
+            glfwGetFramebufferSize(window, &fWidth, &fHeight);
+            
+            //            std::cout << "xPos: " << xPos << ", yPos: " << yPos << "\n";
+            //            std::cout << "width - window: " << width << ", height - window: " << height <<"\n";
+            //            std::cout << "width - framebuffer: " << fWidth << ", height - framebuffer: " << fHeight <<"\n";
+            
+            //            double adjustedXPos = (2.0f * xPos) / WINDOW_WIDTH - 1.0f;
+            //            double adjustedYPos = 1.0f - (2.0f * yPos) / WINDOW_HEIGHT;
+            
+            double adjustedXPos = xPos*(fWidth/width)-1;
+            double adjustedYPos = (WINDOW_HEIGHT-yPos)*(fWidth/width)-1;
             
             //std::cout << "adjustedXPos = " << adjustedXPos << ", adjustedYPos = " << adjustedYPos << "\n";
             
