@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 
 #include <iostream>
 #include <GL/glew.h>
@@ -580,7 +581,24 @@ bool placeDuplicateModel(Model *duplicateModel, int focalModel, std::vector<Mode
     return foundValidPlacement;
 }
 
-int main(){
+int main(int argc, const char * argv[]){
+    
+    // Code snippet from: http://stackoverflow.com/questions/40920783/xcode-app-no-longer-reads-input-from-the-folder-the-app-is-stored-in
+    
+    char workingDir[1024];
+    
+    getcwd(workingDir, 1024);
+    
+    std::cout << workingDir << "\n";
+    
+    // argv[0] returns the full path to the program
+    std::string directory(argv[0]);
+    // And we want to get rid of the program name
+    directory = directory.substr(0, directory.find_last_of("/"));
+    // Point the directory to the program directory
+    chdir(directory.c_str());
+    
+    std::cout << "DIRECTORY I AM IN: " << directory.c_str() << "\n";
     
     // GLFW setup
     
