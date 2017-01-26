@@ -4,7 +4,7 @@ This repo contains an early prototype of a project called **Cubbies**, done as a
 
 The capstone version of Cubbies is written for the PC. However, in the long term, Cubbies is intended as a 3D environment authoring and sharing tool intended primarily for virtual reality headsets.
 
-Just want to try it out (without building the code in Xcode)? You can download a version for recent Macs from [here](https://drive.google.com/open?id=0B6qffmC__KZ1ZEVVSUhSaUhlYVE) (the .app file was too large to put on Github).
+Just want to try it out (without building the code in Xcode)? You can download a version for recent Macs from [here](https://drive.google.com/open?id=0B6qffmC__KZ1YUtLTXhiZnBySzQ) (the .app file was too large to put on Github).
 
 ##Who might use Cubbies?
 
