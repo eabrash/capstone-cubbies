@@ -1,10 +1,10 @@
-#Cubbies
-
 ##What is Cubbies?
 
 This repo contains an early prototype of a project called **Cubbies**, done as a capstone project for [Ada Developers Academy](http://adadevelopersacademy.org/). The long-term vision of Cubbies is as a world authoring and social environment that allows anyone to create a handmade 3D virtual environment (a “cubby”) that they can spend time in and invite their friends to visit. The user can decorate their cubby however they want – for example, by putting art on the walls and choosing the furniture (and eventually, by laying out a floorplan or creating other sophisticated landscapes).
 
 The capstone version of Cubbies is written for the PC. However, in the long term, Cubbies is intended as a 3D environment authoring and sharing tool intended primarily for virtual reality headsets.
+
+Just want to try it out (without building the code in Xcode)? You can download a version for recent Macs from [here](https://drive.google.com/open?id=0B6qffmC__KZ1V2t6YmhWNXJQVWs) (the .dmg file was too large to put on Github).
 
 ##Who might use Cubbies?
 
